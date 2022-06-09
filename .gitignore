@@ -1,0 +1,9 @@
+.DS_Store
+node_modules
+/.svelte-kit
+/build
+/package
+/functions
+/storybook-static
+/test-results
+.env

@@ -1,0 +1,77 @@
+{
+  "name": "svelte-preprocess-react",
+  "version": "0.1.0",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "dev": "svelte-kit dev",
+    "build": "svelte-kit build",
+    "preview": "svelte-kit preview",
+    "package": "svelte-kit package",
+    "lint": "concurrently -c \"#c596c7\",\"#676778\",\"#3074c0\",\"#7c7cea\" --kill-others-on-fail \"npm:lint:*\"",
+    "lint:prettier": "prettier --check --loglevel=warn \"src/**/*.svelte\"",
+    "lint:svelte-check": "svelte-check --fail-on-warnings --fail-on-hints --ignore build,package",
+    "lint:tsc": "tsc --noEmit",
+    "lint:eslint": "eslint --ext=js,ts,svelte --max-warnings=0 src",
+    "format": "prettier --write . && eslint --ext=js,ts,svelte --fix src",
+    "prepare": "husky install",
+    "test": "vitest run --passWithNoTests",
+    "vitest": "vitest watch"
+  },
+  "prettier": "eslint-config-triple/.prettierrc",
+  "lint-staged": {
+    "*.ts": [
+      "eslint --max-warnings 0 --no-ignore",
+      "sh -c 'tsc -p tsconfig.json --noEmit'"
+    ],
+    "*.(c)?js": [
+      "eslint --max-warnings 0 --no-ignore"
+    ],
+    "*.svelte": [
+      "eslint --max-warnings 0 --no-ignore",
+      "svelte-check --fail-on-warnings --fail-on-hints",
+      "prettier --check"
+    ]
+  },
+  "devDependencies": {
+    "@sveltejs/adapter-static": "next",
+    "@sveltejs/kit": "next",
+    "@testing-library/svelte": "^3.1.0",
+    "@types/react": "^18.0.12",
+    "@types/react-dom": "^18.0.5",
+    "@typescript-eslint/eslint-plugin": "^5.27.0",
+    "@typescript-eslint/parser": "^5.27.0",
+    "autoprefixer": "^10.4.7",
+    "concurrently": "^7.2.1",
+    "eslint": "^8.16.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-airbnb-typescript": "^17.0.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-config-triple": "^0.5.1",
+    "eslint-import-resolver-typescript": "^2.7.1",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-only-warn": "^1.0.3",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-svelte3": "^4.0.0",
+    "husky": "^8.0.1",
+    "jsdom": "^19.0.0",
+    "lint-staged": "^13.0.0",
+    "postcss": "^8.4.14",
+    "prettier": "^2.6.2",
+    "prettier-plugin-svelte": "^2.7.0",
+    "react": "^18.1.0",
+    "react-dom": "^18.1.0",
+    "sass": "^1.52.2",
+    "svelte": "^3.48.0",
+    "svelte-check": "^2.7.2",
+    "svelte-preprocess": "^4.10.6",
+    "svelte2tsx": "^0.5.10",
+    "typescript": "^4.7.2",
+    "vite": "^2.9.9",
+    "vite-tsconfig-paths": "^3.4.1",
+    "vitest": "^0.14.1"
+  },
+  "dependencies": {
+    "magic-string": "^0.26.2"
+  }
+}
