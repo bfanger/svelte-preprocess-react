@@ -1,3 +1,3 @@
-import type preprocessReact from "./svelte-preprocess-react";
+import preprocessReact from "./svelte-preprocess-react";
 
 export default preprocessReact;

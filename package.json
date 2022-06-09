@@ -1,6 +1,6 @@
 {
   "name": "svelte-preprocess-react",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "license": "MIT",
   "type": "module",
   "scripts": {
@@ -59,8 +59,6 @@
     "postcss": "^8.4.14",
     "prettier": "^2.6.2",
     "prettier-plugin-svelte": "^2.7.0",
-    "react": "^18.1.0",
-    "react-dom": "^18.1.0",
     "sass": "^1.52.2",
     "svelte": "^3.48.0",
     "svelte-check": "^2.7.2",
@@ -73,5 +71,9 @@
   },
   "dependencies": {
     "magic-string": "^0.26.2"
+  },
+  "peerDependencies": {
+    "react": ">=18",
+    "react-dom": ">=18"
   }
 }
