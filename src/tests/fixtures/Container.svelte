@@ -1,5 +1,7 @@
 <script>
   // @ts-nocheck
+  import Counter from "./Counter";
+
   let count = 1;
 </script>
 

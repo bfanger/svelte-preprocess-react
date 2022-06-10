@@ -1,15 +1,18 @@
 import * as React from "react";
 
 type Props = {
-  initialValue: number;
+  initial?: number;
+  onCount?: (count: number) => void;
 };
-const Counter: React.FC<Props> = ({ initialValue = 0 }) => {
-  const [count, setCount] = React.useState(initialValue);
+const Counter: React.FC<Props> = ({ initial = 0, onCount }) => {
+  const [count, setCount] = React.useState(initial);
   function decrease() {
     setCount(count - 1);
+    onCount?.(count - 1);
   }
   function increase() {
     setCount(count + 1);
+    onCount?.(count + 1);
   }
   return (
     <>

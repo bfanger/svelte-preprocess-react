@@ -9,7 +9,7 @@ import type {
 import type { PreprocessorGroup } from "svelte/types/compiler/preprocess";
 
 export default function preprocessReact(): PreprocessorGroup {
-  // @todo Alternate import older React versions
+  // @todo Alternate import for older React versions
   const importStatement =
     'import sveltifyReact from "svelte-preprocess-react/sveltifyReact18";';
 
@@ -24,14 +24,19 @@ export default function preprocessReact(): PreprocessorGroup {
         return { code: content };
       }
       const script = compiled.ast.instance || (compiled.ast.module as Script);
-      const offset = compiled.ast.html.start > script.start ? 0 : refs.offset;
-      const jsEnd = script.content.end + offset;
-      refs.components.forEach((component) => {
-        const code = `const React$${component} = sveltifyReact(${component});`;
-        s.appendRight(jsEnd, code);
-      });
-      const jsStart = script.content.start + offset;
-      s.appendRight(jsStart, importStatement);
+      const wrappers = refs.components
+        .map((component) => {
+          return `const React$${component} = sveltifyReact(${component});`;
+        })
+        .join(";");
+
+      if (!script) {
+        s.prepend(`<script>\n${importStatement}\n\n${wrappers}\n</script>\n\n`);
+      } else {
+        const offset = compiled.ast.html.start > script.start ? 0 : refs.offset;
+        s.appendRight(script.content.end + offset, wrappers);
+        s.appendRight(script.content.start + offset, importStatement);
+      }
       return {
         code: s.toString(),
         map: s.generateMap(),
@@ -43,16 +48,26 @@ export default function preprocessReact(): PreprocessorGroup {
   function replaceTags(node: TemplateNode, content: MagicString, refs: Refs) {
     /* eslint-disable no-param-reassign */
     if (node.type === "Element" && node.name.startsWith("react:")) {
+      if (node.children && node.children.length > 0) {
+        throw new Error(
+          "Nested components are not (yet) supported in svelte-preprocess-react"
+        );
+      }
       const tag = node as Element;
       const component = tag.name.slice(6);
       const tagStart = node.start + refs.offset;
+      const tagEnd = node.end + refs.offset;
+      const closeStart = tagEnd - tag.name.length - 3;
       content.overwrite(tagStart + 1, tagStart + 7, "React$");
+      if (content.slice(closeStart, closeStart + 8) === `</react:`) {
+        content.overwrite(closeStart + 2, closeStart + 8, `React$`);
+      }
       if (refs.components.includes(component) === false) {
         refs.components.push(component);
       }
       tag.attributes.forEach((attr) => {
         if (attr.type === "EventHandler") {
-          const event = attr as Transition; // the BaseExpressionDirective is not exposed directly
+          const event = attr as Transition;
           if (event.modifiers.length > 0) {
             throw new Error(
               "event modifier are not (yet) supported for React components"

@@ -28,19 +28,10 @@ export default {
 };
 ```
 
-or when used in combination with svelte-preprocess:
-
-```js
-// svelte.config.js
-import preprocess from "svelte-preprocess";
-import preprocessReact from "svelte-preprocess-react";
-
-export default {
-  preprocess: [preprocess({ sourceMap: true }), preprocessReact()],
-};
-```
-
 ## Ideas / Roadmap
 
-- Auto insert `<react:` for .tsx and .jsx imports.
-- Research if it's possible to reliably determine if a Component is a React component at compile time.
+- Improve Typescript support for events
+- Add support for React 17 and below (autodetect version based on package.json)
+- Auto insert `<react:` for .tsx and .jsx imports
+- Add support for children
+- Research if it's possible to reliably determine if a Component is a React component at compile time

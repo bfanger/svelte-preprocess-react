@@ -1,18 +1,29 @@
 import preprocess from "svelte-preprocess";
 import adapter from "@sveltejs/adapter-static";
-// import preprocessReact from "./package";
 
+const buildPackage = process.argv[2] === "package";
+let preprocessReact;
+if (!buildPackage) {
+  preprocessReact = (await import("./package/svelte-preprocess-react.js"))
+    .default;
+}
 /** @type {import('@sveltejs/kit').Config} */
 export default {
-  preprocess: [preprocess({ sourceMap: true })],
-  // preprocess: [...preprocess({ sourceMap: true }), preprocessReact()],
+  preprocess: buildPackage
+    ? preprocess({ sourceMap: true })
+    : [preprocess({ sourceMap: true }), preprocessReact()],
 
   kit: {
-    // aliases: {
-    //   "svelte-preprocess-react": "src/lib",
-    // },
+    alias: {
+      "svelte-preprocess-react": "./package",
+    },
     prerender: { default: true },
     adapter: adapter(),
-    vite: { css: { devSourcemap: true } },
+    vite: {
+      css: { devSourcemap: true },
+      server: {
+        fs: { allow: ["package"] },
+      },
+    },
   },
 };
