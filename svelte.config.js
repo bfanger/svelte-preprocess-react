@@ -15,6 +15,7 @@ export default {
 
   kit: {
     alias: {
+      $lib: "./src/lib",
       "svelte-preprocess-react": "./package",
     },
     prerender: { default: true },

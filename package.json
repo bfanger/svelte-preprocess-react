@@ -30,7 +30,7 @@
     ],
     "*.svelte": [
       "eslint --max-warnings 0 --no-ignore",
-      "svelte-check --fail-on-warnings --fail-on-hints",
+      "svelte-check --fail-on-warnings --fail-on-hints --ignore build,package,src/tests",
       "prettier --check"
     ]
   },

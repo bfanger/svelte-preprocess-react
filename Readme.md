@@ -56,6 +56,19 @@ export default {
 svelte-preprocess-react is a _markup_ preprocessor, which messes up the preprocess ordering.
 Passing the other preprocessor as option ensures that this run before the react preprocessor.
 
+## Using Svelte components in React
+
+```ts
+import reactifySvelte from "$lib/reactifySvelte";
+import ButtonSvelte from "../components/Button.svelte";
+
+const Button = reactifySvelte(ButtonSvelte);
+
+function MyComponent() {
+  return <Button onClick={() => console.log("clicked")}>Click me</Button>;
+}
+```
+
 ## Ideas / Roadmap
 
 - Improve VS Code support (Typescript)

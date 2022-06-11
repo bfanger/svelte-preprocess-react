@@ -1,4 +1,8 @@
 import * as React from "react";
+import reactifySvelte from "../../lib/reactifySvelte";
+import ButtonSvelte from "../components/Button.svelte";
+
+const Button = reactifySvelte(ButtonSvelte);
 
 type Props = {
   initial?: number;
@@ -16,9 +20,9 @@ const Counter: React.FC<Props> = ({ initial = 0, onCount }) => {
   }
   return (
     <>
-      <button onClick={decrease}>-</button>
+      <Button onClick={decrease}>-</Button>
       {count}
-      <button onClick={increase}>+</button>
+      <Button onClick={increase}>+</Button>
     </>
   );
 };
