@@ -1,8 +1,8 @@
 // Vitest Snapshot v1
 
-exports[`preprocess-react > should fail on bindings 1`] = `"'count' is not a valid binding"`;
+exports[`svelte-preprocess-react > should fail on bindings 1`] = `"'count' is not a valid binding"`;
 
-exports[`preprocess-react > should inject a script tag 1`] = `
+exports[`svelte-preprocess-react > should inject a script tag 1`] = `
 "<script>
 import sveltifyReact from \\"svelte-preprocess-react/sveltifyReact18\\";
 
@@ -14,7 +14,7 @@ const React$Counter = sveltifyReact(Counter);
 "
 `;
 
-exports[`preprocess-react > should process <react:component> tags 1`] = `
+exports[`svelte-preprocess-react > should process <react:component> tags 1`] = `
 "<script>import sveltifyReact from \\"svelte-preprocess-react/sveltifyReact18\\";
   // @ts-nocheck
   import Counter from \\"./Counter\\";
@@ -28,5 +28,14 @@ const React$Counter = sveltifyReact(Counter);</script>
     count = next;
   }}
 />
+<React$Counter count={2} onCount={() => {}} />
+"
+`;
+
+exports[`svelte-preprocess-react > should support typescript when using preprocess 1`] = `
+"<script lang=\\"ts\\">export let title;
+</script>
+
+<h1>{title}</h1>
 "
 `;

@@ -7,7 +7,7 @@ Seamlessly use React components inside a Svelte app
 This preprocessor is intended as temporary solution when migrating an existing large React codebase.
 The goal should be to rewrite all the components to Svelte and remove this preprocessor from your setup.
 
-## Usage
+## Usage inside Svelte components
 
 ```html
 <script>
@@ -15,6 +15,19 @@ The goal should be to rewrite all the components to Svelte and remove this prepr
 </script>
 
 <react:MyReactComponent />
+```
+
+The preprocessor compiles this to:
+
+```html
+<script>
+  import sveltifyReact from "svelte-preprocess-react/sveltifyReact18";
+  import MyReactComponent from "./MyReactComponent.jsx";
+
+  const React$MyReactComponent = sveltifyReact(MyReactComponent);
+</script>
+
+<React$MyReactComponent />
 ```
 
 ## Setup
@@ -28,10 +41,25 @@ export default {
 };
 ```
 
+When setting up in combination with other processors like [svelte-preprocess]() use:
+
+```js
+// svelte.config.js
+import preprocess from "svelte-preprocess";
+import preprocessReact from "svelte-preprocess-react";
+
+export default {
+  preprocess: preprocessReact(preprocess: preprocess({ sourceMap: true })),
+};
+```
+
+svelte-preprocess-react is a _markup_ preprocessor, which messes up the preprocess ordering.
+Passing the other preprocessor as option ensures that this run before the react preprocessor.
+
 ## Ideas / Roadmap
 
-- Improve Typescript support for events
+- Improve VS Code support (Typescript)
+- Improve svelte-eslint support
+- Add support for children/slots
 - Add support for React 17 and below (autodetect version based on package.json)
 - Auto insert `<react:` for .tsx and .jsx imports
-- Add support for children
-- Research if it's possible to reliably determine if a Component is a React component at compile time

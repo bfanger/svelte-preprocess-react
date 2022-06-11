@@ -1,10 +1,11 @@
 import { describe, expect, it } from "vitest";
 import { preprocess } from "svelte/compiler";
+import sveltePreprocess from "svelte-preprocess";
 import { readFile } from "fs/promises";
 import { dirname, resolve } from "path";
-import preprocessReact from "../lib/svelte-preprocess-react";
+import preprocessReact from "../lib/preprocess";
 
-describe("preprocess-react", () => {
+describe("svelte-preprocess-react", () => {
   it("should process <react:component> tags", async () => {
     const filename = resolveFilename("./fixtures/Container.svelte");
     const src = await readFile(filename, "utf8");
@@ -26,7 +27,7 @@ describe("preprocess-react", () => {
     expect(failed).toBe(true);
   });
 
-  it("should fail on slots (for  now)", async () => {
+  it("should fail on slots (for now)", async () => {
     const filename = resolveFilename("./fixtures/Slots.svelte");
     const src = await readFile(filename, "utf8");
     let failed: boolean;
@@ -47,6 +48,17 @@ describe("preprocess-react", () => {
     const src = await readFile(filename, "utf8");
     const output = await preprocess(src, preprocessReact(), { filename });
     expect(output.code).toContain("<script>");
+    expect(output.code).toMatchSnapshot();
+  });
+
+  it("should support typescript when using preprocess", async () => {
+    const filename = resolveFilename("./fixtures/Typescript.svelte");
+    const src = await readFile(filename, "utf8");
+    const output = await preprocess(
+      src,
+      preprocessReact({ preprocess: sveltePreprocess() }),
+      { filename }
+    );
     expect(output.code).toMatchSnapshot();
   });
 });

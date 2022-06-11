@@ -1,7 +1,7 @@
 import type { ComponentClass, FunctionComponent } from "react";
 import type { SvelteComponentTyped } from "svelte/internal";
-import ReactWrapper from "./React18Wrapper.svelte";
-import type { ConstructorOf } from "./types";
+import ReactWrapper from "./internal/React18Wrapper.svelte";
+import type { ConstructorOf } from "./internal/types";
 
 export default function sveltifyReact18<P>(
   ReactComponent: FunctionComponent<P> | ComponentClass<P>

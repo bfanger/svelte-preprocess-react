@@ -4,14 +4,14 @@ import adapter from "@sveltejs/adapter-static";
 const buildPackage = process.argv[2] === "package";
 let preprocessReact;
 if (!buildPackage) {
-  preprocessReact = (await import("./package/svelte-preprocess-react.js"))
-    .default;
+  preprocessReact = (await import("./package/preprocess.js")).default;
 }
+
 /** @type {import('@sveltejs/kit').Config} */
 export default {
   preprocess: buildPackage
     ? preprocess({ sourceMap: true })
-    : [preprocess({ sourceMap: true }), preprocessReact()],
+    : preprocessReact({ preprocess: preprocess({ sourceMap: true }) }),
 
   kit: {
     alias: {

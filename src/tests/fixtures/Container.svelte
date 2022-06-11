@@ -11,3 +11,4 @@
     count = next;
   }}
 />
+<react:Counter count={2} onCount={() => {}} />

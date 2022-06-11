@@ -6,4 +6,4 @@
   const ReactCounter = sveltifyReact18(Counter);
 </script>
 
-<ReactCounter count={10} onCount={console.info} />
+<ReactCounter initial={10} onCount={console.info} />
