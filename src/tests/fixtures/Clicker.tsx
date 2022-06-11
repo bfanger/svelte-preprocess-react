@@ -1,4 +1,4 @@
-export default function Counter({ count, onCount }) {
+export default function Clicker({ count, onCount }) {
   return (
     <div>
       <p>You clicked {count} times</p>

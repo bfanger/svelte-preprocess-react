@@ -1,4 +1,4 @@
 <ul>
-  <li><a href="/via-preprocessor">via preprocessor</a></li>
-  <li><a href="/via-lib">via lib</a></li>
+  <li><a href="/preprocessor">via preprocessor</a></li>
+  <li><a href="/sveltify-react">via sveltifyReact</a></li>
 </ul>

@@ -4,7 +4,7 @@ Seamlessly use React components inside a Svelte app
 
 # "Embrace, extend, and extinguish"
 
-This preprocessor is intended as temporary solution when migrating an existing large React codebase.
+This preprocessor is intended as temporary solution when migrating an existing large React codebase.  
 The goal should be to rewrite all the components to Svelte and remove this preprocessor from your setup.
 
 ## Usage inside Svelte components
@@ -31,6 +31,10 @@ The preprocessor compiles this to:
 ```
 
 ## Setup
+
+```sh
+npm install svelte-preprocess-react
+```
 
 ```js
 // svelte.config.js
@@ -68,11 +72,3 @@ function MyComponent() {
   return <Button onClick={() => console.log("clicked")}>Click me</Button>;
 }
 ```
-
-## Ideas / Roadmap
-
-- Improve VS Code support (Typescript)
-- Improve svelte-eslint support
-- Add support for children/slots
-- Add support for React 17 and below (autodetect version based on package.json)
-- Auto insert `<react:` for .tsx and .jsx imports

@@ -11,8 +11,11 @@ import type {
   PreprocessorGroup,
   Processed,
 } from "svelte/types/compiler/preprocess";
+import fs from "fs/promises";
+import path from "path";
 
 type Options = {
+  react?: number | "auto";
   errorMode?: "throw" | "warn";
   preprocess?: PreprocessorGroup | PreprocessorGroup[];
 };
@@ -36,7 +39,11 @@ export default function preprocessReact(
           // eslint-disable-next-line no-param-reassign
           content = preprocessed.code;
         }
-        const processed = transform(content, { filename, errorMode });
+        let react: number = options?.react as number;
+        if (!options.react || options.react === "auto") {
+          react = await detectReactVersion();
+        }
+        const processed = transform(content, { filename, errorMode, react });
         if (!preprocessed) {
           return processed;
         }
@@ -59,13 +66,15 @@ export default function preprocessReact(
   };
 }
 type TransformOptions = {
+  react: number;
   filename?: string;
   errorMode: CompileOptions["errorMode"];
 };
 function transform(content: string, options: TransformOptions) {
-  // @todo Alternate import for older React versions
   const importStatement =
-    'import sveltifyReact from "svelte-preprocess-react/sveltifyReact18";';
+    options.react >= 18
+      ? 'import sveltifyReact from "svelte-preprocess-react/sveltifyReact18";'
+      : 'import sveltifyReact from "svelte-preprocess-react/sveltifyReact17";';
 
   const compiled = compile(content, {
     filename: options.filename,
@@ -142,4 +151,20 @@ function replaceReactTags(
     replaceReactTags(child, content, components);
   });
   return components;
+}
+
+async function detectReactVersion(): Promise<number> {
+  try {
+    const pkg = await fs.readFile(path.resolve(process.cwd(), "package.json"));
+    const json = JSON.parse(pkg.toString());
+    const semver = json.devDependencies.react || json.dependencies.react;
+    const match = `${semver}`.match(/[^0-9]*([0-9]+)/);
+    if (match) {
+      return parseInt(match[1], 10);
+    }
+    throw new Error("No react in dependencies");
+  } catch (err) {
+    console.warn('Could not detect React version. Assuming "react@18"');
+    return 18;
+  }
 }

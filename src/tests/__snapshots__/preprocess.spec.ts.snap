@@ -17,18 +17,46 @@ const React$Counter = sveltifyReact(Counter);
 exports[`svelte-preprocess-react > should process <react:component> tags 1`] = `
 "<script>import sveltifyReact from \\"svelte-preprocess-react/sveltifyReact18\\";
   // @ts-nocheck
-  import Counter from \\"./Counter\\";
+  import Clicker from \\"./Clicker\\";
 
   let count = 1;
-const React$Counter = sveltifyReact(Counter);</script>
+const React$Clicker = sveltifyReact(Clicker);</script>
 
-<React$Counter
+<React$Clicker
   {count}
   onCount={(next) => {
     count = next;
   }}
 />
-<React$Counter count={2} onCount={() => {}} />
+"
+`;
+
+exports[`svelte-preprocess-react > should process <react:component> tags 2`] = `
+"<script>import sveltifyReact from \\"svelte-preprocess-react/sveltifyReact18\\";
+  // @ts-nocheck
+  import Clicker from \\"./Clicker\\";
+
+  let count = 1;
+const React$Clicker = sveltifyReact(Clicker);</script>
+
+<h2>prop and event</h2>
+<React$Clicker
+  {count}
+  onCount={(next) => {
+    count = next;
+  }}
+/>
+<h2>prop and Prop event</h2>
+<React$Clicker
+  count={10}
+  onCount={() => {
+    console.info(\\"count\\");
+  }}
+/>
+<h2>prop</h2>
+<React$Clicker {count} />
+<h2>.</h2>
+<React$Clicker />
 "
 `;
 

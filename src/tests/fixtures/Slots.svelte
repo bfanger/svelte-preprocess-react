@@ -1,10 +1,10 @@
 <script>
   // @ts-nocheck
-  import Counter from "./Counter";
+  import Clicker from "./Clicker";
 
   const count = 1;
 </script>
 
-<react:Counter {count}>
+<react:Clicker {count}>
   <div>Hello World</div>
-</react:Counter>
+</react:Clicker>

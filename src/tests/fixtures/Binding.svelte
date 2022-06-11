@@ -1,8 +1,7 @@
 <script>
-  /** eslint-disable ValidationError */
-  import Counter from "./Counter";
+  import Clicker from "./Clicker";
 
   let count = 1;
 </script>
 
-<react:Counter bind:count />
+<react:Clicker bind:count />

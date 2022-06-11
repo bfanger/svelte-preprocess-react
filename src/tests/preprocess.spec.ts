@@ -12,6 +12,12 @@ describe("svelte-preprocess-react", () => {
     const output = await preprocess(src, preprocessReact(), { filename });
     expect(output.code).toMatchSnapshot();
   });
+  it("should process <react:component> tags", async () => {
+    const filename = resolveFilename("./fixtures/Multiple.svelte");
+    const src = await readFile(filename, "utf8");
+    const output = await preprocess(src, preprocessReact(), { filename });
+    expect(output.code).toMatchSnapshot();
+  });
 
   it("should fail on bindings", async () => {
     const filename = resolveFilename("./fixtures/Binding.svelte");
