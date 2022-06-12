@@ -16,7 +16,9 @@
     "lint:eslint": "eslint --ext=js,ts,svelte --max-warnings=0 src",
     "format": "prettier --write . && eslint --ext=js,ts,svelte --fix src",
     "prepare": "husky install",
-    "test": "vitest run --passWithNoTests",
+    "test": "concurrently -c \"#fcc72a\",\"#45ba4b\" --kill-others-on-fail \"npm:test:*\"",
+    "test:vitest": "vitest run",
+    "test:playwright": "playwright test",
     "vitest": "vitest watch"
   },
   "prettier": "eslint-config-triple/.prettierrc",
@@ -35,6 +37,7 @@
     ]
   },
   "devDependencies": {
+    "@playwright/test": "^1.22.2",
     "@sveltejs/adapter-static": "next",
     "@sveltejs/kit": "next",
     "@testing-library/svelte": "^3.1.0",
@@ -76,7 +79,7 @@
     "magic-string": "^0.26.2"
   },
   "peerDependencies": {
-    "react": "*",
-    "react-dom": "*"
+    "react": ">=16.8.0",
+    "react-dom": ">=16.8.0"
   }
 }

@@ -1,38 +1,38 @@
 <script lang="ts">
-  import { onMount } from "svelte";
+  import { afterUpdate } from "svelte";
   import React, { createElement } from "react";
   import { createRoot, type Root } from "react-dom/client";
   import { renderToString } from "react-dom/server";
 
-  export let ReactComponent: React.FC;
+  export let ReactComponent: React.FunctionComponent | React.ComponentClass;
 
   const html = ReactComponent
     ? renderToString(createElement(ReactComponent, $$props))
     : "";
 
-  let el: Element;
   let root: Root | undefined;
 
-  $: if (root && $$props) {
-    rerender();
+  function reactRoot(el: Element) {
+    const app = createRoot(el);
+    root = app;
+    return {
+      destroy() {
+        app.unmount();
+      },
+    };
   }
 
-  onMount(() => {
-    root = createRoot(el);
-    rerender();
-    return () => {
-      root?.unmount();
-    };
-  });
-  function rerender() {
+  afterUpdate(() => {
     if (!root) {
       return;
     }
-    root.render(createElement(ReactComponent, $$props));
-  }
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    const { ReactComponent: _, ...props } = $$props;
+    root.render(createElement(ReactComponent, props));
+  });
 </script>
 
-<react-wrapper bind:this={el}>{@html html}</react-wrapper>
+<react-wrapper use:reactRoot>{@html html}</react-wrapper>
 
 <style>
   react-wrapper {

@@ -7,3 +7,6 @@ node_modules
 /storybook-static
 /test-results
 .env
+/test-results/
+/playwright-report/
+/playwright/.cache/
