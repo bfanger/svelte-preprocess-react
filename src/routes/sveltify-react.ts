@@ -1,9 +1,9 @@
+import detectReactVersion from "$lib/internal/detectReactVersion";
 import type { RequestHandler } from "@sveltejs/kit";
-import pkg from "../../package.json";
 
 // eslint-disable-next-line import/prefer-default-export
 export const get: RequestHandler = async () => {
-  const version = parseInt(pkg.devDependencies.react, 10);
+  const version = await detectReactVersion();
   return {
     status: 302,
     headers: {

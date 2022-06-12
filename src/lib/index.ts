@@ -1,3 +1,3 @@
-import preprocessReact from "./preprocess";
+import preprocessReact from "./preprocess.js";
 
 export default preprocessReact;
