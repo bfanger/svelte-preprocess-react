@@ -1,10 +1,9 @@
 <script>
-  // @ts-nocheck
-  import Clicker from "./Clicker";
+  import Alert from "../../demo/react-components/Alert";
 
-  const count = 1;
+  if (!Alert) {
+    // Bypass: 'Alert' is declared but its value is never read. (ts)
+  }
 </script>
 
-<react:Clicker {count}>
-  <div>Hello World</div>
-</react:Clicker>
+<react:Alert>A simple primary alert—check it out!</react:Alert>

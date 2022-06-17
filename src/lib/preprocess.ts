@@ -112,11 +112,6 @@ function replaceReactTags(
 ) {
   /* eslint-disable no-param-reassign */
   if (node.type === "Element" && node.name.startsWith("react:")) {
-    if (node.children && node.children.length > 0) {
-      throw new Error(
-        "Nested components are not (yet) supported in svelte-preprocess-react"
-      );
-    }
     const tag = node as Element;
     const component = tag.name.slice(6);
     const tagStart = node.start;

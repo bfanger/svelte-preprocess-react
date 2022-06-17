@@ -1,7 +1,16 @@
 import { createElement, useEffect, useRef } from "react";
 import type { FunctionComponent } from "react";
 import SvelteWrapper from "./internal/SvelteWrapper.svelte";
-import type { SvelteConstructor, SvelteEventHandlers } from "./internal/types";
+import type { SvelteEventHandlers } from "./internal/types";
+
+export type SvelteConstructor<Props = any, Events = any, Slot = any> = {
+  name: string;
+  prototype: {
+    $$prop_def: Props;
+    $$events_def: Events;
+    $$slot_def: Slot;
+  };
+};
 
 export default function reactifySvelte<P = any, E = any>(
   SvelteComponent: SvelteConstructor<P, E>
@@ -25,7 +34,7 @@ export default function reactifySvelte<P = any, E = any>(
         }
         const component = new SvelteWrapper({
           target,
-          props: { SvelteComponent, props, events },
+          props: { SvelteComponent: SvelteComponent as any, props, events },
         });
         component.$on(
           "svelte-slot",

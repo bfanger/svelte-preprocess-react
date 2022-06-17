@@ -2,15 +2,6 @@ export type ConstructorOf<T> = {
   new (): T;
 };
 
-export type SvelteConstructor<Props = any, Events = any, Slot = any> = {
-  name: string;
-  prototype: {
-    $$prop_def: Props;
-    $$events_def: Events;
-    $$slot_def: Slot;
-  };
-};
-
 export type HandlerName<T extends string> = `on${Capitalize<T>}`;
 export type EventName<T extends string> = T extends `on${infer N}`
   ? Uncapitalize<N>

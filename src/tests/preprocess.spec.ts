@@ -35,20 +35,11 @@ describe("svelte-preprocess-react", () => {
     expect(failed).toBe(true);
   });
 
-  it("should fail on slots (for now)", async () => {
+  it("should portal slotted content as children", async () => {
     const filename = resolveFilename("./fixtures/Slots.svelte");
     const src = await readFile(filename, "utf8");
-    let failed: boolean;
-    try {
-      await preprocess(src, preprocessReact(), { filename });
-      failed = false;
-    } catch (err: any) {
-      expect(err.message).toBe(
-        "Nested components are not (yet) supported in svelte-preprocess-react"
-      );
-      failed = true;
-    }
-    expect(failed).toBe(true);
+    const output = await preprocess(src, preprocessReact(), { filename });
+    expect(output.code).toMatchSnapshot();
   });
 
   it("should inject a script tag", async () => {

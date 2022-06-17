@@ -1,0 +1,22 @@
+.alert {
+  --alert-bg: transparent;
+  --alert-padding-x: 1rem;
+  --alert-padding-y: 1rem;
+  --alert-margin-bottom: 1rem;
+  --alert-color: inherit;
+  --alert-border-color: transparent;
+  --alert-border: 1px solid var(--alert-border-color);
+  --alert-border-radius: 0.375rem;
+  position: relative;
+  padding: var(--alert-padding-y) var(--alert-padding-x);
+  margin-bottom: var(--alert-margin-bottom);
+  color: var(--alert-color);
+  background-color: var(--alert-bg);
+  border: var(--alert-border);
+  border-radius: var(--alert-border-radius, 0);
+}
+.alert-primary {
+  --alert-color: #084298;
+  --alert-bg: #cfe2ff;
+  --alert-border-color: #b6d4fe;
+}
