@@ -1,7 +1,5 @@
 // Vitest Snapshot v1
 
-exports[`svelte-preprocess-react > should fail on bindings 1`] = `"'count' is not a valid binding"`;
-
 exports[`svelte-preprocess-react > should inject a script tag 1`] = `
 "<script>
 import sveltifyReact from \\"svelte-preprocess-react/sveltifyReact18\\";

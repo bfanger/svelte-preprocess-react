@@ -1,6 +1,27 @@
-export interface ConstructorOf<T> {
+export type ConstructorOf<T> = {
   new (): T;
-}
+};
+
+export type SvelteConstructor<Props = any, Events = any, Slot = any> = {
+  name: string;
+  prototype: {
+    $$prop_def: Props;
+    $$events_def: Events;
+    $$slot_def: Slot;
+  };
+};
+
+export type HandlerName<T extends string> = `on${Capitalize<T>}`;
+export type EventName<T extends string> = T extends `on${infer N}`
+  ? Uncapitalize<N>
+  : never;
+
+export type SvelteEventHandlers<T> = T extends Record<
+  infer Key extends string,
+  infer Value
+>
+  ? Partial<Record<HandlerName<Key>, (e: Value) => void | boolean>>
+  : never;
 
 type Uppercase =
   | "A"
@@ -26,9 +47,15 @@ type Uppercase =
   | "Y"
   | "Z";
 
-type EventKey = `on${Uppercase}${string}`;
-type ExcludeProps<T> = T extends EventKey ? T : never;
-type ExcludeEvents<T> = T extends EventKey ? never : T;
+type ReactEventProp = `on${Uppercase}${string}`;
+type ExcludeProps<T> = T extends ReactEventProp ? T : never;
+type ExcludeEvents<T> = T extends ReactEventProp ? never : T;
 
-export type PropsOf<T> = Omit<T, ExcludeProps<keyof T>>;
-export type EventsOf<T> = Omit<T, ExcludeEvents<keyof T>>;
+export type EventProps<ReactProps> = Omit<
+  ReactProps,
+  ExcludeEvents<keyof ReactProps>
+>;
+export type OmitEventProps<ReactProps> = Omit<
+  ReactProps,
+  ExcludeProps<keyof ReactProps>
+>;

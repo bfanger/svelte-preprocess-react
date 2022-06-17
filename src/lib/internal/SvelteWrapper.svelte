@@ -1,18 +1,14 @@
 <script lang="ts">
-  import {
-    createEventDispatcher,
-    onMount,
-    tick,
-    type SvelteComponent as SvelteComponentType,
-  } from "svelte";
+  import { createEventDispatcher, onMount, tick } from "svelte";
+  import type { SvelteConstructor } from "./types";
 
   const dispatch = createEventDispatcher();
 
-  export let SvelteComponent: typeof SvelteComponentType;
+  export let SvelteComponent: SvelteConstructor;
   export let props: Record<string, any>;
   export let events: Record<string, any>;
-  export let slot: HTMLElement | undefined = undefined;
 
+  let slot: HTMLElement | undefined = undefined;
   let instance: any;
   $: instance && syncEvents(events);
 

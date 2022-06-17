@@ -4,6 +4,7 @@
     "src/**/*.d.ts",
     "src/**/*.svelte",
     // Additional extensions for eslint
+    "**/*.svelte",
     "**/*.ts",
     "**/*.tsx",
     "**/*.cjs",

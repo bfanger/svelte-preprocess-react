@@ -1,26 +1,19 @@
-import {
-  createElement,
-  useEffect,
-  useRef,
-  type FunctionComponent,
-} from "react";
-import type {
-  SvelteComponent as SvelteComponentType,
-  SvelteComponentTyped,
-} from "svelte";
-import type { ConstructorOf } from "./internal/types";
+import { createElement, useEffect, useRef } from "react";
+import type { FunctionComponent } from "react";
 import SvelteWrapper from "./internal/SvelteWrapper.svelte";
+import type { SvelteConstructor, SvelteEventHandlers } from "./internal/types";
 
-export default function reactifySvelte<P>(
-  SvelteComponent: ConstructorOf<SvelteComponentTyped<P>>
-): FunctionComponent<P> {
+export default function reactifySvelte<P = any, E = any>(
+  SvelteComponent: SvelteConstructor<P, E>
+): FunctionComponent<P & SvelteEventHandlers<E>> {
+  const { name } = SvelteComponent as any;
   const named = {
-    [SvelteComponent.name](options: any) {
+    [name](options: any) {
       const props = extractProps(options);
       const events = extractListeners(options);
 
       const wrapperRef = useRef<HTMLElement>();
-      const svelteRef = useRef<SvelteComponentType>();
+      const svelteRef = useRef<SvelteWrapper>();
       const slotRef = useRef<HTMLElement>();
       const childrenRef = useRef<HTMLElement>();
 
@@ -89,7 +82,7 @@ export default function reactifySvelte<P>(
       );
     },
   };
-  return named[SvelteComponent.name];
+  return named[name];
 }
 
 function extractProps(options: Record<string, any>): Record<string, any> {

@@ -27,7 +27,9 @@ describe("svelte-preprocess-react", () => {
       await preprocess(src, preprocessReact(), { filename });
       failed = false;
     } catch (err: any) {
-      expect(err.message).toMatchSnapshot();
+      expect(err.message).toMatchInlineSnapshot(
+        "\"'count' is not a valid binding\""
+      );
       failed = true;
     }
     expect(failed).toBe(true);
