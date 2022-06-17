@@ -51,7 +51,7 @@ export default {
 };
 ```
 
-When setting up in combination with other processors like [svelte-preprocess]() use:
+When using other processors like [svelte-preprocess]() use:
 
 ```js
 // svelte.config.js
@@ -72,7 +72,7 @@ Passing the other preprocessor as option ensures that this preprocessor runs bef
 
 > Extend
 
-Once you've converted a react component to Svelte you can use
+Once you've converted a React component to Svelte, but other React components also used that component you can use `reactifySvelte`
 
 ```ts
 import reactifySvelte from "$lib/reactifySvelte";
