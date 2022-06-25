@@ -2,9 +2,9 @@
 
 exports[`svelte-preprocess-react > should inject a script tag 1`] = `
 "<script>
-import sveltifyReact from \\"svelte-preprocess-react/sveltifyReact18\\";
+import { createElement as React$$createElement} from \\"react\\"; import React$$ReactDOM from \\"react-dom/client\\"; import { renderToString as React$$renderToString } from \\"react-dom/server\\"; import React$$sveltify from \\"svelte-preprocess-react/sveltifyReact\\"; 
 
-const React$Counter = sveltifyReact(Counter);
+const React$Counter = React$$sveltify(Counter, React$$createElement, React$$ReactDOM, React$$renderToString);
 </script>
 
 <!-- Counter could be a global variable -->
@@ -13,25 +13,25 @@ const React$Counter = sveltifyReact(Counter);
 `;
 
 exports[`svelte-preprocess-react > should portal slotted content as children 1`] = `
-"<script>import sveltifyReact from \\"svelte-preprocess-react/sveltifyReact18\\";
+"<script>import { createElement as React$$createElement} from \\"react\\"; import React$$ReactDOM from \\"react-dom/client\\"; import { renderToString as React$$renderToString } from \\"react-dom/server\\"; import React$$sveltify from \\"svelte-preprocess-react/sveltifyReact\\"; 
   import Alert from \\"../../demo/react-components/Alert\\";
 
   if (!Alert) {
     // Bypass: 'Alert' is declared but its value is never read. (ts)
   }
-const React$Alert = sveltifyReact(Alert);</script>
+const React$Alert = React$$sveltify(Alert, React$$createElement, React$$ReactDOM, React$$renderToString);</script>
 
 <React$Alert>A simple primary alert—check it out!</React$Alert>
 "
 `;
 
 exports[`svelte-preprocess-react > should process <react:component> tags 1`] = `
-"<script>import sveltifyReact from \\"svelte-preprocess-react/sveltifyReact18\\";
+"<script>import { createElement as React$$createElement} from \\"react\\"; import React$$ReactDOM from \\"react-dom/client\\"; import { renderToString as React$$renderToString } from \\"react-dom/server\\"; import React$$sveltify from \\"svelte-preprocess-react/sveltifyReact\\"; 
   // @ts-nocheck
   import Clicker from \\"./Clicker\\";
 
   let count = 1;
-const React$Clicker = sveltifyReact(Clicker);</script>
+const React$Clicker = React$$sveltify(Clicker, React$$createElement, React$$ReactDOM, React$$renderToString);</script>
 
 <React$Clicker
   {count}
@@ -43,12 +43,12 @@ const React$Clicker = sveltifyReact(Clicker);</script>
 `;
 
 exports[`svelte-preprocess-react > should process <react:component> tags 2`] = `
-"<script>import sveltifyReact from \\"svelte-preprocess-react/sveltifyReact18\\";
+"<script>import { createElement as React$$createElement} from \\"react\\"; import React$$ReactDOM from \\"react-dom/client\\"; import { renderToString as React$$renderToString } from \\"react-dom/server\\"; import React$$sveltify from \\"svelte-preprocess-react/sveltifyReact\\"; 
   // @ts-nocheck
   import Clicker from \\"./Clicker\\";
 
   let count = 1;
-const React$Clicker = sveltifyReact(Clicker);</script>
+const React$Clicker = React$$sveltify(Clicker, React$$createElement, React$$ReactDOM, React$$renderToString);</script>
 
 <h2>prop and event</h2>
 <React$Clicker

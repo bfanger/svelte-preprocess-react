@@ -7,32 +7,37 @@
 
   export const load: Load = async ({ fetch }) => {
     const reactVersion = await (await fetch("/api/react-version.json")).json();
-    const sveltifyReactModule =
+    const reactDomModule =
       reactVersion <= 17
-        ? () => import("$lib/sveltifyReact17")
-        : () => import("$lib/sveltifyReact18");
+        ? () => import("react-dom")
+        : () => import("react-dom/client");
     return {
       props: {
         reactVersion,
-        sveltifyReact: (await sveltifyReactModule()).default,
+        ReactDOM: (await reactDomModule()).default,
       },
     };
   };
 </script>
 
 <script lang="ts">
+  import sveltifyReact from "$lib/sveltifyReact";
+
   import { onMount } from "svelte";
   import ClickerReact from "../tests/fixtures/Clicker";
+  import { createElement } from "react";
 
   export let reactVersion: number;
-  export let sveltifyReact: any;
+  export let ReactDOM: any;
 
   let loading = true;
   onMount(() => {
     const win: any = window;
     win.sveltifyReact = sveltifyReact;
+    win.createElement = createElement;
+    win.ReactDOM = ReactDOM;
     win.ClickerReact = ClickerReact;
-    win.Clicker = sveltifyReact(ClickerReact);
+    win.Clicker = sveltifyReact(ClickerReact, createElement, ReactDOM);
 
     loading = false;
   });

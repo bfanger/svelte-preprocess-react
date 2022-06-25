@@ -1,7 +1,7 @@
 {
   "name": "svelte-preprocess-react",
   "description": "Seamlessly use React components inside a Svelte app",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "license": "MIT",
   "type": "module",
   "scripts": {
@@ -64,8 +64,8 @@
     "postcss": "^8.4.14",
     "prettier": "^2.6.2",
     "prettier-plugin-svelte": "^2.7.0",
-    "react": "^18.1.0",
-    "react-dom": "^18.1.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "sass": "^1.52.2",
     "svelte": "^3.48.0",
     "svelte-check": "^2.7.2",

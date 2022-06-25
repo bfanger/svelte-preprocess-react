@@ -70,10 +70,14 @@ type TransformOptions = {
   errorMode: CompileOptions["errorMode"];
 };
 function transform(content: string, options: TransformOptions) {
-  const importStatement =
-    options.react >= 18
-      ? 'import sveltifyReact from "svelte-preprocess-react/sveltifyReact18";'
-      : 'import sveltifyReact from "svelte-preprocess-react/sveltifyReact17";';
+  const prefix = "React$$";
+  const client = options.react >= 18 ? "/client" : "";
+  const importStatements = [
+    `import { createElement as ${prefix}createElement} from "react"; `,
+    `import ${prefix}ReactDOM from "react-dom${client}"; `,
+    `import { renderToString as ${prefix}renderToString } from "react-dom/server"; `,
+    `import ${prefix}sveltify from "svelte-preprocess-react/sveltifyReact"; `,
+  ].join("");
 
   const compiled = compile(content, {
     filename: options.filename,
@@ -89,15 +93,15 @@ function transform(content: string, options: TransformOptions) {
   const script = compiled.ast.instance || (compiled.ast.module as Script);
   const wrappers = components
     .map((component) => {
-      return `const React$${component} = sveltifyReact(${component});`;
+      return `const React$${component} = ${prefix}sveltify(${component}, ${prefix}createElement, ${prefix}ReactDOM, ${prefix}renderToString);`;
     })
     .join(";");
 
   if (!script) {
-    s.prepend(`<script>\n${importStatement}\n\n${wrappers}\n</script>\n\n`);
+    s.prepend(`<script>\n${importStatements}\n\n${wrappers}\n</script>\n\n`);
   } else {
     s.appendRight(script.content.end, wrappers);
-    s.appendRight(script.content.start, importStatement);
+    s.appendRight(script.content.start, importStatements);
   }
   return {
     code: s.toString(),

@@ -1,3 +1,6 @@
+import type React from "react";
+import type ReactDOMServer from "react-dom/server";
+
 export type ConstructorOf<T> = {
   new (): T;
 };
@@ -50,3 +53,14 @@ export type OmitEventProps<ReactProps> = Omit<
   ReactProps,
   ExcludeProps<keyof ReactProps>
 >;
+
+type ReactRoot = {
+  render(node: React.ReactNode): void;
+  unmount(): void;
+};
+export type ReactImplementation = {
+  createElement: typeof React.createElement;
+  createRoot?: (el: Element) => ReactRoot;
+  renderToString?: typeof ReactDOMServer.renderToString;
+  rerender(node: React.ReactNode, el?: Element, root?: ReactRoot): void;
+};
