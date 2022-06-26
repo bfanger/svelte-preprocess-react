@@ -1,7 +1,7 @@
 {
   "name": "svelte-preprocess-react",
   "description": "Seamlessly use React components inside a Svelte app",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "license": "MIT",
   "type": "module",
   "scripts": {

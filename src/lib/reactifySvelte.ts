@@ -1,6 +1,7 @@
-import { createElement, useEffect, useRef } from "react";
+import { createElement, useContext, useEffect, useRef } from "react";
 import type { FunctionComponent } from "react";
 import SvelteWrapper from "./internal/SvelteWrapper.svelte";
+import SvelteToReactContext from "./internal/SvelteToReactContext";
 import type { SvelteEventHandlers } from "./internal/types";
 
 export type SvelteConstructor<Props = any, Events = any, Slot = any> = {
@@ -26,6 +27,8 @@ export default function reactifySvelte<P = any, E = any>(
       const slotRef = useRef<HTMLElement>();
       const childrenRef = useRef<HTMLElement>();
 
+      const svelteInstance = useContext(SvelteToReactContext);
+
       // Mount Svelte component
       useEffect(() => {
         const target = wrapperRef.current;
@@ -34,7 +37,13 @@ export default function reactifySvelte<P = any, E = any>(
         }
         const component = new SvelteWrapper({
           target,
-          props: { SvelteComponent: SvelteComponent as any, props, events },
+          props: {
+            SvelteComponent: SvelteComponent as any,
+            children: typeof options.children !== "undefined",
+            props,
+            events,
+          },
+          context: svelteInstance?.$$.context,
         });
         component.$on(
           "svelte-slot",
@@ -47,7 +56,7 @@ export default function reactifySvelte<P = any, E = any>(
         );
         svelteRef.current = component;
         return () => {
-          svelteRef.current?.$destroy();
+          component.$destroy();
         };
       }, [wrapperRef]);
 

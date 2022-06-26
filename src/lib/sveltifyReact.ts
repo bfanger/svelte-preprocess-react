@@ -2,15 +2,18 @@ import type { ComponentClass, FunctionComponent } from "react";
 import type { SvelteComponentTyped } from "svelte/internal";
 import type React from "react";
 import type ReactDOMServer from "react-dom/server";
+import { writable, type Readable } from "svelte/store";
 import type { ConstructorOf, ReactImplementation } from "./internal/types";
 import ReactWrapper from "./internal/ReactWrapper.svelte";
 
+const never = writable() as Readable<any>;
+type Sveltified<P> = ConstructorOf<SvelteComponentTyped<Omit<P, "children">>>;
 export default function sveltifyReact<P>(
   reactComponent: FunctionComponent<P> | ComponentClass<P>,
   createElement: typeof React.createElement,
   ReactDOMClient: any,
   renderToString?: typeof ReactDOMServer.renderToString
-): ConstructorOf<SvelteComponentTyped<P>> {
+): Sveltified<P> {
   const reactImplementation: ReactImplementation = {
     createElement,
     createRoot: ReactDOMClient.createRoot,
@@ -33,7 +36,12 @@ export default function sveltifyReact<P>(
         const result = $$render.call(
           ReactWrapper,
           meta,
-          { reactComponent, reactImplementation, ...props },
+          {
+            reactComponent,
+            reactImplementation,
+            svelteInstance: never,
+            ...props,
+          },
           ...args
         );
         return result;
@@ -42,11 +50,18 @@ export default function sveltifyReact<P>(
   }
 
   function Sveltified(options: any) {
-    const component = new ReactWrapper({
+    const svelteInstance = writable<any>();
+    const instance = new ReactWrapper({
       ...options,
-      props: { reactComponent, reactImplementation, ...options.props },
+      props: {
+        reactComponent,
+        reactImplementation,
+        svelteInstance,
+        ...options.props,
+      },
     });
-    return component;
+    svelteInstance.set(instance);
+    return instance;
   }
   return Sveltified as any;
 }

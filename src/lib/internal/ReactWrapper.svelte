@@ -1,6 +1,8 @@
 <script lang="ts">
   import type React from "react";
   import { afterUpdate } from "svelte";
+  import type { Readable } from "svelte/store";
+  import SvelteToReactContext from "./SvelteToReactContext";
   import SvelteSlot from "./SvelteSlot";
   import type { ReactImplementation } from "./types";
 
@@ -8,6 +10,7 @@
 
   export let reactComponent: React.FunctionComponent | React.ComponentClass;
   export let reactImplementation: ReactImplementation;
+  export let svelteInstance: Readable<any>;
 
   const { createElement, createRoot, renderToString, rerender } =
     reactImplementation;
@@ -27,6 +30,7 @@
     const props = { ...$$props };
     delete props.reactComponent;
     delete props.reactImplementation;
+    delete props.svelteInstance;
     return props;
   }
 
@@ -52,11 +56,18 @@
     if (createRoot && !root) {
       return;
     }
-    const props = reactProps();
-    if ($$slots.default) {
-      props.children = createElement(SvelteSlot, { slot });
-    }
-    rerender(createElement(reactComponent, props), el, root);
+    const vdom = createElement(
+      SvelteToReactContext.Provider,
+      { value: $svelteInstance },
+      $$slots.default
+        ? createElement(
+            reactComponent,
+            reactProps(),
+            createElement(SvelteSlot, { slot })
+          )
+        : createElement(reactComponent, reactProps())
+    );
+    rerender(vdom, el, root);
   });
 </script>
 
