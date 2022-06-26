@@ -19,6 +19,7 @@ export default function reactifySvelte<P = any, E = any>(
   const { name } = SvelteComponent as any;
   const named = {
     [name](options: any) {
+      const { children } = options;
       const props = extractProps(options);
       const events = extractListeners(options);
 
@@ -39,7 +40,7 @@ export default function reactifySvelte<P = any, E = any>(
           target,
           props: {
             SvelteComponent: SvelteComponent as any,
-            children: typeof options.children !== "undefined",
+            children: typeof children !== "undefined",
             props,
             events,
           },
@@ -81,20 +82,38 @@ export default function reactifySvelte<P = any, E = any>(
         }
       }, [childrenRef]);
 
+      const ssr = SvelteComponent as any;
+      if (ssr.render) {
+        const $$slots: any = {};
+        if (typeof children === "string") {
+          $$slots.default = () => children;
+        }
+        const result = ssr.render(props, {
+          context: svelteInstance?.$$.context,
+          $$slots,
+        });
+        return createElement("svelte-wrapper", {
+          style: {
+            display: "contents",
+          },
+          dangerouslySetInnerHTML: { __html: result.html },
+        });
+      }
+
       return createElement(
         "svelte-wrapper",
         {
           ref: wrapperRef,
           style: { display: "contents" },
         },
-        options.children
+        children
           ? createElement(
               "react-children",
               {
                 ref: childrenRef,
                 style: { display: "contents" },
               },
-              options.children
+              children
             )
           : undefined
       );
