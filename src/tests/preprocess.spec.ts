@@ -12,10 +12,31 @@ describe("svelte-preprocess-react", () => {
     const output = await preprocess(src, preprocessReact(), { filename });
     expect(output.code).toMatchSnapshot();
   });
+
   it("should process <react:component> tags", async () => {
     const filename = resolveFilename("./fixtures/Multiple.svelte");
     const src = await readFile(filename, "utf8");
     const output = await preprocess(src, preprocessReact(), { filename });
+    expect(output.code).toMatchSnapshot();
+  });
+
+  it("should import 'react-dom/server' when ssr is enabled", async () => {
+    const filename = resolveFilename("./fixtures/Container.svelte");
+    const src = await readFile(filename, "utf8");
+    const output = await preprocess(src, preprocessReact({ ssr: true }), {
+      filename,
+    });
+    expect(output.code).toMatch("react-dom/server");
+    expect(output.code).toMatchSnapshot();
+  });
+
+  it("should not import 'react-dom/server' when ssr is disabled", async () => {
+    const filename = resolveFilename("./fixtures/Container.svelte");
+    const src = await readFile(filename, "utf8");
+    const output = await preprocess(src, preprocessReact({ ssr: false }), {
+      filename,
+    });
+    expect(output.code).not.toMatch("react-dom/server");
     expect(output.code).toMatchSnapshot();
   });
 

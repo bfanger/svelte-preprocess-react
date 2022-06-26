@@ -15,16 +15,21 @@ import detectReactVersion from "./internal/detectReactVersion.js";
 
 type Options = {
   react?: number | "auto";
+  ssr?: boolean; // Set to false to omit renderToString from 'react-dom/server'
   errorMode?: "throw" | "warn";
   preprocess?: PreprocessorGroup | PreprocessorGroup[];
 };
 
 const defaults = {
+  react: "auto",
+  ssr: true,
   errorMode: "throw",
 } as const;
 export default function preprocessReact(
   options: Options = {}
 ): PreprocessorGroup {
+  let react = options.react ?? defaults.react;
+  const ssr = options.ssr ?? defaults.ssr;
   const errorMode = options.errorMode ?? defaults.errorMode;
 
   return {
@@ -38,11 +43,16 @@ export default function preprocessReact(
           // eslint-disable-next-line no-param-reassign
           content = preprocessed.code;
         }
-        let react: number = options?.react as number;
-        if (!options.react || options.react === "auto") {
+
+        if (react === "auto") {
           react = await detectReactVersion();
         }
-        const processed = transform(content, { filename, errorMode, react });
+        const processed = transform(content, {
+          filename,
+          react,
+          ssr,
+          errorMode,
+        });
         if (!preprocessed) {
           return processed;
         }
@@ -65,19 +75,26 @@ export default function preprocessReact(
   };
 }
 type TransformOptions = {
-  react: number;
   filename?: string;
+  react: number;
+  ssr: boolean;
   errorMode: CompileOptions["errorMode"];
 };
 function transform(content: string, options: TransformOptions) {
   const prefix = "React$$";
   const client = options.react >= 18 ? "/client" : "";
-  const importStatements = [
-    `import { createElement as ${prefix}createElement} from "react"; `,
-    `import ${prefix}ReactDOM from "react-dom${client}"; `,
-    `import { renderToString as ${prefix}renderToString } from "react-dom/server"; `,
-    `import ${prefix}sveltify from "svelte-preprocess-react/sveltifyReact"; `,
-  ].join("");
+  const imports = [
+    `import ${prefix}sveltify from "svelte-preprocess-react/sveltifyReact"`,
+    `import { createElement as ${prefix}createElement} from "react"`,
+    `import ${prefix}ReactDOM from "react-dom${client}"`,
+  ];
+  let renderToString = "";
+  if (options.ssr) {
+    imports.push(
+      `import { renderToString as ${prefix}renderToString } from "react-dom/server"`
+    );
+    renderToString = `, ${prefix}renderToString`;
+  }
 
   const compiled = compile(content, {
     filename: options.filename,
@@ -93,15 +110,15 @@ function transform(content: string, options: TransformOptions) {
   const script = compiled.ast.instance || (compiled.ast.module as Script);
   const wrappers = components
     .map((component) => {
-      return `const React$${component} = ${prefix}sveltify(${component}, ${prefix}createElement, ${prefix}ReactDOM, ${prefix}renderToString);`;
+      return `const React$${component} = ${prefix}sveltify(${component}, ${prefix}createElement, ${prefix}ReactDOM${renderToString});`;
     })
     .join(";");
 
   if (!script) {
-    s.prepend(`<script>\n${importStatements}\n\n${wrappers}\n</script>\n\n`);
+    s.prepend(`<script>\n${imports}\n\n${wrappers}\n</script>\n\n`);
   } else {
     s.appendRight(script.content.end, wrappers);
-    s.appendRight(script.content.start, importStatements);
+    s.appendRight(script.content.start, `${imports.join("; ")}; `);
   }
   return {
     code: s.toString(),
