@@ -1,5 +1,5 @@
-import type React from "react";
-import type ReactDOMServer from "react-dom/server";
+import type { ComponentClass, FunctionComponent } from "react";
+import type { Readable } from "svelte/store";
 
 export type ConstructorOf<T> = {
   new (): T;
@@ -54,13 +54,17 @@ export type OmitEventProps<ReactProps> = Omit<
   ExcludeProps<keyof ReactProps>
 >;
 
-type ReactRoot = {
-  render(node: React.ReactNode): void;
-  unmount(): void;
+export type TreeNode = Omit<SvelteInit, "onDestroy"> & {
+  svelteInstance: Readable<any>;
+  reactComponent: FunctionComponent<any> | ComponentClass<any>;
+  key: string;
+  nodes: TreeNode[];
 };
-export type ReactImplementation = {
-  createElement: typeof React.createElement;
-  createRoot?: (el: Element) => ReactRoot;
-  renderToString?: typeof ReactDOMServer.renderToString;
-  rerender(node: React.ReactNode, el?: Element, root?: ReactRoot): void;
+
+export type SvelteInit = {
+  parent?: TreeNode;
+  props: Readable<Record<string, any>>;
+  target: Readable<HTMLElement | undefined>;
+  slot: Readable<HTMLElement | undefined>;
+  onDestroy: (callback: () => void) => void;
 };

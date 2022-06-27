@@ -3,6 +3,7 @@
 
   import sveltifyReact from "$lib/sveltifyReact";
   import { createElement } from "react";
+  import { createPortal } from "react-dom";
   import ReactDOM from "react-dom/client";
   import { setContext } from "svelte";
   import DebugContext from "../demo/components/DebugContext.svelte";
@@ -13,6 +14,7 @@
   const DebugContextReactSvelte = sveltifyReact(
     DebugContextReact,
     createElement,
+    createPortal,
     ReactDOM
   );
 </script>

@@ -82,12 +82,22 @@ type TransformOptions = {
 };
 function transform(content: string, options: TransformOptions) {
   const prefix = "React$$";
-  const client = options.react >= 18 ? "/client" : "";
+  let portal: string;
   const imports = [
     `import ${prefix}sveltify from "svelte-preprocess-react/sveltifyReact"`,
     `import { createElement as ${prefix}createElement} from "react"`,
-    `import ${prefix}ReactDOM from "react-dom${client}"`,
   ];
+  if (options.react >= 18) {
+    imports.push(
+      `import ${prefix}ReactDOM from "react-dom/client"`,
+      `import { createPortal as ${prefix}createPortal} from "react-dom"`
+    );
+    portal = `${prefix}createPortal`;
+  } else {
+    imports.push(`import ${prefix}ReactDOM from "react-dom"`);
+    portal = `${prefix}ReactDOM.createPortal`;
+  }
+
   let renderToString = "";
   if (options.ssr) {
     imports.push(
@@ -110,7 +120,7 @@ function transform(content: string, options: TransformOptions) {
   const script = compiled.ast.instance || (compiled.ast.module as Script);
   const wrappers = components
     .map((component) => {
-      return `const React$${component} = ${prefix}sveltify(${component}, ${prefix}createElement, ${prefix}ReactDOM${renderToString});`;
+      return `const React$${component} = ${prefix}sveltify(${component}, ${prefix}createElement, ${portal}, ${prefix}ReactDOM${renderToString});`;
     })
     .join(";");
 

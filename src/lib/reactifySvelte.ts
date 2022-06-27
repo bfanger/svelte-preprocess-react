@@ -1,5 +1,6 @@
 import { createElement, useContext, useEffect, useRef } from "react";
 import type { FunctionComponent } from "react";
+import { get, type Readable } from "svelte/store";
 import SvelteWrapper from "./internal/SvelteWrapper.svelte";
 import SvelteToReactContext from "./internal/SvelteToReactContext";
 import type { SvelteEventHandlers } from "./internal/types";
@@ -28,7 +29,7 @@ export default function reactifySvelte<P = any, E = any>(
       const slotRef = useRef<HTMLElement>();
       const childrenRef = useRef<HTMLElement>();
 
-      const svelteInstance = useContext(SvelteToReactContext);
+      const context = useContext(SvelteToReactContext);
 
       // Mount Svelte component
       useEffect(() => {
@@ -44,7 +45,7 @@ export default function reactifySvelte<P = any, E = any>(
             props,
             events,
           },
-          context: svelteInstance?.$$.context,
+          context: extractSvelteContext(context),
         });
         component.$on(
           "svelte-slot",
@@ -89,7 +90,7 @@ export default function reactifySvelte<P = any, E = any>(
           $$slots.default = () => children;
         }
         const result = ssr.render(props, {
-          context: svelteInstance?.$$.context,
+          context: extractSvelteContext(context),
           $$slots,
         });
         return createElement("svelte-wrapper", {
@@ -144,4 +145,12 @@ function extractListeners(options: Record<string, any>): Record<string, any> {
 
 function isEventProp(prop: string) {
   return /^on[A-Z]/.test(prop);
+}
+
+function extractSvelteContext(reactContext: Readable<any> | undefined) {
+  if (!reactContext) {
+    return undefined;
+  }
+  const value = get(reactContext);
+  return value?.$$.context;
 }

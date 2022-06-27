@@ -5,6 +5,7 @@
   import ClickerReact from "../../tests/fixtures/Clicker";
   import CounterReact from "../react-components/Counter";
   import AlertReact from "../react-components/Alert";
+  import { createPortal } from "react-dom";
 
   let count = 1;
   export let ReactDOM: any; // The 'react-dom/client' import for React 18+, 'react-dom' for React 16 & 17
@@ -12,18 +13,21 @@
   const Counter = sveltifyReact(
     CounterReact,
     createElement,
+    createPortal,
     ReactDOM,
     renderToString
   );
   const Clicker = sveltifyReact(
     ClickerReact,
     createElement,
+    createPortal,
     ReactDOM,
     renderToString
   );
   const Alert = sveltifyReact(
     AlertReact,
     createElement,
+    createPortal,
     ReactDOM,
     renderToString
   );

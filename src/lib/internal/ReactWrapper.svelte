@@ -1,86 +1,46 @@
 <script lang="ts">
-  import type React from "react";
-  import { afterUpdate } from "svelte";
-  import type { Readable } from "svelte/store";
-  import SvelteToReactContext from "./SvelteToReactContext";
-  import SvelteSlot from "./SvelteSlot";
-  import type { ReactImplementation } from "./types";
+  import { writable } from "svelte/store";
+  import { beforeUpdate, getContext, onDestroy, setContext } from "svelte";
+  import type { SvelteInit, TreeNode } from "./types";
 
-  type ReactRoot = ReturnType<NonNullable<ReactImplementation["createRoot"]>>;
+  export let svelteInit: (options: SvelteInit) => TreeNode;
 
-  export let reactComponent: React.FunctionComponent | React.ComponentClass;
-  export let reactImplementation: ReactImplementation;
-  export let svelteInstance: Readable<any>;
+  const props = writable<Record<string, any>>($$props);
+  const target = writable<HTMLElement | undefined>();
+  const slot = writable<HTMLElement | undefined>();
+  const listeners: Array<() => void> = [];
 
-  const { createElement, createRoot, renderToString, rerender } =
-    reactImplementation;
+  const parent = getContext<TreeNode | undefined>("ReactWrapper");
 
-  let el: Element | undefined;
-  let root: ReactRoot | undefined;
-  let slot: HTMLElement | undefined;
-
-  function renderHtml() {
-    if (typeof window !== "undefined" || !renderToString) {
-      return "";
-    }
-    return renderToString(createElement(reactComponent, reactProps()));
-  }
-
-  function reactProps() {
-    const props = { ...$$props };
-    delete props.reactComponent;
-    delete props.reactImplementation;
-    delete props.svelteInstance;
-    return props;
-  }
-
-  function reactRoot(node: Element) {
-    if (!createRoot) {
-      el = node;
-      return undefined;
-    }
-
-    const newRoot = createRoot(node);
-    root = newRoot;
-    return {
-      destroy() {
-        newRoot.unmount();
-        if (el === node) {
-          el = undefined;
-        }
-      },
-    };
-  }
-
-  afterUpdate(() => {
-    if (createRoot && !root) {
-      return;
-    }
-    const vdom = createElement(
-      SvelteToReactContext.Provider,
-      { value: $svelteInstance },
-      $$slots.default
-        ? createElement(
-            reactComponent,
-            reactProps(),
-            createElement(SvelteSlot, { slot })
-          )
-        : createElement(reactComponent, reactProps())
-    );
-    rerender(vdom, el, root);
+  const node = svelteInit({
+    parent,
+    props,
+    target,
+    slot,
+    onDestroy(callback) {
+      listeners.push(callback);
+    },
+  });
+  setContext("ReactWrapper", node);
+  beforeUpdate(() => {
+    props.set($$props);
+  });
+  onDestroy(() => {
+    listeners.forEach((callback) => callback());
   });
 </script>
 
-<react-wrapper use:reactRoot>{@html renderHtml()}</react-wrapper>
+<react-portal-target bind:this={$target} />
+
 {#if $$slots.default}
-  <react-children bind:this={slot}><slot /></react-children>
+  <svelte-slot bind:this={$slot}><slot /></svelte-slot>
 {/if}
 
 <style>
-  react-wrapper {
+  react-portal-target {
     display: contents;
   }
-  react-children {
+  svelte-slot {
     display: none;
   }
 </style>
