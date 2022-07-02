@@ -2,7 +2,7 @@ import type React from "react";
 import type { ReactElement, ReactPortal } from "react";
 import useReadable from "../useReadable";
 import SvelteToReactContext from "./SvelteToReactContext";
-import SvelteSlot from "./SvelteSlot";
+import Child from "./Child";
 import type { TreeNode } from "./types";
 
 export type BridgeProps = {
@@ -35,7 +35,7 @@ const Bridge: React.FC<BridgeProps> = ({
     });
   });
   if (slot) {
-    children.push(createElement(SvelteSlot, { key: "svelte-slot", slot }));
+    children.push(createElement(Child, { key: "svelte-slot", el: slot }));
   }
   return createPortal(
     createElement(

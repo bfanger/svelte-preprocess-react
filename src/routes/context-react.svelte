@@ -25,6 +25,6 @@
   );
 </script>
 
-<Provider value="Hello from svelte">
+<Provider value="Hello from react context provider">
   <Child />
 </Provider>

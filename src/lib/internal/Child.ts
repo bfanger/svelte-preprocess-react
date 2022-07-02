@@ -1,23 +1,23 @@
 import * as React from "react";
 
 type Props = {
-  slot: HTMLElement | undefined;
+  el: HTMLElement | undefined;
 };
-const SvelteSlot: React.FC<Props> = ({ slot }) => {
+const Child: React.FC<Props> = ({ el }) => {
   const ref = React.useRef<HTMLElement>();
   React.useEffect(() => {
     if (!ref.current) {
       return;
     }
-    if (slot) {
+    if (el) {
       // eslint-disable-next-line no-param-reassign
-      slot.style.display = "contents";
-      ref.current.appendChild(slot);
+      el.style.display = "contents";
+      ref.current.appendChild(el);
     }
-  }, [ref, slot]);
-  return React.createElement("svelte-slot", {
+  }, [ref, el]);
+  return React.createElement("react-child", {
     ref,
     style: { display: "contents" },
   });
 };
-export default SvelteSlot;
+export default Child;

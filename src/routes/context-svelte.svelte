@@ -8,7 +8,7 @@
   import { setContext } from "svelte";
   import DebugContext from "../demo/components/DebugContext.svelte";
 
-  setContext("message", "Hello from route");
+  setContext("message", "Hello from svelte route");
 
   const DebugContextReact = reactifySvelte(DebugContext);
   const DebugContextReactSvelte = sveltifyReact(

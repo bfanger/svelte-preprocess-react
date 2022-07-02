@@ -29,6 +29,7 @@ The preprocessor compiles this to:
 <script>
   import sveltifyReact from "svelte-preprocess-react/sveltifyReact";
   import { createElement } from "react";
+  import { createPortal } from "react-dom";
   import ReactDOM from "react-dom/client";
   import { renderToString } from "react-dom/server";
   import MyReactComponent from "./MyReactComponent.jsx";
@@ -36,6 +37,7 @@ The preprocessor compiles this to:
   const React$MyReactComponent = sveltifyReact(
     MyReactComponent,
     createElement,
+    createPortal,
     ReactDOM,
     renderToString
   );
@@ -82,8 +84,6 @@ Passing the other preprocessor as option ensures that this preprocessor runs bef
 
 Once you've converted a React component to Svelte, you'd want delete that React component, but some if other React components depended on that react component you can use `reactifySvelte` to use the new Svelte component as a React component.
 
-````html
-
 ```ts
 import reactifySvelte from "$lib/reactifySvelte";
 import ButtonSvelte from "../components/Button.svelte";
@@ -93,7 +93,7 @@ const Button = reactifySvelte(ButtonSvelte);
 function MyComponent() {
   return <Button onClick={() => console.log("clicked")}>Click me</Button>;
 }
-````
+```
 
 ## Using multiple frameworks is a bad idea
 
