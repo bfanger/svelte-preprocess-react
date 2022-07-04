@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 
 test.use({ viewport: { width: 480, height: 360 } });
-test.describe("sveltifyReact", () => {
+test.describe("sveltify", () => {
   test("props", async ({ page }) => {
     await page.goto("/playwright");
     await expect(page.locator("text=Ready")).toBeVisible();

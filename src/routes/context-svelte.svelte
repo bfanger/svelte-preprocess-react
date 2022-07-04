@@ -1,6 +1,6 @@
 <script lang="ts">
-  import reactifySvelte from "$lib/reactifySvelte";
-  import sveltifyReact from "$lib/sveltifyReact";
+  import reactify from "$lib/reactify";
+  import sveltify from "$lib/sveltify";
   import { createElement } from "react";
   import { createPortal } from "react-dom";
   import ReactDOM from "react-dom/client";
@@ -9,8 +9,8 @@
 
   setContext("message", "Hello from svelte route");
 
-  const DebugContextReact = reactifySvelte(DebugContext);
-  const DebugContextReactSvelte = sveltifyReact(
+  const DebugContextReact = reactify(DebugContext);
+  const DebugContextReactSvelte = sveltify(
     DebugContextReact,
     createElement,
     createPortal,

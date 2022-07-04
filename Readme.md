@@ -1,4 +1,4 @@
-[![svelte-preprocess-react](./docs/svelte-preprocess-react.svg)](https://www.npmjs.com/package/svelte-preprocess-react)
+[![svelte-preprocess-react](./static/svelte-preprocess-react.svg)](https://www.npmjs.com/package/svelte-preprocess-react)
 
 # Svelte Preprocess React
 
@@ -29,14 +29,14 @@ The preprocessor compiles this to:
 
 ```html
 <script>
-  import sveltifyReact from "svelte-preprocess-react/sveltifyReact";
+  import sveltify from "svelte-preprocess-react/sveltify";
   import { createElement } from "react";
   import { createPortal } from "react-dom";
   import ReactDOM from "react-dom/client";
   import { renderToString } from "react-dom/server";
   import MyReactComponent from "./MyReactComponent.jsx";
 
-  const React$MyReactComponent = sveltifyReact(
+  const React$MyReactComponent = sveltify(
     MyReactComponent,
     createElement,
     createPortal,
@@ -77,20 +77,20 @@ export default {
 };
 ```
 
-svelte-preprocess-react is a _markup_ preprocessor, these runs before _script_ preprocessors,
-Passing the other preprocessor as option ensures that this preprocessor runs before the preprocessReact.
+svelte-preprocess-react is a _markup_ preprocessor, these run before the _script_ preprocessors,
+The preprocessor that is passed as an option is applied before running the preprocessReact preprocessor.
 
 ## Using Svelte inside React components
 
 > Extend
 
-Once you've converted a React component to Svelte, you'd want delete that React component, but some if other React components depended on that react component you can use `reactifySvelte` to use the new Svelte component as a React component.
+Once you've converted a React component to Svelte, you'd want delete that React component, but some if other React components depended on that component you can use `reactify` to use the new Svelte component as a React component.
 
-```ts
-import reactifySvelte from "$lib/reactifySvelte";
+```jsx
+import reactify from "$lib/reactify";
 import ButtonSvelte from "../components/Button.svelte";
 
-const Button = reactifySvelte(ButtonSvelte);
+const Button = reactify(ButtonSvelte);
 
 function MyComponent() {
   return <Button onClick={() => console.log("clicked")}>Click me</Button>;

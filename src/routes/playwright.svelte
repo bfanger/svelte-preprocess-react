@@ -21,7 +21,7 @@
 </script>
 
 <script lang="ts">
-  import sveltifyReact from "$lib/sveltifyReact";
+  import sveltify from "$lib/sveltify";
 
   import { onMount } from "svelte";
   import ClickerReact from "../tests/fixtures/Clicker";
@@ -34,16 +34,11 @@
   let loading = true;
   onMount(() => {
     const win: any = window;
-    win.sveltifyReact = sveltifyReact;
+    win.sveltify = sveltify;
     win.createElement = createElement;
     win.ReactDOM = ReactDOM;
     win.ClickerReact = ClickerReact;
-    win.Clicker = sveltifyReact(
-      ClickerReact,
-      createElement,
-      createPortal,
-      ReactDOM
-    );
+    win.Clicker = sveltify(ClickerReact, createElement, createPortal, ReactDOM);
 
     loading = false;
   });

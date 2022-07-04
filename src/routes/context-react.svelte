@@ -1,6 +1,5 @@
 <script lang="ts">
-  import sveltifyReact from "$lib/sveltifyReact";
-
+  import sveltify from "$lib/sveltify";
   import React, { createContext, createElement, useContext } from "react";
   import { createPortal } from "react-dom";
   import ReactDOM from "react-dom/client";
@@ -11,18 +10,13 @@
     const ctx = useContext(Context);
     return createElement("h1", {}, ctx);
   };
-  const Provider = sveltifyReact(
+  const Provider = sveltify(
     ProviderReact,
     createElement,
     createPortal,
     ReactDOM
   );
-  const Child = sveltifyReact(
-    ChildReact,
-    createElement,
-    createPortal,
-    ReactDOM
-  );
+  const Child = sveltify(ChildReact, createElement, createPortal, ReactDOM);
 </script>
 
 <Provider value="Hello from react context provider">

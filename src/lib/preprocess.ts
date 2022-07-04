@@ -84,7 +84,7 @@ function transform(content: string, options: TransformOptions) {
   const prefix = "React$$";
   let portal: string;
   const imports = [
-    `import ${prefix}sveltify from "svelte-preprocess-react/sveltifyReact"`,
+    `import ${prefix}sveltify from "svelte-preprocess-react/sveltify"`,
     `import { createElement as ${prefix}createElement} from "react"`,
   ];
   if (options.react >= 18) {

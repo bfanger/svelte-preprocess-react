@@ -22,7 +22,7 @@ export type SvelteConstructor<Props = any, Events = any, Slot = any> = {
 /**
  * Convert a Svelte component into a React component.
  */
-export default function reactifySvelte<P = any, E = any>(
+export default function reactify<P = any, E = any>(
   SvelteComponent: SvelteConstructor<P, E>
 ): FunctionComponent<P & SvelteEventHandlers<E>> {
   const { name } = SvelteComponent as any;

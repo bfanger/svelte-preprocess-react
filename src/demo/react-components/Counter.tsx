@@ -2,10 +2,10 @@
  * A react component using a Svelte Button component
  */
 import * as React from "react";
-import reactifySvelte from "../../lib/reactifySvelte";
+import reactify from "../../lib/reactify";
 import ButtonSvelte from "../components/Button.svelte";
 
-const Button = reactifySvelte(ButtonSvelte);
+const Button = reactify(ButtonSvelte);
 
 type Props = {
   initial?: number;

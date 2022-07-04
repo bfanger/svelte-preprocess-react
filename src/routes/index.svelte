@@ -1,3 +1,7 @@
+<img
+  src="/svelte-preprocess-react.svg"
+  alt="Svelte logo in react colors and the React logo in svelte colors"
+/>
 <ul>
   <li><a href="/preprocessor">via preprocessor</a></li>
   <li><a href="/sveltify-react">via sveltifyReact</a></li>

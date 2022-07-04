@@ -25,7 +25,7 @@ type Sveltified<P> = ConstructorOf<SvelteComponentTyped<Omit<P, "children">>>;
 /**
  * Convert a React component into a Svelte component.
  */
-export default function sveltifyReact<P>(
+export default function sveltify<P>(
   reactComponent: FunctionComponent<P> | ComponentClass<P>,
   createElement: BridgeProps["createElement"],
   createPortal: BridgeProps["createPortal"],
