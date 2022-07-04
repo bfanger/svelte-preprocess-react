@@ -1,6 +1,5 @@
 <script lang="ts">
   import reactifySvelte from "$lib/reactifySvelte";
-
   import sveltifyReact from "$lib/sveltifyReact";
   import { createElement } from "react";
   import { createPortal } from "react-dom";

@@ -5,7 +5,6 @@ import { writable, type Readable } from "svelte/store";
 import type { ConstructorOf, SvelteInit, TreeNode } from "./internal/types";
 import ReactWrapper from "./internal/ReactWrapper.svelte";
 import Slot from "./internal/Slot.svelte";
-
 import Bridge, { type BridgeProps } from "./internal/Bridge";
 
 let rerender: (props: BridgeProps) => void;
@@ -23,6 +22,9 @@ const tree: TreeNode = {
 };
 
 type Sveltified<P> = ConstructorOf<SvelteComponentTyped<Omit<P, "children">>>;
+/**
+ * Convert a React component into a Svelte component.
+ */
 export default function sveltifyReact<P>(
   reactComponent: FunctionComponent<P> | ComponentClass<P>,
   createElement: BridgeProps["createElement"],
@@ -47,17 +49,16 @@ export default function sveltifyReact<P>(
           return "";
         }
         const html = $$render.call(Slot, result, {}, bindings, slots, context);
-        return renderToString(
-          createElement(
-            reactComponent,
-            props,
-            html
-              ? createElement("svelte-slot", {
-                  dangerouslySetInnerHTML: { __html: html },
-                })
-              : undefined
-          )
-        );
+        const vdom = html
+          ? createElement(
+              reactComponent,
+              props,
+              createElement("svelte-slot", {
+                dangerouslySetInnerHTML: { __html: html },
+              })
+            )
+          : createElement(reactComponent, props);
+        return renderToString(vdom);
       },
     } as any;
   }

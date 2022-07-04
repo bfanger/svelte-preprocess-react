@@ -1,4 +1,10 @@
-import { createElement, useContext, useEffect, useRef } from "react";
+import {
+  createElement,
+  useContext,
+  useEffect,
+  useRef,
+  type ReactNode,
+} from "react";
 import type { FunctionComponent } from "react";
 import { get, type Readable } from "svelte/store";
 import SvelteWrapper from "./internal/SvelteWrapper.svelte";
@@ -13,7 +19,9 @@ export type SvelteConstructor<Props = any, Events = any, Slot = any> = {
     $$slot_def: Slot;
   };
 };
-
+/**
+ * Convert a Svelte component into a React component.
+ */
 export default function reactifySvelte<P = any, E = any>(
   SvelteComponent: SvelteConstructor<P, E>
 ): FunctionComponent<P & SvelteEventHandlers<E>> {
@@ -41,7 +49,7 @@ export default function reactifySvelte<P = any, E = any>(
           target,
           props: {
             SvelteComponent: SvelteComponent as any,
-            children: typeof children !== "undefined",
+            children: detectChildren(children),
             props,
             events,
           },
@@ -50,7 +58,7 @@ export default function reactifySvelte<P = any, E = any>(
         component.$on(
           "svelte-slot",
           ({ detail: el }: CustomEvent<HTMLElement>) => {
-            if (childrenRef.current) {
+            if (el && childrenRef.current) {
               el.appendChild(childrenRef.current);
             }
             slotRef.current = el;
@@ -153,4 +161,16 @@ function extractSvelteContext(reactContext: Readable<any> | undefined) {
   }
   const value = get(reactContext);
   return value?.$$.context;
+}
+
+function detectChildren(
+  children: ReactNode | ReactNode[] | undefined
+): boolean {
+  if (children === undefined) {
+    return false;
+  }
+  if (Array.isArray(children) && children.length === 0) {
+    return false;
+  }
+  return true;
 }

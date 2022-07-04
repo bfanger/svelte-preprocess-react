@@ -5,7 +5,7 @@
 
   export let svelteInit: (options: SvelteInit) => TreeNode;
 
-  const props = writable<Record<string, any>>($$props);
+  const props = writable<Record<string, any>>(extractProps($$props));
   const target = writable<HTMLElement | undefined>();
   const slot = writable<HTMLElement | undefined>();
   const listeners: Array<() => void> = [];
@@ -23,11 +23,15 @@
   });
   setContext("ReactWrapper", node);
   beforeUpdate(() => {
-    props.set($$props);
+    props.set(extractProps($$props));
   });
   onDestroy(() => {
     listeners.forEach((callback) => callback());
   });
+  function extractProps(values: Record<string, any>) {
+    const { svelteInit: excluded, ...rest } = values;
+    return rest;
+  }
 </script>
 
 <react-portal-target bind:this={$target} />
