@@ -1,7 +1,11 @@
 {
   "name": "svelte-preprocess-react",
   "description": "Seamlessly use React components inside a Svelte app",
-  "version": "0.7.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bfanger/svelte-preprocess-react.git"
+  },
+  "version": "0.7.1",
   "license": "MIT",
   "type": "module",
   "scripts": {

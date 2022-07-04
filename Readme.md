@@ -1,3 +1,5 @@
+[![svelte-preprocess-react](./docs/svelte-preprocess-react.svg)](https://www.npmjs.com/package/svelte-preprocess-react)
+
 # Svelte Preprocess React
 
 Seamlessly use React components inside a Svelte app
