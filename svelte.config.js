@@ -20,11 +20,5 @@ export default {
     },
     prerender: { default: true },
     adapter: adapter(),
-    vite: {
-      css: { devSourcemap: true },
-      server: {
-        fs: { allow: ["package"] },
-      },
-    },
   },
 };

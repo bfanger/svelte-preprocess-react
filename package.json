@@ -1,6 +1,11 @@
 {
   "name": "svelte-preprocess-react",
   "description": "Seamlessly use React components inside a Svelte app",
+  "keywords": [
+    "svelte",
+    "react",
+    "interoperability"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/bfanger/svelte-preprocess-react.git"
@@ -9,9 +14,9 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "dev": "svelte-kit package && svelte-kit dev",
-    "build": "svelte-kit build",
-    "preview": "svelte-kit preview",
+    "dev": "svelte-kit package && vite dev",
+    "build": "vite build",
+    "preview": "vite preview",
     "package": "svelte-kit package",
     "lint": "concurrently -c \"#c596c7\",\"#676778\",\"#3074c0\",\"#7c7cea\" --kill-others-on-fail \"npm:lint:*\"",
     "lint:prettier": "prettier --check --loglevel=warn \"src/**/*.svelte\"",
@@ -24,6 +29,7 @@
     "test:playwright": "playwright test",
     "vitest": "vitest watch",
     "preinstall": "npx only-allow yarn",
+    "postinstall": "svelte-kit sync",
     "prepare": "husky install"
   },
   "prettier": "eslint-config-triple/.prettierrc",
