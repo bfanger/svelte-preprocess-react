@@ -85,7 +85,6 @@ function transform(content: string, options: TransformOptions) {
   let portal: string;
   const imports = [
     `import ${prefix}sveltify from "svelte-preprocess-react/sveltify"`,
-    `import { createElement as ${prefix}createElement} from "react"`,
   ];
   if (options.react >= 18) {
     imports.push(
@@ -120,7 +119,7 @@ function transform(content: string, options: TransformOptions) {
   const script = compiled.ast.instance || (compiled.ast.module as Script);
   const wrappers = components
     .map((component) => {
-      return `const React$${component} = ${prefix}sveltify(${component}, ${prefix}createElement, ${portal}, ${prefix}ReactDOM${renderToString});`;
+      return `const React$${component} = ${prefix}sveltify(${component}, ${portal}, ${prefix}ReactDOM${renderToString});`;
     })
     .join(";");
 

@@ -4,6 +4,12 @@
 
 Seamlessly use React components inside a Svelte app
 
+Suports:
+
+- Nesting (Slot & Children)
+- Contexts
+- SSR
+
 # "Embrace, extend, and extinguish"
 
 This preprocessor is intended as temporary solution when migrating an existing large React codebase.  
@@ -17,35 +23,35 @@ Inside the Svelte template prepend the name of the component with `react:` prefi
 
 Instead of `<Button>`, you'd write `<react:Button>`
 
-```html
+You're also able to use libraries from the react ecosystem, react-youtube for example:
+
+```svelte
 <script>
-  import MyReactComponent from "./MyReactComponent.jsx";
+  import YouTube from "react-youtube";
 </script>
 
-<react:MyReactComponent />
+<react:YouTube videoId="AdNJ3fydeao" />
 ```
 
-The preprocessor compiles this to:
+The snippet above would be generate:
 
-```html
+```svelte
 <script>
   import sveltify from "svelte-preprocess-react/sveltify";
-  import { createElement } from "react";
   import { createPortal } from "react-dom";
   import ReactDOM from "react-dom/client";
   import { renderToString } from "react-dom/server";
-  import MyReactComponent from "./MyReactComponent.jsx";
+  import YouTube from "react-youtube";
 
-  const React$MyReactComponent = sveltify(
-    MyReactComponent,
-    createElement,
+  const React$YouTube = sveltify(
+    YouTube,
     createPortal,
     ReactDOM,
     renderToString
   );
 </script>
 
-<React$MyReactComponent />
+<React$YouTube videoId="AdNJ3fydeao" />
 ```
 
 ## Setup

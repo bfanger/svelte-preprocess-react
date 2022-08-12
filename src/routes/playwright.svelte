@@ -25,7 +25,6 @@
 
   import { onMount } from "svelte";
   import ClickerReact from "../tests/fixtures/Clicker";
-  import { createElement } from "react";
   import { createPortal } from "react-dom";
 
   export let reactVersion: number;
@@ -35,10 +34,9 @@
   onMount(() => {
     const win: any = window;
     win.sveltify = sveltify;
-    win.createElement = createElement;
     win.ReactDOM = ReactDOM;
     win.ClickerReact = ClickerReact;
-    win.Clicker = sveltify(ClickerReact, createElement, createPortal, ReactDOM);
+    win.Clicker = sveltify(ClickerReact, createPortal, ReactDOM);
 
     loading = false;
   });

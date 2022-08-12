@@ -1,24 +1,19 @@
 import type React from "react";
-import type { ReactElement, ReactPortal } from "react";
+import { createElement } from "react";
 import useReadable from "../useReadable";
 import SvelteToReactContext from "./SvelteToReactContext";
 import Child from "./Child";
 import type { TreeNode } from "./types";
 
 export type BridgeProps = {
-  createElement: typeof React.createElement;
   createPortal: (
     children: React.ReactNode,
     container: Element | DocumentFragment,
     key?: null | string
-  ) => ReactPortal;
+  ) => React.ReactPortal;
   node: TreeNode;
 };
-const Bridge: React.FC<BridgeProps> = ({
-  createElement,
-  createPortal,
-  node,
-}) => {
+const Bridge: React.FC<BridgeProps> = ({ createPortal, node }) => {
   const target = useReadable(node.target);
   const props = useReadable(node.props);
   const slot = useReadable(node.slot);
@@ -26,10 +21,9 @@ const Bridge: React.FC<BridgeProps> = ({
   if (!target) {
     return null;
   }
-  const children: ReactElement[] = node.nodes.map((subnode) => {
+  const children: React.ReactElement[] = node.nodes.map((subnode) => {
     return createElement(Bridge, {
       key: subnode.key,
-      createElement,
       createPortal,
       node: subnode,
     });

@@ -1,6 +1,5 @@
 <script lang="ts">
   import sveltify from "$lib/sveltify";
-  import { createElement } from "react";
   import { renderToString } from "react-dom/server";
   import ClickerReact from "../../tests/fixtures/Clicker";
   import CounterReact from "../react-components/Counter";
@@ -12,25 +11,17 @@
 
   const Counter = sveltify(
     CounterReact,
-    createElement,
     createPortal,
     ReactDOM,
     renderToString
   );
   const Clicker = sveltify(
     ClickerReact,
-    createElement,
     createPortal,
     ReactDOM,
     renderToString
   );
-  const Alert = sveltify(
-    AlertReact,
-    createElement,
-    createPortal,
-    ReactDOM,
-    renderToString
-  );
+  const Alert = sveltify(AlertReact, createPortal, ReactDOM, renderToString);
 </script>
 
 <Counter initial={10} onCount={console.info} />

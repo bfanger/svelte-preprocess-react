@@ -1,3 +1,4 @@
+import { createElement } from "react";
 import type { ComponentClass, FunctionComponent } from "react";
 import type { SvelteComponentTyped } from "svelte/internal";
 import type ReactDOMServer from "react-dom/server";
@@ -27,7 +28,6 @@ type Sveltified<P> = ConstructorOf<SvelteComponentTyped<Omit<P, "children">>>;
  */
 export default function sveltify<P>(
   reactComponent: FunctionComponent<P> | ComponentClass<P>,
-  createElement: BridgeProps["createElement"],
   createPortal: BridgeProps["createPortal"],
   ReactDOMClient: any,
   renderToString?: typeof ReactDOMServer.renderToString
@@ -98,12 +98,12 @@ export default function sveltify<P>(
           };
           const parent = init.parent ?? tree;
           parent.nodes.push(node);
-          rerender({ createElement, createPortal, node: tree });
+          rerender({ createPortal, node: tree });
           init.onDestroy(() => {
             parent.nodes = parent.nodes.filter(
               (n) => n.svelteInstance !== svelteInstance
             );
-            rerender({ createElement, createPortal, node: tree });
+            rerender({ createPortal, node: tree });
           });
           return node;
         },
