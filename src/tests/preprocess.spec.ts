@@ -81,6 +81,17 @@ describe("svelte-preprocess-react", () => {
     );
     expect(output.code).toMatchSnapshot();
   });
+
+  it("should convert text content to react children prop", async () => {
+    const filename = resolveFilename("./fixtures/SlottedText.svelte");
+    const src = await readFile(filename, "utf8");
+    const output = await preprocess(
+      src,
+      preprocessReact({ preprocess: sveltePreprocess() }),
+      { filename }
+    );
+    expect(output.code).toMatchSnapshot();
+  });
 });
 
 const base = dirname(import.meta.url).replace("file://", "");

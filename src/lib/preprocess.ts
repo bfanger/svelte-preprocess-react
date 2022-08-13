@@ -170,6 +170,37 @@ function replaceReactTags(
         );
       }
     });
+    if (node.children && node.children.length > 0) {
+      const isTextContent =
+        node.children.filter(
+          (child) => ["Text", "MustacheTag"].includes(child.type) === false
+        ).length === 0;
+      const escaped: string[] = [];
+      if (isTextContent) {
+        // Convert text & expresions into a children prop.
+        escaped.push('"');
+        node.children.forEach((child) => {
+          if (child.type === "Text") {
+            escaped.push(
+              child.data.replace(/"/g, `{'"'}`).replace(/\n/g, `{'\\n'}`)
+            );
+          } else if (child.type === "MustacheTag") {
+            const expression = content.original.slice(child.start, child.end);
+            escaped.push(expression);
+          } else {
+            throw new Error(`Unexpected node type:${child.type}`);
+          }
+        });
+        escaped.push('"');
+        // slot was converted to children prop
+        content.appendRight(
+          node.children[0].start - 1,
+          ` children=${escaped.join("")} /`
+        );
+        content.remove(node.children[0].start, node.end);
+        return components;
+      }
+    }
   }
   node.children?.forEach((child) => {
     replaceReactTags(child, content, components);

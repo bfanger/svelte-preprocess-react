@@ -15,7 +15,7 @@ export type BridgeProps = {
 };
 const Bridge: React.FC<BridgeProps> = ({ createPortal, node }) => {
   const target = useReadable(node.target);
-  const props = useReadable(node.props);
+  let props = useReadable(node.props);
   const slot = useReadable(node.slot);
 
   if (!target) {
@@ -28,6 +28,11 @@ const Bridge: React.FC<BridgeProps> = ({ createPortal, node }) => {
       node: subnode,
     });
   });
+  if (props.children) {
+    children.push(props.children);
+    props = { ...props };
+    delete props.children;
+  }
   if (slot) {
     children.push(createElement(Child, { key: "svelte-slot", el: slot }));
   }

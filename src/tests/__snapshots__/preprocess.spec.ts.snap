@@ -1,5 +1,18 @@
 // Vitest Snapshot v1
 
+exports[`svelte-preprocess-react > should convert text content to react children prop 1`] = `
+"<script lang=\\"ts\\">import React$$sveltify from \\"svelte-preprocess-react/sveltify\\"; import React$$ReactDOM from \\"react-dom/client\\"; import { createPortal as React$$createPortal} from \\"react-dom\\"; import { renderToString as React$$renderToString } from \\"react-dom/server\\"; import Alert from \\"src/demo/react-components/Alert\\";
+const count = 0;
+const React$Alert = React$$sveltify(Alert, React$$createPortal, React$$ReactDOM, React$$renderToString);</script>
+
+<React$Alert children=\\"Static Text\\" />
+
+<React$Alert children=\\"{'\\\\n'}  {'\\"'}Multiline content{'\\"'}. Lorem ipsum dolor sit amet consectetur adipisicing elit.{'\\\\n'}  Suscipit nisi atque asperiores.{'\\\\n'}\\" />
+
+<React$Alert children=\\"Value: {count + 1}\\" />
+"
+`;
+
 exports[`svelte-preprocess-react > should import 'react-dom/server' when ssr is enabled 1`] = `
 "<script>import React$$sveltify from \\"svelte-preprocess-react/sveltify\\"; import React$$ReactDOM from \\"react-dom/client\\"; import { createPortal as React$$createPortal} from \\"react-dom\\"; import { renderToString as React$$renderToString } from \\"react-dom/server\\"; 
   // @ts-nocheck
@@ -55,7 +68,7 @@ exports[`svelte-preprocess-react > should portal slotted content as children 1`]
   }
 const React$Alert = React$$sveltify(Alert, React$$createPortal, React$$ReactDOM, React$$renderToString);</script>
 
-<React$Alert>A simple primary alert—check it out!</React$Alert>
+<React$Alert children=\\"A simple primary alert—check it out!\\" />
 "
 `;
 
