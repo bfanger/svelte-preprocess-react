@@ -6,7 +6,7 @@ import { writable, type Readable } from "svelte/store";
 import type { ConstructorOf, SvelteInit, TreeNode } from "./internal/types";
 import ReactWrapper from "./internal/ReactWrapper.svelte";
 import Slot from "./internal/Slot.svelte";
-import Bridge, { type BridgeProps } from "./internal/Bridge";
+import Bridge, { type BridgeProps } from "./internal/Bridge.js";
 
 let rerender: (props: BridgeProps) => void;
 let autokey = 0;

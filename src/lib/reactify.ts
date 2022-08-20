@@ -8,7 +8,7 @@ import {
 import type { FunctionComponent } from "react";
 import { get, type Readable } from "svelte/store";
 import SvelteWrapper from "./internal/SvelteWrapper.svelte";
-import SvelteToReactContext from "./internal/SvelteToReactContext";
+import SvelteToReactContext from "./internal/SvelteToReactContext.js";
 import type { SvelteEventHandlers } from "./internal/types";
 
 export type SvelteConstructor<Props = any, Events = any, Slot = any> = {

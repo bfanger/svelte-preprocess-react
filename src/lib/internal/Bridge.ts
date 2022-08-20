@@ -1,8 +1,8 @@
 import type React from "react";
 import { createElement } from "react";
-import useReadable from "../useReadable";
-import SvelteToReactContext from "./SvelteToReactContext";
-import Child from "./Child";
+import useReadable from "../useReadable.js";
+import SvelteToReactContext from "./SvelteToReactContext.js";
+import Child from "./Child.js";
 import type { TreeNode } from "./types";
 
 export type BridgeProps = {
