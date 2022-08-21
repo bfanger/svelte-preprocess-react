@@ -4,16 +4,16 @@
 
 Seamlessly use React components inside a Svelte app
 
-Suports:
+Supports:
 
 - Nesting (Slot & Children)
 - Contexts
 - SSR
 
-# "Embrace, extend, and extinguish"
+# "Embrace, extend and extinguish"
 
-This preprocessor is intended as temporary solution when migrating an existing large React codebase.  
-The goal should be to rewrite all the components to Svelte and remove this preprocessor from your setup.
+This preprocessor is intended as temporary solution when migrating an existing large React codebase or when a third-party hasn't yet provided a Svelte adapter.  
+After you've gradually converted all components to Svelte you can remove this preprocessor from your setup.
 
 ## Using React inside Svelte components
 
