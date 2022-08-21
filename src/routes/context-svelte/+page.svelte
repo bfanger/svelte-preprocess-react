@@ -4,7 +4,7 @@
   import { createPortal } from "react-dom";
   import ReactDOM from "react-dom/client";
   import { setContext } from "svelte";
-  import DebugContext from "../demo/components/DebugContext.svelte";
+  import DebugContext from "../../demo/components/DebugContext.svelte";
 
   setContext("message", "Hello from svelte route");
 

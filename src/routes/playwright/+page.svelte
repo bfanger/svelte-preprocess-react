@@ -1,36 +1,17 @@
-<script lang="ts" context="module">
-  /**
-   * This page exposes variables on the window object that can be used by the Playwright tests.
-   */
-
-  import type { Load } from "@sveltejs/kit";
-
-  export const load: Load = async ({ fetch }) => {
-    const reactVersion = await (await fetch("/api/react-version.json")).json();
-    const reactDomModule =
-      reactVersion <= 17
-        ? () => import("react-dom")
-        : () => import("react-dom/client");
-    return {
-      props: {
-        reactVersion,
-        ReactDOM: (await reactDomModule()).default,
-      },
-    };
-  };
-</script>
-
 <script lang="ts">
   import sveltify from "$lib/sveltify";
-
   import { onMount } from "svelte";
-  import ClickerReact from "../tests/fixtures/Clicker";
+  import ClickerReact from "../../tests/fixtures/Clicker";
   import { createPortal } from "react-dom";
+  import type { PageData } from "./$types";
 
-  export let reactVersion: number;
-  export let ReactDOM: any;
+  export let data: PageData;
+
+  $: reactVersion = data.reactVersion as number;
+  $: ReactDOM = data.ReactDOM;
 
   let loading = true;
+
   onMount(() => {
     const win: any = window;
     win.sveltify = sveltify;

@@ -1,6 +1,6 @@
 <script lang="ts">
-  import Counter from "../demo/react-components/Counter";
-  import Alert from "../demo/react-components/Alert";
+  import Counter from "../../demo/react-components/Counter";
+  import Alert from "../../demo/react-components/Alert";
 
   if (!Counter && !Alert) {
     // Bypass: is declared but its value is never read. (ts)
