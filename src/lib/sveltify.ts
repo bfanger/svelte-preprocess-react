@@ -51,13 +51,13 @@ export default function sveltify<P>(
         const html = $$render.call(Slot, result, {}, bindings, slots, context);
         const vdom = html
           ? createElement(
-              reactComponent,
+              reactComponent as FunctionComponent,
               props,
               createElement("svelte-slot", {
                 dangerouslySetInnerHTML: { __html: html },
               })
             )
-          : createElement(reactComponent, props);
+          : createElement(reactComponent as FunctionComponent, props);
         return renderToString(vdom);
       },
     } as any;

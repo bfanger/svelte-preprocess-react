@@ -14,11 +14,8 @@ export default {
     : preprocessReact({ preprocess: preprocess({ sourceMap: true }) }),
 
   kit: {
-    alias: {
-      $lib: "./src/lib",
-      "svelte-preprocess-react": "./package",
-    },
-    prerender: { default: true },
-    adapter: adapter(),
+    adapter: adapter({
+      fallback: "index.html",
+    }),
   },
 };
