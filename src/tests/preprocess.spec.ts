@@ -92,6 +92,17 @@ describe("svelte-preprocess-react", () => {
     );
     expect(output.code).toMatchSnapshot();
   });
+
+  it("should process <react:Context.Provider> tags", async () => {
+    const filename = resolveFilename("./fixtures/Provider.svelte");
+    const src = await readFile(filename, "utf8");
+    const output = await preprocess(
+      src,
+      preprocessReact({ preprocess: sveltePreprocess() }),
+      { filename }
+    );
+    expect(output.code).toMatchSnapshot();
+  });
 });
 
 const base = dirname(import.meta.url).replace("file://", "");

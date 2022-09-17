@@ -112,14 +112,15 @@ function transform(content: string, options: TransformOptions) {
   });
   const s = new MagicString(content, { filename: options.filename });
   const components = replaceReactTags(compiled.ast.html, s);
+  const aliases = Object.entries(components);
 
-  if (components.length === 0) {
+  if (aliases.length === 0) {
     return { code: content };
   }
   const script = compiled.ast.instance || (compiled.ast.module as Script);
-  const wrappers = components
-    .map((component) => {
-      return `const React$${component} = ${prefix}sveltify(${component}, ${portal}, ${prefix}ReactDOM${renderToString});`;
+  const wrappers = aliases
+    .map(([alias, expression]) => {
+      return `const ${alias} = ${prefix}sveltify(${expression}, ${portal}, ${prefix}ReactDOM${renderToString});`;
     })
     .join(";");
 
@@ -138,21 +139,28 @@ function transform(content: string, options: TransformOptions) {
 function replaceReactTags(
   node: TemplateNode,
   content: MagicString,
-  components: string[] = []
+  components: Record<string, string> = {}
 ) {
   /* eslint-disable no-param-reassign */
   if (node.type === "Element" && node.name.startsWith("react:")) {
     const tag = node as Element;
-    const component = tag.name.slice(6);
+    const componentExpression = tag.name.slice(6);
+    const alias = `React$${componentExpression.replace(/\./g, "$")}`;
     const tagStart = node.start;
     const tagEnd = node.end;
     const closeStart = tagEnd - tag.name.length - 3;
-    content.overwrite(tagStart + 1, tagStart + 7, "React$");
-    if (content.slice(closeStart, closeStart + 8) === `</react:`) {
-      content.overwrite(closeStart + 2, closeStart + 8, `React$`);
+    const hasCloseTag =
+      content.slice(closeStart, closeStart + 8) === `</react:`;
+    content.overwrite(tagStart + 1, tagStart + 1 + tag.name.length, alias);
+    if (hasCloseTag) {
+      content.overwrite(
+        closeStart + 2,
+        closeStart + 2 + tag.name.length,
+        alias
+      );
     }
-    if (components.includes(component) === false) {
-      components.push(component);
+    if (!components[alias]) {
+      components[alias] = componentExpression;
     }
     tag.attributes.forEach((attr) => {
       if (attr.type === "EventHandler") {
