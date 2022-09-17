@@ -1,6 +1,10 @@
 # Architecture
 
-This document describes design desicions and implementation details of the preprocessor.
+This document describes designdecisions and implementation details of the preprocessor.
+
+**Principles:**
+
+- Compatibility first, Ease-of-use second and Performance last.
 
 ## Context
 

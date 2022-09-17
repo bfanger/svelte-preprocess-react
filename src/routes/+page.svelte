@@ -8,4 +8,6 @@
 
   <li><a href="/context-svelte">getContext()</a></li>
   <li><a href="/context-react">useContext()</a></li>
+
+  <li><a href="/hooks">Using hooks</a></li>
 </ul>
