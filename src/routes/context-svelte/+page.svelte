@@ -1,6 +1,5 @@
 <script lang="ts">
-  import reactify from "$lib/reactify";
-  import sveltify from "$lib/sveltify";
+  import { reactify, sveltify } from "$lib";
   import { createPortal } from "react-dom";
   import ReactDOM from "react-dom/client";
   import { setContext } from "svelte";

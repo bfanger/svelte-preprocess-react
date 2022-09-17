@@ -1,3 +1,7 @@
+# Architecture
+
+This document describes design desicions and implementation details of the preprocessor.
+
 ## Context
 
 ```jsx
@@ -10,7 +14,7 @@
 </App>
 ```
 
-Both svelte and react have component trees, for context to work in both Svelte needs to act as if the tree is:
+Both Svelte and React have component trees, for context to work in both, Svelte needs to act as if the tree is:
 
 ```jsx
 <App>
@@ -28,7 +32,7 @@ and React needs to act as if the tree is:
 
 ### Client mode
 
-sveltifyReact create a single React Root and based on the Hierachy of the ReactWrapper components we/re abel to built the react tree:
+sveltifyReact creates a single React Root and based on the Hierachy of the ReactWrapper components we're able to built the React tree:
 
 ```jsx
 <Bridge>
@@ -41,6 +45,9 @@ sveltifyReact create a single React Root and based on the Hierachy of the ReactW
 ```
 
 The `<Bridge>`s use React Portals to render the components into the DOM of the ReactWrapper Svelte component.
+
+This is why the childeren prop passed to your React is an array, even when you manually pass a children prop.
+This array allows svelte-preprocess-react to inject the slotted content into the correct place in the React tree.
 
 ### Server mode
 

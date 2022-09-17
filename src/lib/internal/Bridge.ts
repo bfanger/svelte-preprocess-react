@@ -1,6 +1,6 @@
 import type React from "react";
 import { createElement } from "react";
-import useReadable from "../useReadable.js";
+import useStore from "../useStore.js";
 import SvelteToReactContext from "./SvelteToReactContext.js";
 import Child from "./Child.js";
 import type { TreeNode } from "./types";
@@ -14,9 +14,9 @@ export type BridgeProps = {
   node: TreeNode;
 };
 const Bridge: React.FC<BridgeProps> = ({ createPortal, node }) => {
-  const target = useReadable(node.target);
-  let props = useReadable(node.props);
-  const slot = useReadable(node.slot);
+  const target = useStore(node.target);
+  let props = useStore(node.props);
+  const slot = useStore(node.slot);
 
   if (!target) {
     return null;

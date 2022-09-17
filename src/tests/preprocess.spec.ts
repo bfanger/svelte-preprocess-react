@@ -3,7 +3,7 @@ import { preprocess } from "svelte/compiler";
 import sveltePreprocess from "svelte-preprocess";
 import { readFile } from "fs/promises";
 import { dirname, resolve } from "path";
-import preprocessReact from "../lib/preprocess";
+import preprocessReact from "../lib/preprocessReact";
 
 describe("svelte-preprocess-react", () => {
   it("should process <react:component> tags", async () => {

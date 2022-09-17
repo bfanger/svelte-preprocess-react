@@ -62,7 +62,7 @@ npm install svelte-preprocess-react
 
 ```js
 // svelte.config.js
-import preprocessReact from "svelte-preprocess-react";
+import preprocessReact from "svelte-preprocess-react/preprocessReact";
 
 export default {
   preprocess: preprocessReact(),
@@ -74,7 +74,7 @@ When using other processors like [svelte-preprocess]() use:
 ```js
 // svelte.config.js
 import preprocess from "svelte-preprocess";
-import preprocessReact from "svelte-preprocess-react";
+import preprocessReact from "svelte-preprocess-react/preprocessReact";
 
 export default {
   preprocess: preprocessReact({
@@ -93,7 +93,7 @@ The preprocessor that is passed as an option is applied before running the prepr
 Once you've converted a React component to Svelte, you'd want delete that React component, but some if other React components depended on that component you can use `reactify` to use the new Svelte component as a React component.
 
 ```jsx
-import reactify from "$lib/reactify";
+import { reactify } from "resvelte-preprocess-react";
 import ButtonSvelte from "../components/Button.svelte";
 
 const Button = reactify(ButtonSvelte);

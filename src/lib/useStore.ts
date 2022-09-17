@@ -1,9 +1,19 @@
-import { useEffect as useLayoutEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { get, type Readable } from "svelte/store";
 
-export default function useReadable<T>(store: Readable<T>): T {
+/**
+ * Hook for using Svelte stores in React.
+ *
+ * Usage:
+ *
+ * const User: React.FC = () => {
+ *   const $user = useStore(userStore);
+ *   return <h1>Hello, {$user.name}</h1>;
+ * }
+ */
+export default function useStore<T>(store: Readable<T>): T {
   const [value, setValue] = useState(() => get(store));
-  useLayoutEffect(() => {
+  useEffect(() => {
     let first = true;
     const cancel = store.subscribe((next) => {
       if (first) {
