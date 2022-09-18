@@ -17,6 +17,7 @@ const Bridge: React.FC<BridgeProps> = ({ createPortal, node }) => {
   const target = useStore(node.target);
   let props = useStore(node.props);
   const slot = useStore(node.slot);
+  const hooks = useStore(node.hooks);
 
   if (!target) {
     return null;
@@ -35,6 +36,11 @@ const Bridge: React.FC<BridgeProps> = ({ createPortal, node }) => {
   }
   if (slot) {
     children.push(createElement(Child, { key: "svelte-slot", el: slot }));
+  }
+  if (hooks.length >= 0) {
+    children.push(
+      ...hooks.map(({ Hook, key }) => createElement(Hook, { key }))
+    );
   }
   return createPortal(
     createElement(

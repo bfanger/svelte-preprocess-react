@@ -13,13 +13,14 @@ let autokey = 0;
 const never = writable() as Readable<any>;
 const target = writable<HTMLElement>();
 const tree: TreeNode = {
-  key: "root",
+  key: autokey,
   svelteInstance: never,
   reactComponent: ({ children }: any) => children,
   target,
   props: writable({}),
   slot: never,
   nodes: [],
+  hooks: writable([]),
 };
 
 type Sveltified<P> = ConstructorOf<SvelteComponentTyped<Omit<P, "children">>>;
@@ -88,12 +89,13 @@ export default function sveltify<P>(
         svelteInit(init: SvelteInit) {
           autokey += 1;
           const node = {
-            key: autokey.toString(),
+            key: autokey,
             svelteInstance,
             reactComponent,
             props: init.props,
             slot: init.slot,
             target: init.target,
+            hooks: init.hooks,
             nodes: [],
           };
           const parent = init.parent ?? tree;

@@ -9,6 +9,7 @@ Supports:
 - Nesting (Slot & Children)
 - Contexts
 - SSR
+- Hooks ([useStore](./docs/useStore.md) & [hooks](./docs/hooks.md))
 
 # "Embrace, extend and extinguish"
 

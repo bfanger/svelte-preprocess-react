@@ -1,5 +1,6 @@
+import type React from "react";
 import type { ComponentClass, FunctionComponent } from "react";
-import type { Readable } from "svelte/store";
+import type { Readable, Writable } from "svelte/store";
 
 export type ConstructorOf<T> = {
   new (): T;
@@ -57,7 +58,8 @@ export type OmitEventProps<ReactProps> = Omit<
 export type TreeNode = Omit<SvelteInit, "onDestroy"> & {
   svelteInstance: Readable<any>;
   reactComponent: FunctionComponent<any> | ComponentClass<any>;
-  key: string;
+  key: number;
+  hooks: Writable<Array<{ Hook: React.FC; key: number }>>;
   nodes: TreeNode[];
 };
 
@@ -66,5 +68,6 @@ export type SvelteInit = {
   props: Readable<Record<string, any>>;
   target: Readable<HTMLElement | undefined>;
   slot: Readable<HTMLElement | undefined>;
+  hooks: Writable<Array<{ Hook: React.FC; key: number }>>;
   onDestroy: (callback: () => void) => void;
 };

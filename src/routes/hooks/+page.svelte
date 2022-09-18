@@ -1,28 +1,37 @@
 <script lang="ts">
-  import { Hook } from "$lib";
   import { useState } from "react";
+  import { hooks, used } from "$lib";
+  import ReactDOMClient from "react-dom/client"; // React 18+,(use "react-dom" for older versions)
+  import { renderToString } from "react-dom/server";
+  import { AuthProvider, type Auth } from "./react-auth";
+  import Nested from "./HookWithContext.svelte";
 
-  function useSomeState() {
-    return useState("Initial value");
+  used(AuthProvider);
+
+  const countHook = hooks(() => useState(0), ReactDOMClient, renderToString);
+
+  const auth: Auth = { authenticated: false };
+  function onLogin() {
+    auth.authenticated = true;
   }
-
-  function useMultipleHooks() {
-    const [x] = useState(1);
-    const [y] = useState(2);
-    return { x, y };
+  function onLogout() {
+    auth.authenticated = false;
   }
 </script>
 
-<Hook use={useSomeState} let:out={[value, setValue]}>
-  <div>{value}</div>
-  <button
-    on:click={() => {
-      setValue("Changed");
-    }}>Change</button
-  >
-</Hook>
-<hr />
-<Hook use={useMultipleHooks} let:out={position}>
-  x: {position.x}
-  y: {position.y}
-</Hook>
+{#if $countHook}
+  {@const [count, setCount] = $countHook}
+
+  <div>Count: {count}</div>
+  <button on:click={() => setCount(count + 1)}>+</button>
+  <hr />
+{/if}
+<react:AuthProvider value={auth}>
+  <Nested />
+</react:AuthProvider>
+
+{#if auth.authenticated}
+  <button on:click={onLogout}>Logout</button>
+{:else}
+  <button on:click={onLogin}>Login</button>
+{/if}
