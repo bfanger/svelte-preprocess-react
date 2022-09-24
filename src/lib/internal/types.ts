@@ -2,10 +2,6 @@ import type React from "react";
 import type { ComponentClass, FunctionComponent } from "react";
 import type { Readable, Writable } from "svelte/store";
 
-export type ConstructorOf<T> = {
-  new (): T;
-};
-
 export type HandlerName<T extends string> = `on${Capitalize<T>}`;
 export type EventName<T extends string> = T extends `on${infer N}`
   ? Uncapitalize<N>

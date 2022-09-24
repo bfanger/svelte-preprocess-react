@@ -32,7 +32,7 @@ const React$Clicker = React$$sveltify(Clicker, React$$createPortal, React$$React
 
 exports[`svelte-preprocess-react > should inject a script tag 1`] = `
 "<script>
-import React$$sveltify from \\"svelte-preprocess-react/sveltify\\",import React$$ReactDOM from \\"react-dom/client\\",import { createPortal as React$$createPortal} from \\"react-dom\\",import { renderToString as React$$renderToString } from \\"react-dom/server\\"
+import React$$sveltify from \\"svelte-preprocess-react/sveltify\\"; import React$$ReactDOM from \\"react-dom/client\\"; import { createPortal as React$$createPortal} from \\"react-dom\\"; import { renderToString as React$$renderToString } from \\"react-dom/server\\"
 
 const React$Counter = React$$sveltify(Counter, React$$createPortal, React$$ReactDOM, React$$renderToString);
 </script>
@@ -129,6 +129,19 @@ const React$Clicker = React$$sveltify(Clicker, React$$createPortal, React$$React
 <React$Clicker {count} />
 <h2>.</h2>
 <React$Clicker />
+"
+`;
+
+exports[`svelte-preprocess-react > should process <react:element> (lowercase) tags 1`] = `
+"<script>
+import React$$sveltify from \\"svelte-preprocess-react/sveltify\\"; import React$$ReactDOM from \\"react-dom/client\\"; import { createPortal as React$$createPortal} from \\"react-dom\\"; import { renderToString as React$$renderToString } from \\"react-dom/server\\"
+
+const React$button = React$$sveltify(\\"button\\", React$$createPortal, React$$ReactDOM, React$$renderToString);
+</script>
+
+<React$button onClick={() => console.info(\\"clicked\\")}>
+  <slot />
+</React$button>
 "
 `;
 

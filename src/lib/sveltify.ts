@@ -3,7 +3,7 @@ import type { ComponentClass, FunctionComponent } from "react";
 import type { SvelteComponentTyped } from "svelte/internal";
 import type ReactDOMServer from "react-dom/server";
 import { writable, type Readable } from "svelte/store";
-import type { ConstructorOf, SvelteInit, TreeNode } from "./internal/types";
+import type { SvelteInit, TreeNode } from "./internal/types";
 import ReactWrapper from "./internal/ReactWrapper.svelte";
 import Slot from "./internal/Slot.svelte";
 import Bridge, { type BridgeProps } from "./internal/Bridge.js";
@@ -23,7 +23,11 @@ const tree: TreeNode = {
   hooks: writable([]),
 };
 
-type Sveltified<P> = ConstructorOf<SvelteComponentTyped<Omit<P, "children">>>;
+declare type Sveltified<P extends Record<string, any>> = new (args: {
+  target: any;
+  props?: P;
+}) => SvelteComponentTyped<P>;
+
 /**
  * Convert a React component into a Svelte component.
  */
@@ -32,7 +36,7 @@ export default function sveltify<P>(
   createPortal: BridgeProps["createPortal"],
   ReactDOMClient: any,
   renderToString?: typeof ReactDOMServer.renderToString
-): Sveltified<P> {
+): Sveltified<Omit<P, "children">> {
   const Wrapper = ReactWrapper as any;
   const ssr = typeof Wrapper.$$render === "function";
   if (ssr) {

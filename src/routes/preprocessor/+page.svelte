@@ -17,3 +17,4 @@
   "Multiline content". {10 ** 4} Lorem ipsum dolor sit amet consectetur adipisicing
   elit. Suscipit nisi atque asperiores.</react:Alert
 >
+<react:div>a div</react:div>

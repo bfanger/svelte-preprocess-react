@@ -125,7 +125,7 @@ function transform(content: string, options: TransformOptions) {
     .join(";");
 
   if (!script) {
-    s.prepend(`<script>\n${imports}\n\n${wrappers}\n</script>\n\n`);
+    s.prepend(`<script>\n${imports.join("; ")}\n\n${wrappers}\n</script>\n\n`);
   } else {
     s.appendRight(script.content.end, wrappers);
     s.appendRight(script.content.start, `${imports.join("; ")}; `);
@@ -160,7 +160,11 @@ function replaceReactTags(
       );
     }
     if (!components[alias]) {
-      components[alias] = componentExpression;
+      if (componentExpression.match(/^[a-z-]+$/)) {
+        components[alias] = `"${componentExpression}"`;
+      } else {
+        components[alias] = componentExpression;
+      }
     }
     tag.attributes.forEach((attr) => {
       if (attr.type === "EventHandler") {
