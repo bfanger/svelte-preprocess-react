@@ -6,7 +6,7 @@
 </script>
 
 {#if $auth?.authenticated}
-  <div>Authenticated</div>
+  <div data-testid="authenticated">Authenticated</div>
 {:else}
-  <div>Not authenticated</div>
+  <div data-testid="not-authenticated">Not authenticated</div>
 {/if}
