@@ -9,7 +9,6 @@ const config: UserConfig = {
     fs: { allow: ["package"] },
   },
   test: {
-    environment: "happy-dom",
     exclude: [...configDefaults.exclude, "package", "playwright"],
   },
   resolve: {

@@ -139,7 +139,7 @@ import React$$sveltify from \\"svelte-preprocess-react/sveltify\\"; import React
 const React$button = React$$sveltify(\\"button\\", React$$createPortal, React$$ReactDOM, React$$renderToString);
 </script>
 
-<React$button onClick={() => console.info(\\"clicked\\")}>
+<React$button onClick={() => console.info(\\"clicked\\")} on:keydown>
   <slot />
 </React$button>
 "

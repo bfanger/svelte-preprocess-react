@@ -2,14 +2,14 @@
   import { writable } from "svelte/store";
   import { beforeUpdate, getContext, onDestroy, setContext } from "svelte";
   import type { SvelteInit, TreeNode } from "./types";
-  import type React from "react";
+  import type { FunctionComponent } from "react";
 
   export let svelteInit: (options: SvelteInit) => TreeNode;
 
   const props = writable<Record<string, any>>(extractProps($$props));
   const target = writable<HTMLElement | undefined>();
   const slot = writable<HTMLElement | undefined>();
-  const hooks = writable<Array<{ Hook: React.FC; key: number }>>([]);
+  const hooks = writable<Array<{ Hook: FunctionComponent; key: number }>>([]);
   const listeners: Array<() => void> = [];
 
   const parent = getContext<TreeNode | undefined>("ReactWrapper");

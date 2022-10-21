@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import * as React from "react";
 import { get, type Readable } from "svelte/store";
 
 /**
@@ -12,8 +12,8 @@ import { get, type Readable } from "svelte/store";
  * }
  */
 export default function useStore<T>(store: Readable<T>): T {
-  const [value, setValue] = useState(() => get(store));
-  useEffect(() => {
+  const [value, setValue] = React.useState(() => get(store));
+  React.useEffect(() => {
     let first = true;
     const cancel = store.subscribe((next) => {
       if (first) {

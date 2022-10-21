@@ -1,11 +1,11 @@
-import { useRef, useEffect, createElement, type FC } from "react";
+import * as React from "react";
 
 type Props = {
   el: HTMLElement | undefined;
 };
-const Child: FC<Props> = ({ el }) => {
-  const ref = useRef<HTMLElement>();
-  useEffect(() => {
+const Child: React.FC<Props> = ({ el }) => {
+  const ref = React.useRef<HTMLElement>();
+  React.useEffect(() => {
     if (!ref.current) {
       return;
     }
@@ -15,7 +15,7 @@ const Child: FC<Props> = ({ el }) => {
       ref.current.appendChild(el);
     }
   }, [ref, el]);
-  return createElement("react-child", {
+  return React.createElement("react-child", {
     ref,
     style: { display: "contents" },
   });

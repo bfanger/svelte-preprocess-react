@@ -167,7 +167,7 @@ function replaceReactTags(
       }
     }
     tag.attributes.forEach((attr) => {
-      if (attr.type === "EventHandler") {
+      if (attr.type === "EventHandler" && attr.expression !== null) {
         const event = attr as Transition;
         if (event.modifiers.length > 0) {
           throw new Error(

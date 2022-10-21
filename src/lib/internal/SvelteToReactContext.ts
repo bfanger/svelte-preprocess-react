@@ -1,5 +1,5 @@
-import { createContext } from "react";
+import * as React from "react";
 
-const SvelteToReactContext = createContext(undefined as any);
+const SvelteToReactContext = React.createContext(undefined as any);
 SvelteToReactContext.displayName = "SvelteToReactContext";
 export default SvelteToReactContext;

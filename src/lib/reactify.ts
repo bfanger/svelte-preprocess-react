@@ -1,11 +1,4 @@
-import {
-  createElement,
-  useContext,
-  useEffect,
-  useRef,
-  type ReactNode,
-} from "react";
-import type { FunctionComponent } from "react";
+import * as React from "react";
 import { get, type Readable } from "svelte/store";
 import SvelteWrapper from "./internal/SvelteWrapper.svelte";
 import SvelteToReactContext from "./internal/SvelteToReactContext.js";
@@ -24,7 +17,7 @@ export type SvelteConstructor<Props = any, Events = any, Slot = any> = {
  */
 export default function reactify<P = any, E = any>(
   SvelteComponent: SvelteConstructor<P, E>
-): FunctionComponent<P & SvelteEventHandlers<E>> {
+): React.FunctionComponent<P & SvelteEventHandlers<E>> {
   const { name } = SvelteComponent as any;
   const named = {
     [name](options: any) {
@@ -32,15 +25,15 @@ export default function reactify<P = any, E = any>(
       const props = extractProps(options);
       const events = extractListeners(options);
 
-      const wrapperRef = useRef<HTMLElement>();
-      const svelteRef = useRef<SvelteWrapper>();
-      const slotRef = useRef<HTMLElement>();
-      const childrenRef = useRef<HTMLElement>();
+      const wrapperRef = React.useRef<HTMLElement>();
+      const svelteRef = React.useRef<SvelteWrapper>();
+      const slotRef = React.useRef<HTMLElement>();
+      const childrenRef = React.useRef<HTMLElement>();
 
-      const context = useContext(SvelteToReactContext);
+      const context = React.useContext(SvelteToReactContext);
 
       // Mount Svelte component
-      useEffect(() => {
+      React.useEffect(() => {
         const target = wrapperRef.current;
         if (!target) {
           return undefined;
@@ -71,14 +64,14 @@ export default function reactify<P = any, E = any>(
       }, [wrapperRef]);
 
       // Sync props & events
-      useEffect(() => {
+      React.useEffect(() => {
         if (svelteRef.current) {
           svelteRef.current.$set({ props, events });
         }
       }, [props, svelteRef]);
 
       // Sync children/slot
-      useEffect(() => {
+      React.useEffect(() => {
         if (childrenRef.current) {
           if (
             slotRef.current &&
@@ -101,7 +94,7 @@ export default function reactify<P = any, E = any>(
           context: extractSvelteContext(context),
           $$slots,
         });
-        return createElement("svelte-wrapper", {
+        return React.createElement("svelte-wrapper", {
           style: {
             display: "contents",
           },
@@ -109,14 +102,14 @@ export default function reactify<P = any, E = any>(
         });
       }
 
-      return createElement(
+      return React.createElement(
         "svelte-wrapper",
         {
           ref: wrapperRef,
           style: { display: "contents" },
         },
         children
-          ? createElement(
+          ? React.createElement(
               "react-children",
               {
                 ref: childrenRef,
@@ -164,7 +157,7 @@ function extractSvelteContext(reactContext: Readable<any> | undefined) {
 }
 
 function detectChildren(
-  children: ReactNode | ReactNode[] | undefined
+  children: React.ReactNode | React.ReactNode[] | undefined
 ): boolean {
   if (children === undefined) {
     return false;

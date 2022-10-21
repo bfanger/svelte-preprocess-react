@@ -1,8 +1,8 @@
+import { readFile } from "fs/promises";
+import { dirname, resolve } from "path";
 import { describe, expect, it } from "vitest";
 import { preprocess } from "svelte/compiler";
 import sveltePreprocess from "svelte-preprocess";
-import { readFile } from "fs/promises";
-import { dirname, resolve } from "path";
 import preprocessReact from "../lib/preprocessReact";
 
 describe("svelte-preprocess-react", () => {

@@ -6,10 +6,10 @@ import DogSvelte from "./fixtures/Dog.svelte";
 
 describe("reactify", () => {
   const Dog = reactify(DogSvelte);
-  type ReactProps = React.ComponentProps<typeof Dog>;
+  type ReactProps = React.ComponentProps<typeof Dog>; // in a tsx file, the resulting type is "any"  :-(
   it("renders a svelte-wrapper", () => {
     const props: ReactProps = { name: "Fido", onBark() {} };
-    const html = renderToString(<Dog/>);
+    const html = renderToString(<Dog />);
     expect(html).toMatchInlineSnapshot(
       '"<svelte-wrapper style=\\"display:contents\\"></svelte-wrapper>"'
     );

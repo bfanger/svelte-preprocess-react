@@ -1,5 +1,4 @@
-import { createElement } from "react";
-import type { ComponentClass, FunctionComponent } from "react";
+import * as React from "react";
 import type { SvelteComponentTyped } from "svelte/internal";
 import type ReactDOMServer from "react-dom/server";
 import { writable, type Readable } from "svelte/store";
@@ -32,7 +31,7 @@ declare type Sveltified<P extends Record<string, any>> = new (args: {
  * Convert a React component into a Svelte component.
  */
 export default function sveltify<P>(
-  reactComponent: FunctionComponent<P> | ComponentClass<P>,
+  reactComponent: React.FunctionComponent<P> | React.ComponentClass<P>,
   createPortal: BridgeProps["createPortal"],
   ReactDOMClient: any,
   renderToString?: typeof ReactDOMServer.renderToString
@@ -55,14 +54,17 @@ export default function sveltify<P>(
         }
         const html = $$render.call(Slot, result, {}, bindings, slots, context);
         const vdom = html
-          ? createElement(
-              reactComponent as FunctionComponent,
+          ? React.createElement(
+              reactComponent as React.FunctionComponent,
               props,
-              createElement("svelte-slot", {
+              React.createElement("svelte-slot", {
                 dangerouslySetInnerHTML: { __html: html },
               })
             )
-          : createElement(reactComponent as FunctionComponent, props);
+          : React.createElement(
+              reactComponent as React.FunctionComponent,
+              props
+            );
         return renderToString(vdom);
       },
     } as any;
@@ -76,11 +78,11 @@ export default function sveltify<P>(
     document.head.appendChild(targetEl);
     if (root) {
       rerender = (props: BridgeProps) => {
-        root.render(createElement(Bridge, props));
+        root.render(React.createElement(Bridge, props));
       };
     } else {
       rerender = (props: BridgeProps) => {
-        ReactDOMClient.render(createElement(Bridge, props), rootEl);
+        ReactDOMClient.render(React.createElement(Bridge, props), rootEl);
       };
     }
   }

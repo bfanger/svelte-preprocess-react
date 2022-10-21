@@ -1,5 +1,4 @@
-import type React from "react";
-import { createElement } from "react";
+import * as React from "react";
 import useStore from "../useStore.js";
 import SvelteToReactContext from "./SvelteToReactContext.js";
 import Child from "./Child.js";
@@ -23,7 +22,7 @@ const Bridge: React.FC<BridgeProps> = ({ createPortal, node }) => {
     return null;
   }
   const children: React.ReactElement[] = node.nodes.map((subnode) => {
-    return createElement(Bridge, {
+    return React.createElement(Bridge, {
       key: subnode.key,
       createPortal,
       node: subnode,
@@ -35,18 +34,18 @@ const Bridge: React.FC<BridgeProps> = ({ createPortal, node }) => {
     delete props.children;
   }
   if (slot) {
-    children.push(createElement(Child, { key: "svelte-slot", el: slot }));
+    children.push(React.createElement(Child, { key: "svelte-slot", el: slot }));
   }
   if (hooks.length >= 0) {
     children.push(
-      ...hooks.map(({ Hook, key }) => createElement(Hook, { key }))
+      ...hooks.map(({ Hook, key }) => React.createElement(Hook, { key }))
     );
   }
   return createPortal(
-    createElement(
+    React.createElement(
       SvelteToReactContext.Provider,
       { value: node.svelteInstance },
-      createElement(node.reactComponent, props, children)
+      React.createElement(node.reactComponent, props, children)
     ),
     target
   );

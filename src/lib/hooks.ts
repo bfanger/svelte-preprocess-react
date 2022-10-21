@@ -1,4 +1,4 @@
-import React, { createElement } from "react";
+import * as React from "react";
 import { writable, type Readable } from "svelte/store";
 import type ReactDOMServer from "react-dom/server";
 import { getContext, onDestroy } from "svelte";
@@ -42,15 +42,15 @@ function standalone(
     if (!renderToString) {
       throw new Error("renderToString parameter is required for SSR");
     }
-    renderToString(createElement(Hook));
+    renderToString(React.createElement(Hook));
     return () => {};
   }
   const el = document.createElement("react-hooks");
   const root = ReactDOMClient.createRoot?.(el);
   if (root) {
-    root.render(createElement(Hook));
+    root.render(React.createElement(Hook));
   } else {
-    ReactDOMClient.render(createElement(Hook), el);
+    ReactDOMClient.render(React.createElement(Hook), el);
   }
   return () => {
     if (root) {
