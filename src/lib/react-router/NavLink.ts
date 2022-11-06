@@ -1,56 +1,45 @@
 import * as React from "react";
-import Link from "./Link.js";
-import useLocation from "./useLocation.js";
-import type { Location } from "./types";
+import Link, { type LinkProps } from "./Link.js";
+import useRouterContext from "./internal/useRouterContext.js";
+import locationToUrl from "./internal/locationToUrl.js";
+import type { RouteCondition } from "./types.js";
 
-type LinkProps = React.ComponentProps<typeof Link>;
-type Props = Omit<LinkProps, "className" | "style"> & {
-  activeClassName?: string | undefined;
-  activeStyle?: React.CSSProperties | undefined;
-  exact?: boolean | undefined;
-  strict?: boolean | undefined;
-  isActive?(match: unknown, location: Location): boolean;
-  location?: Location | undefined;
-  className?: string | ((isActive: boolean) => string) | undefined;
+export type NavLinkProps = Omit<
+  LinkProps,
+  "className" | "style" | "children"
+> & {
+  children?: React.ReactNode | ((condition: RouteCondition) => React.ReactNode);
+  className?: string | ((condition: RouteCondition) => string | undefined);
   style?:
     | React.CSSProperties
-    | ((isActive: boolean) => React.CSSProperties)
-    | undefined;
-  sensitive?: boolean | undefined;
+    | ((condition: RouteCondition) => React.CSSProperties | undefined);
 };
-
-const NavLink: React.FC<Props> = ({
-  exact,
-  strict,
-  isActive,
-  location,
-  activeStyle,
-  activeClassName,
+const NavLink: React.FC<NavLinkProps> = ({
   className,
   style,
   children,
   ...rest
 }) => {
-  const attrs: LinkProps = { ...rest };
-  if (typeof attrs.to !== "string") {
-    throw new Error("NavLink only supports string locations");
+  const context = useRouterContext();
+  const attrs: LinkProps = rest;
+  const target = locationToUrl(attrs.to, context.base).toString();
+  const current = locationToUrl(context.location, context.base).toString();
+  const isActive = target === current;
+  const condition: RouteCondition = { isActive };
+  if (typeof className === "function") {
+    attrs.className = className(condition);
+  } else if (isActive) {
+    attrs.className = className ? `${className} active` : "active";
+  } else {
+    attrs.className = className;
   }
 
-  const { pathname } = useLocation();
-  const active = exact ? pathname === attrs.to : pathname.startsWith(attrs.to);
+  attrs.style = typeof style === "function" ? style(condition) : style;
 
-  if (active) {
-    if (activeClassName) {
-      attrs.className = attrs.className
-        ? `${attrs.className} ${activeClassName}`
-        : activeClassName;
-    }
-    if (activeStyle) {
-      attrs.style = attrs.style
-        ? { ...attrs.style, ...activeStyle }
-        : activeStyle;
-    }
-  }
-  return React.createElement(Link, attrs, children);
+  return React.createElement(
+    Link,
+    attrs,
+    typeof children === "function" ? children(condition) : children
+  );
 };
 export default NavLink;

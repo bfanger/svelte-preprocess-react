@@ -1,6 +1,6 @@
 # Architecture
 
-This document describes designdecisions and implementation details of the preprocessor.
+This document describes design-decisions and implementation details of the preprocessor.
 
 **Principles:**
 
@@ -55,7 +55,7 @@ This array allows svelte-preprocess-react to inject the slotted content into the
 
 ### Server mode
 
-Based off on how the Svelte component is compiled we can detect SSR and utitilize the renderToString method th generate the html. (limited to leaf nodes a.t.m.)
+Based off on how the Svelte component is compiled we can detect SSR and utilize the renderToString method th generate the html. (limited to leaf nodes a.t.m.)
 
 This detection is done at runtime, so the client will also ship with the renderToStringYou server code.
 For smaller bundle size you can disable this feature by passing `ssr: false` to the preprocess function.

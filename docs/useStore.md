@@ -24,10 +24,10 @@ In React and other regular javascript files this does _not_ work.
 To update the value and trigger an update use the `set` or `update` methods:
 
 ```ts
-// Instead of `$user = { name:'Jane Doe' }`
+// Instead of `$user = { name: "Jane Doe" }`
 user.set({ name: "Jane Doe" });
 
-// Instead of `$user.name = 'Jane Doe'`
+// Instead of `$user.name = "Jane Doe"`
 user.update((user) => ({ ...user, name: "Jane Doe" }));
 ```
 

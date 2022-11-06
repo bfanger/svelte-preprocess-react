@@ -94,7 +94,7 @@ The preprocessor that is passed as an option is applied before running the prepr
 Once you've converted a React component to Svelte, you'd want delete that React component, but some if other React components depended on that component you can use `reactify` to use the new Svelte component as a React component.
 
 ```jsx
-import { reactify } from "resvelte-preprocess-react";
+import { reactify } from "svelte-preprocess-react";
 import ButtonSvelte from "../components/Button.svelte";
 
 const Button = reactify(ButtonSvelte);
@@ -111,7 +111,15 @@ function MyComponent() {
 Using multiple frontend frameworks add overhead both in User and Developer experience.
 
 - Increased download size
-- Slower (each framework boundry adds overhead)
+- Slower (each framework boundary adds overhead)
 - Context switching, keeping the intricacies of both Svelte and React in your head slows down development
 
-svelte-preprocess-react is a migraton tool, it can be used to migrate _from_ or _to_ React, it's not a long term solution.
+svelte-preprocess-react is a migration tool, it can be used to migrate _from_ or _to_ React, it's not a long term solution.
+
+# More info
+
+- [reactify()](./docs/reactify.md) Convert a Svelte component into an React component
+- [hooks()](./docs/hooks.md) Using React hooks inside Svelte components
+- [useStore](./docs/useStore.md) Using a Svelte Store in a React components
+- [react-router](./docs/react-router.md) Migrate from react-router to SvelteKit
+- [Architecture](./docs/architecture.md) svelte-preprocess-react's API Design-principles and System architecture

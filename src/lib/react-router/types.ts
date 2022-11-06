@@ -5,3 +5,7 @@ export type Location = {
 };
 
 export type Params = Record<string, string>;
+
+export type RouteCondition = { isActive: boolean };
+
+export type To = string | Location;
