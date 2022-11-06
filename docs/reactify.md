@@ -23,4 +23,4 @@ const Dialog: React.FC<Props> = ({ onClose }) => (
 );
 ```
 
-React only has props, we we asume that the props starting with "on" followed by a capital letter are event handlers.
+React only has props, we we assume that the props starting with "on" followed by a capital letter are event handlers.

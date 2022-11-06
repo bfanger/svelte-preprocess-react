@@ -1,7 +1,7 @@
 # hooks
 
 Using React hooks inside Svelte components.
-Because React doesn't have an synchronous render anymore (by-design), the initial value of the store will be `undefined`.
+Because React doesn't have a synchronous render (by-design), the initial value of the store will be `undefined`.
 
 The `hooks()` function uses Svelte lifecycle functions, so you can only call the function during component initialization.
 

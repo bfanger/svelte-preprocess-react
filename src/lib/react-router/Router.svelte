@@ -14,6 +14,10 @@
 
 <react:RouterContextProvider
   value={{
+    base:
+      typeof window === "undefined"
+        ? "http://localhost/"
+        : window.location.href,
     location,
     params,
     history: {

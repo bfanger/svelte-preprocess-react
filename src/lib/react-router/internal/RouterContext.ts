@@ -2,6 +2,7 @@ import * as React from "react";
 import type { Location, Params } from "../types";
 
 type RouterContextType = {
+  base: string;
   location: Location;
   params: Params;
   history: {
