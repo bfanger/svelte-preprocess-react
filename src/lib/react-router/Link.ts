@@ -31,14 +31,15 @@ const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
         throw new Error("Link was not wrapped inside a <Router>");
       }
     }
-    const href = locationToUrl(to, context?.base).toString();
+
+    const href = locationToUrl(to, context?.url ?? "").toString();
     if (replace) {
       const { onClick } = attrs;
       attrs.onClick = (event) => {
         onClick?.(event);
         if (!event.defaultPrevented) {
           event.preventDefault();
-          context?.history.replace(href);
+          context?.goto(href, { replaceState: true });
         }
       };
     }

@@ -10,4 +10,6 @@
   <li><a href="/context-react">useContext()</a></li>
 
   <li><a href="/hooks">Using hooks</a></li>
+
+  <li><a href="/react-router/home">react-router</a></li>
 </ul>

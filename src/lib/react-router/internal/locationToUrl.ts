@@ -3,7 +3,7 @@ import type { To } from "../types";
 /**
  * Convert a react-router location to an URL.
  */
-export default function locationToUrl(to: To, base = "http://localhost/"): URL {
+export default function locationToUrl(to: To, base: string | URL): URL {
   const pathname = typeof to === "string" ? to : to.pathname;
   let url: URL;
   if (typeof to === "string" && /^[a-z]+:\/\//.test(to)) {
@@ -18,7 +18,11 @@ export default function locationToUrl(to: To, base = "http://localhost/"): URL {
     url = new URL(pathname, base);
   } else {
     // react-router's relative path
-    url = new URL(pathname, base?.endsWith("/") ? base : `${base}/`);
+    const baseUrl = new URL(base);
+    if (pathname.startsWith(".")) {
+      baseUrl.pathname += "/";
+    }
+    url = new URL(pathname, baseUrl);
     if (url.pathname.length > 1 && url.pathname.endsWith("/")) {
       // Remove trailing slash
       url.pathname = url.pathname.substring(0, url.pathname.length - 1);

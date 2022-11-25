@@ -22,8 +22,8 @@ const NavLink: React.FC<NavLinkProps> = ({
 }) => {
   const context = useRouterContext();
   const attrs: LinkProps = rest;
-  const target = locationToUrl(attrs.to, context.base).toString();
-  const current = locationToUrl(context.location, context.base).toString();
+  const target = locationToUrl(attrs.to, context.url).toString();
+  const current = locationToUrl(context.url, context.url).toString();
   const isActive = target === current;
   const condition: RouteCondition = { isActive };
   if (typeof className === "function") {

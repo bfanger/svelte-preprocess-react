@@ -115,7 +115,7 @@ describe("NavLink (react-router v6)", () => {
     });
     it("does not match when <Link to> path is a subset of the active url", () => {
       const { container } = render(
-        <TestRouter url="/user-preferences" base="http://test/">
+        <TestRouter url="/user-preferences">
           <NavLink to="user">Go to /user</NavLink>
           <NavLink to="user-preferences">Go to /user-preferences</NavLink>
         </TestRouter>
@@ -125,7 +125,7 @@ describe("NavLink (react-router v6)", () => {
     });
     it("does not match when active url is a subset of a <Route path> segment", () => {
       const { container } = render(
-        <TestRouter url="/user" base="http://test/">
+        <TestRouter url="/user">
           <div>
             <NavLink to="user">Go to /user</NavLink>
             <NavLink to="user-preferences">Go to /user-preferences</NavLink>

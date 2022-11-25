@@ -39,19 +39,17 @@ In src/routes/+layout.svelte
 
 ```svelte
 <script lang="ts">
-  import Router from "svelte-preprocess-react/react-router/Router.svelte";
+  import { used } from "svelte-preprocess-react";
+  import { RouterProvider } from "svelte-preprocess-react/react-router";
   import { page } from "$app/stores";
   import { goto } from "$app/navigation";
+
+  used(RouterProvider);
 </script>
 
-<Router
-  location={$page.url}
-  params={$page.params}
-  push={(url) => goto(url)}
-  replace={(url) => goto(url, { replaceState: true })}
->
+<react:RouterProvider value={{ url: $page.url, params: $page.params, goto }}>
   <slot />
-</Router>
+</react:RouterProvider>
 ```
 
-As you can see the `<Router>` is exposing the push & replace actions but the actual navigation and url updates are done by the SvelteKit router.
+the actual navigation and url updates are done by the SvelteKit router. The `<RouterProvider>` exposed the current url and push & replace actions

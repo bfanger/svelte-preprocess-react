@@ -1,10 +1,26 @@
 import * as React from "react";
-import RouterContext from "./RouterContext.js";
+import RouterContext, { type RouterContextType } from "./RouterContext.js";
 
-export default function useRouterContext() {
+export default function useRouterContext(): RouterContextType {
   const context = React.useContext(RouterContext);
   if (!context) {
-    throw new Error("Component was not wrapped inside a <Router>");
+    console.warn("Component was not wrapped inside a <react:RouterProvider>");
+    return {
+      url: new URL(
+        typeof window !== "undefined"
+          ? window.location.href
+          : "http://localhost/"
+      ),
+      params: {},
+      goto,
+    };
   }
   return context;
+}
+
+function goto(url: string) {
+  console.warn(
+    "No access to <react:RouterProvider>, falling back to using browser navigation"
+  );
+  window.location.href = url;
 }

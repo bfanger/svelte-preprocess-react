@@ -4,34 +4,17 @@ import RouterContext from "../../lib/react-router/internal/RouterContext";
 
 type Props = {
   url: string;
-  base?: string;
   children: React.ReactNode;
-  onPush?: (url: string) => void;
-  onReplace?: (url: string) => void;
+  goto?: (url: string, opts?: { replaceState?: boolean }) => void;
 };
 
-const TestRouter: React.FC<Props> = ({
-  children,
-  url,
-  base,
-  onPush = noop,
-  onReplace = noop,
-}) => {
-  const { pathname, search, hash } = new URL(url, base ?? "http://localhost/");
+const TestRouter: React.FC<Props> = ({ children, url, goto = noop }) => {
   return (
     <RouterContext.Provider
       value={{
-        base: base ?? `http://localhost${pathname}`,
-        history: {
-          push: onPush,
-          replace: onReplace,
-        },
-        location: {
-          pathname,
-          search,
-          hash,
-        },
+        url: new URL(url, "http://localhost/"),
         params: {},
+        goto,
       }}
     >
       {children}
