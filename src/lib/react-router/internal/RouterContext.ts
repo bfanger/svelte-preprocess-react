@@ -1,14 +1,10 @@
 import * as React from "react";
-import type { Location, Params } from "../types";
+import type { Params } from "../types";
 
-type RouterContextType = {
-  base: string;
-  location: Location;
+export type RouterContextType = {
+  url: URL;
   params: Params;
-  history: {
-    push(url: string): void;
-    replace(url: string): void;
-  };
+  goto(url: string, opts?: { replaceState?: boolean }): void;
 };
 const RouterContext = React.createContext<RouterContextType | undefined>(
   undefined

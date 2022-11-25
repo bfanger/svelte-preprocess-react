@@ -219,15 +219,15 @@ function replaceReactTags(
     replaceReactTags(child, content, components);
   });
   // traverse else branch of IfBlock
-  node.else?.children?.forEach((child) => {
+  node.else?.children?.forEach((child: TemplateNode) => {
     replaceReactTags(child, content, components);
   });
   // traverse then branch of AwaitBlock
-  node.then?.children?.forEach((child) => {
+  node.then?.children?.forEach((child: TemplateNode) => {
     replaceReactTags(child, content, components);
   });
   // traverse catch branch of AwaitBlock
-  node.catch?.children?.forEach((child) => {
+  node.catch?.children?.forEach((child: TemplateNode) => {
     replaceReactTags(child, content, components);
   });
   return components;

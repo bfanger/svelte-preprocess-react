@@ -8,5 +8,8 @@
   "parserOptions": {
     "project": "./tsconfig.eslint.json",
     "extraFileExtensions": [".svelte"]
+  },
+  "rules": {
+    "import/extensions": "off"
   }
 }

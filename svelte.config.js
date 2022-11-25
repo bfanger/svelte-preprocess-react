@@ -19,4 +19,9 @@ export default {
       fallback: "index.html",
     }),
   },
+  vitePlugin: {
+    experimental: {
+      inspector: { holdMode: true },
+    },
+  },
 };

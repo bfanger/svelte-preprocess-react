@@ -1,11 +1,15 @@
 import * as React from "react";
-import type { SvelteComponentTyped } from "svelte/internal";
+import {
+  get_current_component,
+  type SvelteComponentTyped,
+} from "svelte/internal";
 import type ReactDOMServer from "react-dom/server";
 import { writable, type Readable } from "svelte/store";
 import type { SvelteInit, TreeNode } from "./internal/types";
 import ReactWrapper from "./internal/ReactWrapper.svelte";
 import Slot from "./internal/Slot.svelte";
 import Bridge, { type BridgeProps } from "./internal/Bridge.js";
+import SvelteToReactContext from "./internal/SvelteToReactContext";
 
 let rerender: (props: BridgeProps) => void;
 let autokey = 0;
@@ -22,6 +26,12 @@ const tree: TreeNode = {
   hooks: writable([]),
 };
 
+let current:
+  | undefined
+  | {
+      reactComponent: any;
+      props: Record<string, any>;
+    }[];
 declare type Sveltified<P extends Record<string, any>> = new (args: {
   target: any;
   props?: P;
@@ -52,20 +62,68 @@ export default function sveltify<P>(
         if (!renderToString) {
           return "";
         }
+
+        if (current !== undefined) {
+          current.push({ reactComponent, props });
+          return `<ssr-portal${current.length - 1}/>`;
+        }
+        current = [];
+        const parent = get_current_component();
         const html = $$render.call(Slot, result, {}, bindings, slots, context);
-        const vdom = html
+        const leaf = !slots.default && current.length === 0;
+
+        const vdom = leaf
           ? React.createElement(
               reactComponent as React.FunctionComponent,
-              props,
-              React.createElement("svelte-slot", {
-                dangerouslySetInnerHTML: { __html: html },
-              })
+              props
             )
           : React.createElement(
               reactComponent as React.FunctionComponent,
-              props
+              props,
+              [
+                React.createElement("svelte-slot", {
+                  style: { display: "contents" },
+                  dangerouslySetInnerHTML: { __html: html },
+                }),
+                ...current.map((child, i) =>
+                  React.createElement(
+                    `ssr-portal${i}`,
+                    null,
+                    React.createElement(child.reactComponent, child.props)
+                  )
+                ),
+              ]
             );
-        return renderToString(vdom);
+        let rendered = renderToString(
+          React.createElement(
+            SvelteToReactContext.Provider,
+            {
+              value: writable({
+                $$: { context: context || parent?.$$.context },
+              }),
+            },
+            vdom
+          )
+        );
+        current.forEach((_, i) => {
+          const start = `<ssr-portal${i}>`;
+          const end = `</ssr-portal${i}>`;
+          const startPosition = rendered.indexOf(start);
+          const endPosition = rendered.indexOf(end);
+          let content = "";
+          if (startPosition !== -1) {
+            content = rendered.substring(
+              startPosition + start.length,
+              endPosition
+            );
+            rendered =
+              rendered.substring(0, startPosition) +
+              rendered.substring(endPosition + end.length);
+          }
+          rendered = rendered.replace(`<ssr-portal${i}/>`, content);
+        });
+        current = undefined;
+        return rendered;
       },
     } as any;
   }

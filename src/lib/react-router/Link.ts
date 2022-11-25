@@ -16,29 +16,19 @@ const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
     const attrs = rest;
     const context = React.useContext(RouterContext);
     if (!context) {
-      let pathname = "";
-      if (typeof to === "string") {
-        pathname = to;
-      } else if (typeof to === "object") {
-        pathname = to.pathname;
-      }
-      if (
-        replace ||
-        pathname.startsWith("/") === false ||
-        /^[a+z]+:\/\//.test(pathname) === false
-      ) {
-        // Without context only absolute paths are supported.
-        throw new Error("Link was not wrapped inside a <Router>");
+      if (replace) {
+        console.warn("replace attribute <Link> needs a <Router.Provider>");
       }
     }
-    const href = locationToUrl(to, context?.base).toString();
+
+    const href = locationToUrl(to, context?.url).toString();
     if (replace) {
       const { onClick } = attrs;
       attrs.onClick = (event) => {
         onClick?.(event);
         if (!event.defaultPrevented) {
           event.preventDefault();
-          context?.history.replace(href);
+          context?.goto(href, { replaceState: true });
         }
       };
     }
