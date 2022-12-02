@@ -7,6 +7,9 @@ import type {
   TemplateNode,
   Transition,
 } from "svelte/types/compiler/interfaces";
+import type IfBlock from "svelte/types/compiler/compile/nodes/IfBlock";
+import type EachBlock from "svelte/types/compiler/compile/nodes/EachBlock";
+import type AwaitBlock from "svelte/types/compiler/compile/nodes/AwaitBlock";
 import type {
   PreprocessorGroup,
   Processed,
@@ -218,16 +221,16 @@ function replaceReactTags(
   node.children?.forEach((child) => {
     replaceReactTags(child, content, components);
   });
-  // traverse else branch of IfBlock
-  node.else?.children?.forEach((child: TemplateNode) => {
+  (node as IfBlock | EachBlock).else?.children?.forEach((child) => {
     replaceReactTags(child, content, components);
   });
-  // traverse then branch of AwaitBlock
-  node.then?.children?.forEach((child: TemplateNode) => {
+  (node as AwaitBlock).pending?.children?.forEach((child) => {
     replaceReactTags(child, content, components);
   });
-  // traverse catch branch of AwaitBlock
-  node.catch?.children?.forEach((child: TemplateNode) => {
+  (node as AwaitBlock).then?.children?.forEach((child) => {
+    replaceReactTags(child, content, components);
+  });
+  (node as AwaitBlock).catch?.children?.forEach((child: TemplateNode) => {
     replaceReactTags(child, content, components);
   });
   return components;

@@ -109,6 +109,16 @@ describe("svelte-preprocess-react", () => {
     const output = await preprocess(src, preprocessReact(), { filename });
     expect(output.code).toMatchSnapshot();
   });
+  it("should process {:else} {:then} and {:catch} sections", async () => {
+    const filename = resolveFilename("./fixtures/Blocks.svelte");
+    const src = await readFile(filename, "utf8");
+    const output = await preprocess(
+      src,
+      preprocessReact({ preprocess: sveltePreprocess() }),
+      { filename }
+    );
+    expect(output.code).toMatchSnapshot();
+  });
 });
 
 const base = dirname(import.meta.url).replace("file://", "");

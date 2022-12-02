@@ -145,6 +145,36 @@ const React$button = React$$sveltify(\\"button\\", React$$createPortal, React$$R
 "
 `;
 
+exports[`svelte-preprocess-react > should process {:else} {:then} and {:catch} sections 1`] = `
+"<script lang=\\"ts\\">import React$$sveltify from \\"svelte-preprocess-react/sveltify\\"; import React$$ReactDOM from \\"react-dom/client\\"; import { createPortal as React$$createPortal} from \\"react-dom\\"; import { renderToString as React$$renderToString } from \\"react-dom/server\\"; const number = 1;
+const Component = () => null;
+export {};
+const React$Component = React$$sveltify(Component, React$$createPortal, React$$ReactDOM, React$$renderToString);</script>
+
+{#if number === 1}
+  <React$Component />
+{:else if number === 2}
+  <React$Component />
+{:else}
+  <React$Component />
+{/if}
+
+{#each [] as item}
+  <React$Component />
+{:else}
+  <React$Component />
+{/each}
+
+{#await Promise.resolve()}
+  <React$Component />
+{:then}
+  <React$Component />
+{:catch}
+  <React$Component />
+{/await}
+"
+`;
+
 exports[`svelte-preprocess-react > should support typescript when using preprocess 1`] = `
 "<script lang=\\"ts\\">export let title;
 </script>
