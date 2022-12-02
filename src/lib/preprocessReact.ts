@@ -214,7 +214,20 @@ function replaceReactTags(
       }
     }
   }
+  // traverse children
   node.children?.forEach((child) => {
+    replaceReactTags(child, content, components);
+  });
+  // traverse else branch of IfBlock
+  node.else?.children?.forEach((child) => {
+    replaceReactTags(child, content, components);
+  });
+  // traverse then branch of AwaitBlock
+  node.then?.children?.forEach((child) => {
+    replaceReactTags(child, content, components);
+  });
+  // traverse catch branch of AwaitBlock
+  node.catch?.children?.forEach((child) => {
     replaceReactTags(child, content, components);
   });
   return components;
