@@ -82,13 +82,14 @@ export default function sveltify<P>(
               props,
               [
                 React.createElement("svelte-slot", {
+                  key: "svelte-slot",
                   style: { display: "contents" },
                   dangerouslySetInnerHTML: { __html: html },
                 }),
                 ...current.map((child, i) =>
                   React.createElement(
                     `ssr-portal${i}`,
-                    null,
+                    { key: `ssr-portal${i}` },
                     React.createElement(child.reactComponent, child.props)
                   )
                 ),
