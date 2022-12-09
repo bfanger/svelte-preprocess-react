@@ -23,7 +23,7 @@ const Bridge: React.FC<BridgeProps> = ({ createPortal, node }) => {
   }
   const children: React.ReactElement[] = node.nodes.map((subnode) => {
     return React.createElement(Bridge, {
-      key: subnode.key,
+      key: `bridge${subnode.key}`,
       createPortal,
       node: subnode,
     });
@@ -38,7 +38,9 @@ const Bridge: React.FC<BridgeProps> = ({ createPortal, node }) => {
   }
   if (hooks.length >= 0) {
     children.push(
-      ...hooks.map(({ Hook, key }) => React.createElement(Hook, { key }))
+      ...hooks.map(({ Hook, key }) =>
+        React.createElement(Hook, { key: `hook${key}` })
+      )
     );
   }
   return createPortal(
