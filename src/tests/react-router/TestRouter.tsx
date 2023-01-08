@@ -1,5 +1,4 @@
 import * as React from "react";
-import { noop } from "svelte/internal";
 import RouterContext from "../../lib/react-router/internal/RouterContext";
 
 type Props = {
@@ -8,7 +7,7 @@ type Props = {
   goto?: (url: string, opts?: { replaceState?: boolean }) => void;
 };
 
-const TestRouter: React.FC<Props> = ({ children, url, goto = noop }) => {
+const TestRouter: React.FC<Props> = ({ children, url, goto = () => {} }) => {
   return (
     <RouterContext.Provider
       value={{

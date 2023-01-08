@@ -46,7 +46,7 @@ const Bridge: React.FC<BridgeProps> = ({ createPortal, node }) => {
   return createPortal(
     React.createElement(
       SvelteToReactContext.Provider,
-      { value: node.svelteInstance },
+      { value: node.contexts },
       React.createElement(node.reactComponent, props, children)
     ),
     target

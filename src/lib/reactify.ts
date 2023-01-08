@@ -1,5 +1,4 @@
 import * as React from "react";
-import { get, type Readable } from "svelte/store";
 import SvelteWrapper from "./internal/SvelteWrapper.svelte";
 import SvelteToReactContext from "./internal/SvelteToReactContext.js";
 import type { SvelteEventHandlers } from "./internal/types";
@@ -17,7 +16,9 @@ export type SvelteConstructor<Props = any, Events = any, Slot = any> = {
  */
 export default function reactify<P = any, E = any>(
   SvelteComponent: SvelteConstructor<P, E>
-): React.FunctionComponent<P & SvelteEventHandlers<E>> {
+): React.FunctionComponent<
+  P & SvelteEventHandlers<E> & { children?: React.ReactNode }
+> {
   const { name } = SvelteComponent as any;
   const named = {
     [name](options: any) {
@@ -46,7 +47,7 @@ export default function reactify<P = any, E = any>(
             props,
             events,
           },
-          context: extractSvelteContext(context),
+          context,
         });
         component.$on(
           "svelte-slot",
@@ -91,7 +92,7 @@ export default function reactify<P = any, E = any>(
           $$slots.default = () => children;
         }
         const result = ssr.render(props, {
-          context: extractSvelteContext(context),
+          context,
           $$slots,
         });
         return React.createElement("svelte-wrapper", {
@@ -146,14 +147,6 @@ function extractListeners(options: Record<string, any>): Record<string, any> {
 
 function isEventProp(prop: string) {
   return /^on[A-Z]/.test(prop);
-}
-
-function extractSvelteContext(reactContext: Readable<any> | undefined) {
-  if (!reactContext) {
-    return undefined;
-  }
-  const value = get(reactContext);
-  return value?.$$.context;
 }
 
 function detectChildren(

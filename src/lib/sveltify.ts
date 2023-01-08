@@ -1,10 +1,7 @@
 import * as React from "react";
-import {
-  get_current_component,
-  type SvelteComponentTyped,
-} from "svelte/internal";
 import type ReactDOMServer from "react-dom/server";
 import { writable, type Readable } from "svelte/store";
+import { getAllContexts, type SvelteComponentTyped } from "svelte";
 import type { SvelteInit, TreeNode } from "./internal/types";
 import ReactWrapper from "./internal/ReactWrapper.svelte";
 import Slot from "./internal/Slot.svelte";
@@ -23,6 +20,7 @@ const tree: TreeNode = {
   props: writable({}),
   slot: never,
   nodes: [],
+  contexts: new Map(),
   hooks: writable([]),
 };
 
@@ -68,7 +66,7 @@ export default function sveltify<P>(
           return `<ssr-portal${current.length - 1}/>`;
         }
         current = [];
-        const parent = get_current_component();
+        const contexts = getAllContexts();
         const html = $$render.call(Slot, result, {}, bindings, slots, context);
         const leaf = !slots.default && current.length === 0;
 
@@ -99,9 +97,7 @@ export default function sveltify<P>(
           React.createElement(
             SvelteToReactContext.Provider,
             {
-              value: writable({
-                $$: { context: context || parent?.$$.context },
-              }),
+              value: context || contexts,
             },
             vdom
           )
@@ -161,6 +157,7 @@ export default function sveltify<P>(
             slot: init.slot,
             target: init.target,
             hooks: init.hooks,
+            contexts: init.contexts,
             nodes: [],
           };
           const parent = init.parent ?? tree;

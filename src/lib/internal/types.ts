@@ -63,6 +63,7 @@ export type SvelteInit = {
   props: Readable<Record<string, any>>;
   target: Readable<HTMLElement | undefined>;
   slot: Readable<HTMLElement | undefined>;
+  contexts: Map<any, any>;
   hooks: Writable<Array<{ Hook: FunctionComponent; key: number }>>;
   onDestroy: (callback: () => void) => void;
 };

@@ -1,6 +1,12 @@
 <script lang="ts">
   import { writable } from "svelte/store";
-  import { beforeUpdate, getContext, onDestroy, setContext } from "svelte";
+  import {
+    beforeUpdate,
+    getAllContexts,
+    getContext,
+    onDestroy,
+    setContext,
+  } from "svelte";
   import type { SvelteInit, TreeNode } from "./types";
   import type { FunctionComponent } from "react";
 
@@ -20,6 +26,7 @@
     target,
     slot,
     hooks,
+    contexts: getAllContexts(),
     onDestroy(callback) {
       listeners.push(callback);
     },

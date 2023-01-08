@@ -1,4 +1,3 @@
-import { noop } from "svelte/internal";
 import { describe, it } from "vitest";
 import type {
   EventName,
@@ -8,7 +7,7 @@ import type {
   SvelteEventHandlers,
 } from "../lib/internal/types";
 
-const fn = noop as any;
+const fn: any = () => {};
 
 describe("types", () => {
   it("bogus test", () => {
