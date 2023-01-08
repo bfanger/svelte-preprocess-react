@@ -10,11 +10,11 @@
     "type": "git",
     "url": "https://github.com/bfanger/svelte-preprocess-react.git"
   },
-  "version": "0.14.0",
+  "version": "0.14.1",
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "dev": "svelte-package && vite dev",
+    "dev": "node ./src/pre-dev.js && svelte-package && vite dev",
     "build": "vite build",
     "preview": "vite preview",
     "package": "svelte-package",
