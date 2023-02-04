@@ -12,4 +12,5 @@
   <li><a href="/hooks">Using hooks</a></li>
 
   <li><a href="/react-router/home">react-router</a></li>
+  <li><a href="/lazy">react lazy</a></li>
 </ul>

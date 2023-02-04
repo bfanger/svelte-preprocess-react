@@ -20,7 +20,7 @@
     "package": "svelte-package",
     "lint": "concurrently -c \"#c596c7\",\"#676778\",\"#3074c0\",\"#7c7cea\" --kill-others-on-fail \"npm:lint:*\"",
     "lint:prettier": "prettier --check --loglevel=warn \"src/**/*.svelte\"",
-    "lint:svelte-check": "svelte-check --fail-on-warnings --fail-on-hints --ignore build,package,src/tests",
+    "lint:svelte-check": "svelte-check --fail-on-warnings --fail-on-hints",
     "lint:tsc": "tsc --noEmit",
     "lint:eslint": "eslint --ext=js,ts,svelte --max-warnings=0 src",
     "format": "prettier --write . && eslint --ext=js,ts,svelte --fix src",
@@ -41,7 +41,7 @@
     ],
     "*.svelte": [
       "eslint --max-warnings 0 --no-ignore",
-      "svelte-check --fail-on-warnings --fail-on-hints --ignore build,package,src/tests",
+      "svelte-check --fail-on-warnings --fail-on-hints",
       "prettier --check"
     ]
   },

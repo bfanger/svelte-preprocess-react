@@ -15,5 +15,6 @@
     "strict": true,
     "noEmit": true,
     "jsx": "preserve"
-  }
+  },
+  "exclude": ["build", "package", "src/tests"]
 }

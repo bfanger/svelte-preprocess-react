@@ -17,7 +17,8 @@ export type SvelteConstructor<Props = any, Events = any, Slot = any> = {
 export default function reactify<P = any, E = any>(
   SvelteComponent: SvelteConstructor<P, E>
 ): React.FunctionComponent<
-  P & SvelteEventHandlers<E> & { children?: React.ReactNode }
+  | (P & SvelteEventHandlers<E> & { children?: React.ReactNode })
+  | { children?: React.ReactNode }
 > {
   const { name } = SvelteComponent as any;
   const named = {
