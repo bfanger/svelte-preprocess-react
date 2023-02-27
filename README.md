@@ -11,6 +11,8 @@ Supports:
 - SSR
 - Hooks ([useStore](./docs/useStore.md) & [hooks](./docs/hooks.md))
 
+This project was featured at the [Svelte London - November 2022 Meetup](https://www.youtube.com/live/DXQl1G54DJY?feature=share&t=2569)
+
 # "Embrace, extend and extinguish"
 
 This preprocessor is intended as temporary solution when migrating an existing large React codebase or when a third-party hasn't yet provided a Svelte adapter.  
