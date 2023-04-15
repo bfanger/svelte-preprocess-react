@@ -1,4 +1,4 @@
-// Vitest Snapshot v1
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`svelte-preprocess-react > should convert text content to react children prop 1`] = `
 "<script lang=\\"ts\\">import React$$sveltify from \\"svelte-preprocess-react/sveltify\\"; import React$$ReactDOM from \\"react-dom/client\\"; import { createPortal as React$$createPortal} from \\"react-dom\\"; import { renderToString as React$$renderToString } from \\"react-dom/server\\"; import Alert from \\"src/demo/react-components/Alert\\";

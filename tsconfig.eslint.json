@@ -12,5 +12,6 @@
     ".*.cjs",
     "**/*.js",
     ".*.js"
-  ]
+  ],
+  "exclude": ["build", "package"]
 }
