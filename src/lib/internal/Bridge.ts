@@ -21,33 +21,46 @@ const Bridge: React.FC<BridgeProps> = ({ createPortal, node }) => {
   if (!target) {
     return null;
   }
-  const children: React.ReactElement[] = node.nodes.map((subnode) => {
-    return React.createElement(Bridge, {
-      key: `bridge${subnode.key}`,
-      createPortal,
-      node: subnode,
+  let children: React.ReactElement[] | undefined;
+  if (node.nodes.length === 0 && slot === undefined && hooks.length === 0) {
+    if (props.children) {
+      children = props.children;
+      props = { ...props };
+      delete props.children;
+    }
+  } else {
+    children = node.nodes.map((subnode) => {
+      return React.createElement(Bridge, {
+        key: `bridge${subnode.key}`,
+        createPortal,
+        node: subnode,
+      });
     });
-  });
-  if (props.children) {
-    children.push(props.children);
-    props = { ...props };
-    delete props.children;
-  }
-  if (slot) {
-    children.push(React.createElement(Child, { key: "svelte-slot", el: slot }));
-  }
-  if (hooks.length >= 0) {
-    children.push(
-      ...hooks.map(({ Hook, key }) =>
-        React.createElement(Hook, { key: `hook${key}` })
-      )
-    );
+    if (props.children) {
+      children.push(props.children);
+      props = { ...props };
+      delete props.children;
+    }
+    if (slot) {
+      children.push(
+        React.createElement(Child, { key: "svelte-slot", el: slot })
+      );
+    }
+    if (hooks.length >= 0) {
+      children.push(
+        ...hooks.map(({ Hook, key }) =>
+          React.createElement(Hook, { key: `hook${key}` })
+        )
+      );
+    }
   }
   return createPortal(
     React.createElement(
       SvelteToReactContext.Provider,
       { value: node.contexts },
-      React.createElement(node.reactComponent, props, children)
+      children === undefined
+        ? React.createElement(node.reactComponent, props)
+        : React.createElement(node.reactComponent, props, children)
     ),
     target
   );
