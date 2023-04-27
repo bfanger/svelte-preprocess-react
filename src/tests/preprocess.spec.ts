@@ -2,7 +2,7 @@ import { readFile } from "fs/promises";
 import { dirname, resolve } from "path";
 import { describe, expect, it } from "vitest";
 import { preprocess } from "svelte/compiler";
-import sveltePreprocess from "svelte-preprocess";
+import { vitePreprocess } from "@sveltejs/kit/vite";
 import preprocessReact from "../lib/preprocessReact";
 
 describe("svelte-preprocess-react", () => {
@@ -76,7 +76,7 @@ describe("svelte-preprocess-react", () => {
     const src = await readFile(filename, "utf8");
     const output = await preprocess(
       src,
-      preprocessReact({ preprocess: sveltePreprocess() }),
+      preprocessReact({ preprocess: vitePreprocess() }),
       { filename }
     );
     expect(output.code).toMatchSnapshot();
@@ -87,7 +87,7 @@ describe("svelte-preprocess-react", () => {
     const src = await readFile(filename, "utf8");
     const output = await preprocess(
       src,
-      preprocessReact({ preprocess: sveltePreprocess() }),
+      preprocessReact({ preprocess: vitePreprocess() }),
       { filename }
     );
     expect(output.code).toMatchSnapshot();
@@ -98,7 +98,7 @@ describe("svelte-preprocess-react", () => {
     const src = await readFile(filename, "utf8");
     const output = await preprocess(
       src,
-      preprocessReact({ preprocess: sveltePreprocess() }),
+      preprocessReact({ preprocess: vitePreprocess() }),
       { filename }
     );
     expect(output.code).toMatchSnapshot();
@@ -114,7 +114,7 @@ describe("svelte-preprocess-react", () => {
     const src = await readFile(filename, "utf8");
     const output = await preprocess(
       src,
-      preprocessReact({ preprocess: sveltePreprocess() }),
+      preprocessReact({ preprocess: vitePreprocess() }),
       { filename }
     );
     expect(output.code).toMatchSnapshot();

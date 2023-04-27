@@ -72,16 +72,16 @@ export default {
 };
 ```
 
-When using other processors like [svelte-preprocess]() use:
+When using other processors like [@sveltejs/vite-plugin-svelte](https://github.com/sveltejs/vite-plugin-svelte/blob/main/docs/preprocess.md) or [svelte-preprocess](https://github.com/sveltejs/svelte-preprocess) use:
 
 ```js
 // svelte.config.js
-import preprocess from "svelte-preprocess";
+import { vitePreprocess } from "@sveltejs/kit/vite";
 import preprocessReact from "svelte-preprocess-react/preprocessReact";
 
 export default {
   preprocess: preprocessReact({
-    preprocess: preprocess({ sourceMap: true }),
+    preprocess: vitePreprocess(),
   }),
 };
 ```

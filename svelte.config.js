@@ -1,4 +1,4 @@
-import preprocess from "svelte-preprocess";
+import { vitePreprocess } from "@sveltejs/kit/vite";
 import adapter from "@sveltejs/adapter-static";
 
 const skip =
@@ -11,8 +11,8 @@ if (!skip) {
 /** @type {import('@sveltejs/kit').Config} */
 export default {
   preprocess: skip
-    ? preprocess({ sourceMap: true })
-    : preprocessReact({ preprocess: preprocess({ sourceMap: true }) }),
+    ? vitePreprocess()
+    : preprocessReact({ preprocess: vitePreprocess() }),
 
   kit: {
     adapter: adapter({
