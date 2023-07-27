@@ -1,10 +1,10 @@
 <script lang="ts">
   import { useState } from "react";
-  import { hooks, used } from "$lib";
   import ReactDOMClient from "react-dom/client"; // React 18+,(use "react-dom" for older versions)
   import { renderToString } from "react-dom/server";
   import { AuthProvider, type Auth } from "./react-auth";
   import Nested from "./HookWithContext.svelte";
+  import { hooks, used } from "$lib";
 
   used(AuthProvider);
 

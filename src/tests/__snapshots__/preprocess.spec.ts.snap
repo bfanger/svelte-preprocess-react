@@ -1,7 +1,7 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`svelte-preprocess-react > should convert text content to react children prop 1`] = `
-"<script lang=\\"ts\\">import React$$sveltify from \\"svelte-preprocess-react/sveltify\\"; import React$$ReactDOM from \\"react-dom/client\\"; import { createPortal as React$$createPortal} from \\"react-dom\\"; import { renderToString as React$$renderToString } from \\"react-dom/server\\"; import Alert from \\"src/demo/react-components/Alert\\";
+"<script lang=\\"ts\\">import React$$sveltify from \\"svelte-preprocess-react/sveltify\\"; import React$$ReactDOM from \\"react-dom/client\\"; import { createPortal as React$$createPortal} from \\"react-dom\\"; import { renderToString as React$$renderToString } from \\"react-dom/server\\"; import Alert from \\"../../demo/react-components/Alert\\";
 const count = 0;
 const React$Alert = React$$sveltify(Alert, React$$createPortal, React$$ReactDOM, React$$renderToString);</script>
 
@@ -139,6 +139,7 @@ import React$$sveltify from \\"svelte-preprocess-react/sveltify\\"; import React
 const React$button = React$$sveltify(\\"button\\", React$$createPortal, React$$ReactDOM, React$$renderToString);
 </script>
 
+<!-- svelte-ignore a11y-no-static-element-interactions -->
 <React$button onClick={() => console.info(\\"clicked\\")} on:keydown>
   <slot />
 </React$button>

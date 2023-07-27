@@ -7,7 +7,7 @@ import type { TreeNode } from "./internal/types";
 export default function hooks<T>(
   callback: () => T,
   ReactDOMClient?: any,
-  renderToString?: typeof ReactDOMServer.renderToString
+  renderToString?: typeof ReactDOMServer.renderToString,
 ): Readable<T | undefined> {
   const store = writable<T | undefined>();
 
@@ -27,7 +27,7 @@ export default function hooks<T>(
     onDestroy(standalone(Hook, ReactDOMClient, renderToString));
   } else if (typeof window !== "undefined") {
     throw new Error(
-      "The ReactDOMClient parameter is required for hooks(), because no parent component was a sveltified React component"
+      "The ReactDOMClient parameter is required for hooks(), because no parent component was a sveltified React component",
     );
   }
   return store;
@@ -36,7 +36,7 @@ export default function hooks<T>(
 function standalone(
   Hook: React.FC,
   ReactDOMClient: any,
-  renderToString?: typeof ReactDOMServer.renderToString
+  renderToString?: typeof ReactDOMServer.renderToString,
 ) {
   if (typeof document === "undefined") {
     if (!renderToString) {

@@ -6,7 +6,7 @@ describe("locationToUrl", () => {
     expect(`${locationToUrl("/foo")}`).toBe("/foo");
     expect(`${locationToUrl("/foo?arg=1#hash")}`).toBe("/foo?arg=1#hash");
     expect(
-      `${locationToUrl("/foo", new URL("https://example.com/test/123"))}`
+      `${locationToUrl("/foo", new URL("https://example.com/test/123"))}`,
     ).toBe("/foo");
   });
   it(". should return the current absolute url", () => {

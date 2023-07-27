@@ -10,30 +10,30 @@ describe("<Link> href", () => {
       const { container } = render(
         <TestRouter url="/inbox">
           <Link to="/about" />
-        </TestRouter>
+        </TestRouter>,
       );
       expect(container.querySelector("a")?.getAttribute("href")).toEqual(
-        "/about"
+        "/about",
       );
     });
     it('<Link to="."> resolves relative to the current route', () => {
       const { container } = render(
         <TestRouter url="/inbox">
           <Link to="." />
-        </TestRouter>
+        </TestRouter>,
       );
       expect(container.querySelector("a")?.getAttribute("href")).toEqual(
-        "/inbox"
+        "/inbox",
       );
     });
     it('<Link to=".."> resolves relative to the parent route', () => {
       const { container } = render(
         <TestRouter url="/inbox/messages">
           <Link to=".." />
-        </TestRouter>
+        </TestRouter>,
       );
       expect(container.querySelector("a")?.getAttribute("href")).toEqual(
-        "/inbox"
+        "/inbox",
       );
     });
     it('<Link to=".."> with more .. segments than parent routes resolves to the root URL', () => {
@@ -44,10 +44,10 @@ describe("<Link> href", () => {
             {/* traverse past the root */}
             <Link to="../../../about" />
           </>
-        </TestRouter>
+        </TestRouter>,
       );
       expect(
-        [...container.querySelectorAll("a")].map((a) => a.getAttribute("href"))
+        [...container.querySelectorAll("a")].map((a) => a.getAttribute("href")),
       ).toEqual(["/about", "/about"]);
     });
   });
@@ -57,11 +57,11 @@ describe("<Link> href", () => {
       const { container } = render(
         <TestRouter url="/inbox/messages/abc">
           <Link to="/about" />
-        </TestRouter>
+        </TestRouter>,
       );
 
       expect(container.querySelector("a")?.getAttribute("href")).toEqual(
-        "/about"
+        "/about",
       );
     });
 
@@ -69,11 +69,11 @@ describe("<Link> href", () => {
       const { container } = render(
         <TestRouter url="/inbox/messages/abc">
           <Link to="." />
-        </TestRouter>
+        </TestRouter>,
       );
 
       expect(container.querySelector("a")?.getAttribute("href")).toEqual(
-        "/inbox/messages/abc"
+        "/inbox/messages/abc",
       );
     });
 
@@ -107,11 +107,11 @@ describe("<Link> href", () => {
       const { container } = render(
         <TestRouter url="/inbox">
           <Link to="/home" />
-        </TestRouter>
+        </TestRouter>,
       );
 
       expect(container.querySelector("a")?.getAttribute("href")).toEqual(
-        "/home"
+        "/home",
       );
     });
 
@@ -119,11 +119,11 @@ describe("<Link> href", () => {
       const { container } = render(
         <TestRouter url="/inbox">
           <Link to="." />
-        </TestRouter>
+        </TestRouter>,
       );
 
       expect(container.querySelector("a")?.getAttribute("href")).toEqual(
-        "/inbox"
+        "/inbox",
       );
     });
 
@@ -131,7 +131,7 @@ describe("<Link> href", () => {
       const { container } = render(
         <TestRouter url="/inbox">
           <Link to=".." />
-        </TestRouter>
+        </TestRouter>,
       );
 
       expect(container.querySelector("a")?.getAttribute("href")).toEqual("/");
@@ -145,11 +145,11 @@ describe("<Link> href", () => {
             {/* traverse past the root */}
             <Link to="../../../about" />
           </>
-        </TestRouter>
+        </TestRouter>,
       );
 
       expect(
-        [...container.querySelectorAll("a")].map((a) => a.getAttribute("href"))
+        [...container.querySelectorAll("a")].map((a) => a.getAttribute("href")),
       ).toEqual(["/about", "/about"]);
     });
   });
@@ -159,10 +159,10 @@ describe("<Link> href", () => {
       const { container } = render(
         <TestRouter url="">
           <Link to="/path?search=value#hash" />
-        </TestRouter>
+        </TestRouter>,
       );
       expect(container.querySelector("a")?.getAttribute("href")).toEqual(
-        "/path?search=value#hash"
+        "/path?search=value#hash",
       );
     });
   });

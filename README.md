@@ -50,7 +50,7 @@ The snippet above would be generate:
     YouTube,
     createPortal,
     ReactDOM,
-    renderToString
+    renderToString,
   );
 </script>
 

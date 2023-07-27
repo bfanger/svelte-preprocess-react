@@ -10,7 +10,7 @@ export default function locationToUrl(to: To, base?: URL): URL {
     base ??
       (typeof window === "undefined"
         ? "http://localhost"
-        : window.location.href)
+        : window.location.href),
   );
 
   if (typeof to === "string" && /^[a-z]+:\/\//.test(to)) {

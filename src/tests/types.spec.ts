@@ -20,7 +20,7 @@ describe("types", () => {
     testEventProps({ onClick() {} });
 
     const testPropsOmitEventProps = fn as (
-      _: OmitEventProps<ReactProps>
+      _: OmitEventProps<ReactProps>,
     ) => void;
     testPropsOmitEventProps({ label: "test" });
 
@@ -34,7 +34,7 @@ describe("types", () => {
       click: MouseEvent;
     };
     const testSvelteEventHandlers = fn as (
-      _: SvelteEventHandlers<SvelteEvents>
+      _: SvelteEventHandlers<SvelteEvents>,
     ) => void;
     testSvelteEventHandlers({
       onClick(event: MouseEvent) {

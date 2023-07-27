@@ -1,9 +1,9 @@
 <script lang="ts">
-  import sveltify from "$lib/sveltify";
   import React, { createContext, createElement, useContext } from "react";
   import { createPortal } from "react-dom";
   import ReactDOM from "react-dom/client";
   import { renderToString } from "react-dom/server";
+  import sveltify from "$lib/sveltify";
 
   const Context = createContext("It didn't work");
   const ProviderReact = Context.Provider;
@@ -15,7 +15,7 @@
     ProviderReact,
     createPortal,
     ReactDOM,
-    renderToString
+    renderToString,
   );
   const Child = sveltify(ChildReact, createPortal, ReactDOM, renderToString);
 </script>

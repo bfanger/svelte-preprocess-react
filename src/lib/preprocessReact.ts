@@ -3,13 +3,9 @@ import { compile, preprocess } from "svelte/compiler";
 import type {
   CompileOptions,
   Element,
-  Script,
   TemplateNode,
   Transition,
 } from "svelte/types/compiler/interfaces";
-import type IfBlock from "svelte/types/compiler/compile/nodes/IfBlock";
-import type EachBlock from "svelte/types/compiler/compile/nodes/EachBlock";
-import type AwaitBlock from "svelte/types/compiler/compile/nodes/AwaitBlock";
 import type {
   PreprocessorGroup,
   Processed,
@@ -29,7 +25,7 @@ const defaults = {
   errorMode: "throw",
 } as const;
 export default function preprocessReact(
-  options: Options = {}
+  options: Options = {},
 ): PreprocessorGroup {
   let react = options.react ?? defaults.react;
   const ssr = options.ssr ?? defaults.ssr;
@@ -92,7 +88,7 @@ function transform(content: string, options: TransformOptions) {
   if (options.react >= 18) {
     imports.push(
       `import ${prefix}ReactDOM from "react-dom/client"`,
-      `import { createPortal as ${prefix}createPortal} from "react-dom"`
+      `import { createPortal as ${prefix}createPortal} from "react-dom"`,
     );
     portal = `${prefix}createPortal`;
   } else {
@@ -103,7 +99,7 @@ function transform(content: string, options: TransformOptions) {
   let renderToString = "";
   if (options.ssr) {
     imports.push(
-      `import { renderToString as ${prefix}renderToString } from "react-dom/server"`
+      `import { renderToString as ${prefix}renderToString } from "react-dom/server"`,
     );
     renderToString = `, ${prefix}renderToString`;
   }
@@ -120,18 +116,20 @@ function transform(content: string, options: TransformOptions) {
   if (aliases.length === 0) {
     return { code: content };
   }
-  const script = compiled.ast.instance || (compiled.ast.module as Script);
+  const script = compiled.ast.instance || compiled.ast.module;
   const wrappers = aliases
-    .map(([alias, expression]) => {
-      return `const ${alias} = ${prefix}sveltify(${expression}, ${portal}, ${prefix}ReactDOM${renderToString});`;
-    })
+    .map(
+      ([alias, expression]) =>
+        `const ${alias} = ${prefix}sveltify(${expression}, ${portal}, ${prefix}ReactDOM${renderToString});`,
+    )
     .join(";");
 
   if (!script) {
     s.prepend(`<script>\n${imports.join("; ")}\n\n${wrappers}\n</script>\n\n`);
   } else {
-    s.appendRight(script.content.end, wrappers);
-    s.appendRight(script.content.start, `${imports.join("; ")}; `);
+    const program = script.content as any;
+    s.appendRight(program.end, wrappers);
+    s.appendRight(program.start, `${imports.join("; ")}; `);
   }
   return {
     code: s.toString(),
@@ -142,7 +140,7 @@ function transform(content: string, options: TransformOptions) {
 function replaceReactTags(
   node: TemplateNode,
   content: MagicString,
-  components: Record<string, string> = {}
+  components: Record<string, string> = {},
 ) {
   /* eslint-disable no-param-reassign */
   if (node.type === "Element" && node.name.startsWith("react:")) {
@@ -159,7 +157,7 @@ function replaceReactTags(
       content.overwrite(
         closeStart + 2,
         closeStart + 2 + tag.name.length,
-        alias
+        alias,
       );
     }
     if (!components[alias]) {
@@ -174,21 +172,21 @@ function replaceReactTags(
         const event = attr as Transition;
         if (event.modifiers.length > 0) {
           throw new Error(
-            "event modifier are not (yet) supported for React components"
+            "event modifier are not (yet) supported for React components",
           );
         }
         const eventStart = event.start;
         content.overwrite(
           eventStart,
           eventStart + 4,
-          `on${event.name[0].toUpperCase()}`
+          `on${event.name[0].toUpperCase()}`,
         );
       }
     });
     if (node.children && node.children.length > 0) {
       const isTextContent =
         node.children.filter(
-          (child) => ["Text", "MustacheTag"].includes(child.type) === false
+          (child) => ["Text", "MustacheTag"].includes(child.type) === false,
         ).length === 0;
       const escaped: string[] = [];
       if (isTextContent) {
@@ -197,7 +195,7 @@ function replaceReactTags(
         node.children.forEach((child) => {
           if (child.type === "Text") {
             escaped.push(
-              child.data.replace(/"/g, `{'"'}`).replace(/\n/g, `{'\\n'}`)
+              child.data.replace(/"/g, `{'"'}`).replace(/\n/g, `{'\\n'}`),
             );
           } else if (child.type === "MustacheTag") {
             const expression = content.original.slice(child.start, child.end);
@@ -210,27 +208,27 @@ function replaceReactTags(
         // slot was converted to children prop
         content.appendRight(
           node.children[0].start - 1,
-          ` children=${escaped.join("")} /`
+          ` children=${escaped.join("")} /`,
         );
         content.remove(node.children[0].start, node.end);
         return components;
       }
     }
   }
-  // traverse children
+  // traverse children & branching blocks
   node.children?.forEach((child) => {
     replaceReactTags(child, content, components);
   });
-  (node as IfBlock | EachBlock).else?.children?.forEach((child) => {
+  node.else?.children?.forEach((child: TemplateNode) => {
     replaceReactTags(child, content, components);
   });
-  (node as AwaitBlock).pending?.children?.forEach((child) => {
+  node.pending?.children?.forEach((child: TemplateNode) => {
     replaceReactTags(child, content, components);
   });
-  (node as AwaitBlock).then?.children?.forEach((child) => {
+  node.then?.children?.forEach((child: TemplateNode) => {
     replaceReactTags(child, content, components);
   });
-  (node as AwaitBlock).catch?.children?.forEach((child: TemplateNode) => {
+  node.catch?.children?.forEach((child: TemplateNode) => {
     replaceReactTags(child, content, components);
   });
   return components;

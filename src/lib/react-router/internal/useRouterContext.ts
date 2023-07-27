@@ -9,7 +9,7 @@ export default function useRouterContext(): RouterContextType {
       url: new URL(
         typeof window !== "undefined"
           ? window.location.href
-          : "http://localhost/"
+          : "http://localhost/",
       ),
       params: {},
       goto,
@@ -20,7 +20,7 @@ export default function useRouterContext(): RouterContextType {
 
 function goto(url: string) {
   console.warn(
-    "No access to <react:RouterProvider>, falling back to using browser navigation"
+    "No access to <react:RouterProvider>, falling back to using browser navigation",
   );
   window.location.href = url;
 }

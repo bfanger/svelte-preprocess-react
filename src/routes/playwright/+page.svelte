@@ -1,9 +1,9 @@
 <script lang="ts">
-  import sveltify from "$lib/sveltify";
   import { onMount } from "svelte";
-  import ClickerReact from "../../tests/fixtures/Clicker";
   import { createPortal } from "react-dom";
+  import ClickerReact from "../../tests/fixtures/Clicker";
   import type { PageData } from "./$types";
+  import sveltify from "$lib/sveltify";
 
   export let data: PageData;
 

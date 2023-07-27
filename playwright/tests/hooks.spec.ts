@@ -14,16 +14,16 @@ test.describe("hooks", () => {
   test("authentication", async ({ page }) => {
     await page.goto("/hooks", { waitUntil: "networkidle" });
     await expect(
-      page.locator('[data-testid="not-authenticated"]')
+      page.locator('[data-testid="not-authenticated"]'),
     ).toBeVisible();
     await expect(
-      page.locator('[data-testid="authenticated"]')
+      page.locator('[data-testid="authenticated"]'),
     ).not.toBeVisible();
     await page.locator('[data-testid="login"]').click();
     await expect(page.locator('[data-testid="authenticated"]')).toBeVisible();
     await page.locator('[data-testid="logout"]').click();
     await expect(
-      page.locator('[data-testid="not-authenticated"]')
+      page.locator('[data-testid="not-authenticated"]'),
     ).toBeVisible();
   });
 });

@@ -8,7 +8,7 @@ export type BridgeProps = {
   createPortal: (
     children: React.ReactNode,
     container: Element | DocumentFragment,
-    key?: null | string
+    key?: null | string,
   ) => React.ReactPortal;
   node: TreeNode;
 };
@@ -29,13 +29,13 @@ const Bridge: React.FC<BridgeProps> = ({ createPortal, node }) => {
       delete props.children;
     }
   } else {
-    children = node.nodes.map((subnode) => {
-      return React.createElement(Bridge, {
+    children = node.nodes.map((subnode) =>
+      React.createElement(Bridge, {
         key: `bridge${subnode.key}`,
         createPortal,
         node: subnode,
-      });
-    });
+      }),
+    );
     if (props.children) {
       children.push(props.children);
       props = { ...props };
@@ -43,14 +43,14 @@ const Bridge: React.FC<BridgeProps> = ({ createPortal, node }) => {
     }
     if (slot) {
       children.push(
-        React.createElement(Child, { key: "svelte-slot", el: slot })
+        React.createElement(Child, { key: "svelte-slot", el: slot }),
       );
     }
     if (hooks.length >= 0) {
       children.push(
         ...hooks.map(({ Hook, key }) =>
-          React.createElement(Hook, { key: `hook${key}` })
-        )
+          React.createElement(Hook, { key: `hook${key}` }),
+        ),
       );
     }
   }
@@ -60,9 +60,9 @@ const Bridge: React.FC<BridgeProps> = ({ createPortal, node }) => {
       { value: node.contexts },
       children === undefined
         ? React.createElement(node.reactComponent, props)
-        : React.createElement(node.reactComponent, props, children)
+        : React.createElement(node.reactComponent, props, children),
     ),
-    target
+    target,
   );
 };
 export default Bridge;

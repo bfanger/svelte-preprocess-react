@@ -39,7 +39,7 @@ const NavLink: React.FC<NavLinkProps> = ({
   return React.createElement(
     Link,
     attrs,
-    typeof children === "function" ? children(condition) : children
+    typeof children === "function" ? children(condition) : children,
   );
 };
 export default NavLink;

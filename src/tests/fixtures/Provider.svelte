@@ -1,6 +1,6 @@
 <script lang="ts">
-  import used from "$lib/used";
   import type { Context as ContentType } from "react";
+  import used from "$lib/used";
 
   export let Context: ContentType<any>;
 

@@ -12,6 +12,6 @@ export default function useHistory() {
         goto(url, { replaceState: true });
       },
     }),
-    [goto]
+    [goto],
   );
 }

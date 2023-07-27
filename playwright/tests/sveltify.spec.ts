@@ -5,7 +5,7 @@ test.describe("sveltify", () => {
   test("props", async ({ page }) => {
     await page.goto("/playwright");
     await expect(page.locator("text=Ready")).toBeVisible();
-    await page.evaluate(function mount() {
+    await page.evaluate(() => {
       const win = window as any;
       const target = document.getElementById("playground");
       win.app = new win.Clicker({
@@ -29,14 +29,14 @@ test.describe("sveltify", () => {
   test("react context", async ({ page }) => {
     await page.goto("/context-react");
     await expect(
-      page.locator('text="Hello from react context provider"')
+      page.locator('text="Hello from react context provider"'),
     ).toBeVisible();
   });
 
   test("svelte context", async ({ page }) => {
     await page.goto("/context-svelte");
     await expect(
-      page.locator('text=/.*"Hello from svelte route".*/')
+      page.locator('text=/.*"Hello from svelte route".*/'),
     ).toBeVisible();
   });
 });

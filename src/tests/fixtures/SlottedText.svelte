@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Alert from "src/demo/react-components/Alert";
+  import Alert from "../../demo/react-components/Alert";
 
   const count = 0;
 </script>

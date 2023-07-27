@@ -7,8 +7,8 @@
     onDestroy,
     setContext,
   } from "svelte";
-  import type { SvelteInit, TreeNode } from "./types";
   import type { FunctionComponent } from "react";
+  import type { SvelteInit, TreeNode } from "./types";
 
   export let svelteInit: (options: SvelteInit) => TreeNode;
 

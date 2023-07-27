@@ -10,4 +10,4 @@
   });
 </script>
 
-<svelte-dog on:click on:keypress>{name}</svelte-dog>
+<svelte-dog>{name}</svelte-dog>

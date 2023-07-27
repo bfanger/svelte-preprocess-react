@@ -1,4 +1,5 @@
 /node_modules
 /build
+/dist
 /.svelte-kit
 /src/tests/fixtures/Binding.svelte

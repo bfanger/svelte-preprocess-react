@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { hooks } from "$lib";
   import { useAuth } from "./react-auth";
+  import { hooks } from "$lib";
 
   const auth = hooks(useAuth);
 </script>

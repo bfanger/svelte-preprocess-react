@@ -1,9 +1,9 @@
 <script lang="ts">
+  import Menu from "./Menu";
   import { RouterProvider } from "$lib/react-router";
   import { page } from "$app/stores";
   import { goto } from "$app/navigation";
   import { used } from "$lib";
-  import Menu from "./Menu";
 
   used(RouterProvider, Menu);
 </script>

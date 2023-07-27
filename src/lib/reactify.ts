@@ -15,7 +15,7 @@ export type SvelteConstructor<Props = any, Events = any, Slot = any> = {
  * Convert a Svelte component into a React component.
  */
 export default function reactify<P = any, E = any>(
-  SvelteComponent: SvelteConstructor<P, E>
+  SvelteComponent: SvelteConstructor<P, E>,
 ): React.FunctionComponent<
   | (P & SvelteEventHandlers<E> & { children?: React.ReactNode })
   | { children?: React.ReactNode }
@@ -57,7 +57,7 @@ export default function reactify<P = any, E = any>(
               el.appendChild(childrenRef.current);
             }
             slotRef.current = el;
-          }
+          },
         );
         svelteRef.current = component;
         return () => {
@@ -117,9 +117,9 @@ export default function reactify<P = any, E = any>(
                 ref: childrenRef,
                 style: { display: "contents" },
               },
-              children
+              children,
             )
-          : undefined
+          : undefined,
       );
     },
   };
@@ -151,7 +151,7 @@ function isEventProp(prop: string) {
 }
 
 function detectChildren(
-  children: React.ReactNode | React.ReactNode[] | undefined
+  children: React.ReactNode | React.ReactNode[] | undefined,
 ): boolean {
   if (children === undefined) {
     return false;

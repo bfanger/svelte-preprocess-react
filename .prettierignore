@@ -1,4 +1,4 @@
 /.svelte-kit
 /build
-/package
+/dist
 /node_modules

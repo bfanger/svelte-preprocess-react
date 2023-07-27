@@ -2,7 +2,7 @@
 node_modules
 /.svelte-kit
 /build
-/package
+/dist
 /functions
 /storybook-static
 /test-results

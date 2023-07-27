@@ -5,7 +5,7 @@ const skip =
   process.argv[1].endsWith("svelte-package") || process.argv[2] === "sync";
 let preprocessReact;
 if (!skip) {
-  preprocessReact = (await import("./package/preprocessReact.js")).default;
+  preprocessReact = (await import("./dist/preprocessReact.js")).default;
 }
 
 /** @type {import('@sveltejs/kit').Config} */
@@ -20,8 +20,6 @@ export default {
     }),
   },
   vitePlugin: {
-    experimental: {
-      inspector: { holdMode: true },
-    },
+    inspector: true,
   },
 };

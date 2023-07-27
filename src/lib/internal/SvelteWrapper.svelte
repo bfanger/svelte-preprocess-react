@@ -11,7 +11,9 @@
 
   let slot: HTMLElement | undefined = undefined;
   let instance: any;
-  $: instance && syncEvents(events);
+  $: if (instance) {
+    syncEvents(events);
+  }
 
   let offs: Array<() => void> = [];
   function syncEvents(listeners: Record<string, any>) {

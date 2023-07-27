@@ -7,6 +7,6 @@ export type RouterContextType = {
   goto(url: string, opts?: { replaceState?: boolean }): void;
 };
 const RouterContext = React.createContext<RouterContextType | undefined>(
-  undefined
+  undefined,
 );
 export default RouterContext;

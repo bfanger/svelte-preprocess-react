@@ -12,7 +12,7 @@ export type LinkProps = Omit<
 };
 
 const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
-  function LinkWithRef({ to, replace, children, ...rest }, ref) {
+  ({ to, replace, children, ...rest }, ref) => {
     const attrs = rest;
     const context = React.useContext(RouterContext);
     if (!context) {
@@ -33,6 +33,6 @@ const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
       };
     }
     return React.createElement("a", { ...attrs, ref, href }, children);
-  }
+  },
 );
 export default Link;

@@ -1,21 +1,20 @@
 import path from "path";
 import { sveltekit } from "@sveltejs/kit/vite";
-import react from "@vitejs/plugin-react";
 import { configDefaults, type UserConfig } from "vitest/config";
 
 const config: UserConfig = {
-  plugins: [react({ fastRefresh: false }), sveltekit()],
+  plugins: [sveltekit()],
   css: { devSourcemap: true },
   server: {
-    fs: { allow: ["package"] },
+    fs: { allow: ["dist"] },
   },
   test: {
     environment: "jsdom",
-    exclude: [...configDefaults.exclude, "package", "playwright"],
+    exclude: [...configDefaults.exclude, "dist", "playwright"],
   },
   resolve: {
     alias: {
-      "svelte-preprocess-react": path.resolve("./package"),
+      "svelte-preprocess-react": path.resolve("./dist"),
     },
   },
 };

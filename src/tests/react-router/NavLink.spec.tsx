@@ -10,7 +10,7 @@ describe("NavLink (react-router v6)", () => {
       const { container } = render(
         <TestRouter url="/home">
           <NavLink to="somewhere-else">Somewhere else</NavLink>
-        </TestRouter>
+        </TestRouter>,
       );
       const anchor = container.querySelector("a");
       expect(anchor?.className).not.toMatch("active");
@@ -21,7 +21,7 @@ describe("NavLink (react-router v6)", () => {
           <NavLink to="somewhere-else">
             {({ isActive }) => (isActive ? "Current" : "Somewhere else")}
           </NavLink>
-        </TestRouter>
+        </TestRouter>,
       );
 
       const anchor = container.querySelector("a");
@@ -38,7 +38,7 @@ describe("NavLink (react-router v6)", () => {
           >
             Home
           </NavLink>
-        </TestRouter>
+        </TestRouter>,
       );
       const anchor = container.querySelector("a");
       expect(anchor?.className).toBe("");
@@ -50,7 +50,7 @@ describe("NavLink (react-router v6)", () => {
       const { container } = render(
         <TestRouter url="/home">
           <NavLink to=".">Home</NavLink>
-        </TestRouter>
+        </TestRouter>,
       );
       const anchor = container.querySelector("a");
       expect(anchor?.className).toMatch("active");
@@ -67,7 +67,7 @@ describe("NavLink (react-router v6)", () => {
           >
             Home
           </NavLink>
-        </TestRouter>
+        </TestRouter>,
       );
       const anchor = container.querySelector("a");
       expect(anchor?.className.includes("nav-link")).toBe(true);
@@ -85,7 +85,7 @@ describe("NavLink (react-router v6)", () => {
           >
             Home
           </NavLink>
-        </TestRouter>
+        </TestRouter>,
       );
       const anchor = container.querySelector("a");
       expect(anchor?.style).toMatchObject({ textTransform: "uppercase" });
@@ -96,7 +96,7 @@ describe("NavLink (react-router v6)", () => {
           <NavLink to=".">
             {({ isActive }) => (isActive ? "Home (current)" : "Home")}
           </NavLink>
-        </TestRouter>
+        </TestRouter>,
       );
       const anchor = container.querySelector("a");
       expect(anchor?.textContent).toMatch("Home (current)");
@@ -108,7 +108,7 @@ describe("NavLink (react-router v6)", () => {
       const { container } = render(
         <TestRouter url="/home/children">
           <NavLink to="child">Home</NavLink>
-        </TestRouter>
+        </TestRouter>,
       );
       const anchor = container.querySelector("a");
       expect(anchor?.className).not.toMatch("active");
@@ -118,7 +118,7 @@ describe("NavLink (react-router v6)", () => {
         <TestRouter url="/user-preferences">
           <NavLink to="user">Go to /user</NavLink>
           <NavLink to="user-preferences">Go to /user-preferences</NavLink>
-        </TestRouter>
+        </TestRouter>,
       );
       const anchors = [...container.querySelectorAll("a")];
       expect(anchors.map((a) => a.className)).toEqual(["", "active"]);
@@ -130,7 +130,7 @@ describe("NavLink (react-router v6)", () => {
             <NavLink to="user">Go to /user</NavLink>
             <NavLink to="user-preferences">Go to /user-preferences</NavLink>
           </div>
-        </TestRouter>
+        </TestRouter>,
       );
       const anchors = [...container.querySelectorAll("a")];
       expect(anchors.map((a) => a.className)).toEqual(["active", ""]);

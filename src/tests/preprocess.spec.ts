@@ -49,7 +49,7 @@ describe("svelte-preprocess-react", () => {
       failed = false;
     } catch (err: any) {
       expect(err.message).toMatchInlineSnapshot(
-        "\"'count' is not a valid binding\""
+        "\"'count' is not a valid binding\"",
       );
       failed = true;
     }
@@ -77,7 +77,7 @@ describe("svelte-preprocess-react", () => {
     const output = await preprocess(
       src,
       preprocessReact({ preprocess: vitePreprocess() }),
-      { filename }
+      { filename },
     );
     expect(output.code).toMatchSnapshot();
   });
@@ -88,7 +88,7 @@ describe("svelte-preprocess-react", () => {
     const output = await preprocess(
       src,
       preprocessReact({ preprocess: vitePreprocess() }),
-      { filename }
+      { filename },
     );
     expect(output.code).toMatchSnapshot();
   });
@@ -99,7 +99,7 @@ describe("svelte-preprocess-react", () => {
     const output = await preprocess(
       src,
       preprocessReact({ preprocess: vitePreprocess() }),
-      { filename }
+      { filename },
     );
     expect(output.code).toMatchSnapshot();
   });
@@ -115,7 +115,7 @@ describe("svelte-preprocess-react", () => {
     const output = await preprocess(
       src,
       preprocessReact({ preprocess: vitePreprocess() }),
-      { filename }
+      { filename },
     );
     expect(output.code).toMatchSnapshot();
   });

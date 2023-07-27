@@ -6,7 +6,7 @@ import type { SvelteInit, TreeNode } from "./internal/types";
 import ReactWrapper from "./internal/ReactWrapper.svelte";
 import Slot from "./internal/Slot.svelte";
 import Bridge, { type BridgeProps } from "./internal/Bridge.js";
-import SvelteToReactContext from "./internal/SvelteToReactContext";
+import SvelteToReactContext from "./internal/SvelteToReactContext.js";
 
 let rerender: (props: BridgeProps) => void;
 let autokey = 0;
@@ -42,7 +42,7 @@ export default function sveltify<P>(
   reactComponent: React.FunctionComponent<P> | React.ComponentClass<P>,
   createPortal: BridgeProps["createPortal"],
   ReactDOMClient: any,
-  renderToString?: typeof ReactDOMServer.renderToString
+  renderToString?: typeof ReactDOMServer.renderToString,
 ): Sveltified<Omit<P, "children">> {
   const Wrapper = ReactWrapper as any;
   const ssr = typeof Wrapper.$$render === "function";
@@ -55,7 +55,7 @@ export default function sveltify<P>(
         props: any,
         bindings: any,
         slots: any,
-        context: any
+        context: any,
       ) {
         if (!renderToString) {
           return "";
@@ -74,14 +74,14 @@ export default function sveltify<P>(
             {},
             bindings,
             slots,
-            context
+            context,
           );
           const leaf = !slots.default && current.length === 0;
 
           const vdom = leaf
             ? React.createElement(
                 reactComponent as React.FunctionComponent,
-                props
+                props,
               )
             : React.createElement(
                 reactComponent as React.FunctionComponent,
@@ -96,10 +96,10 @@ export default function sveltify<P>(
                     React.createElement(
                       `ssr-portal${i}`,
                       { key: `ssr-portal${i}` },
-                      React.createElement(child.reactComponent, child.props)
-                    )
+                      React.createElement(child.reactComponent, child.props),
+                    ),
                   ),
-                ]
+                ],
               );
           let rendered = renderToString(
             React.createElement(
@@ -107,8 +107,8 @@ export default function sveltify<P>(
               {
                 value: context || contexts,
               },
-              vdom
-            )
+              vdom,
+            ),
           );
           current.forEach((_, i) => {
             const start = `<ssr-portal${i}>`;
@@ -119,7 +119,7 @@ export default function sveltify<P>(
             if (startPosition !== -1) {
               content = rendered.substring(
                 startPosition + start.length,
-                endPosition
+                endPosition,
               );
               rendered =
                 rendered.substring(0, startPosition) +
@@ -175,7 +175,7 @@ export default function sveltify<P>(
           rerender({ createPortal, node: tree });
           init.onDestroy(() => {
             parent.nodes = parent.nodes.filter(
-              (n) => n.svelteInstance !== svelteInstance
+              (n) => n.svelteInstance !== svelteInstance,
             );
             rerender({ createPortal, node: tree });
           });

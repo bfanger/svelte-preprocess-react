@@ -1,10 +1,10 @@
 <script lang="ts">
-  import { reactify, sveltify } from "$lib";
   import { createPortal } from "react-dom";
   import ReactDOM from "react-dom/client";
   import { renderToString } from "react-dom/server";
   import { setContext } from "svelte";
   import DebugContext from "../../demo/components/DebugContext.svelte";
+  import { reactify, sveltify } from "$lib";
 
   setContext("message", "Hello from svelte route");
 
@@ -13,7 +13,7 @@
     DebugContextReact,
     createPortal,
     ReactDOM,
-    renderToString
+    renderToString,
   );
 </script>
 

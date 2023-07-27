@@ -9,6 +9,6 @@ export default function useLocation(): Location {
 
   return React.useMemo(
     () => ({ pathname, search, hash }),
-    [hash, pathname, search]
+    [hash, pathname, search],
   );
 }
