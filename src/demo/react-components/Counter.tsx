@@ -2,8 +2,8 @@
  * A react component using a Svelte Button component
  */
 import * as React from "react";
-import reactify from "../../lib/reactify";
 import ButtonSvelte from "../components/Button.svelte";
+import { reactify } from "svelte-preprocess-react";
 
 const Button = reactify(ButtonSvelte);
 

@@ -3,7 +3,7 @@
   import { createPortal } from "react-dom";
   import ReactDOM from "react-dom/client";
   import { renderToString } from "react-dom/server";
-  import sveltify from "$lib/sveltify";
+  import { sveltify } from "svelte-preprocess-react";
 
   const Context = createContext("It didn't work");
   const ProviderReact = Context.Provider;

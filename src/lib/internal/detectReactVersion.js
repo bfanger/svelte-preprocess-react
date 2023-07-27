@@ -1,7 +1,7 @@
 import fs from "fs/promises";
 import path from "path";
 
-export default async function detectReactVersion(): Promise<number> {
+export default async function detectReactVersion() {
   try {
     const pkg = await fs.readFile(path.resolve(process.cwd(), "package.json"));
     const json = JSON.parse(pkg.toString());

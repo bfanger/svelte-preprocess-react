@@ -3,7 +3,7 @@
   import { createPortal } from "react-dom";
   import ClickerReact from "../../tests/fixtures/Clicker";
   import type { PageData } from "./$types";
-  import sveltify from "$lib/sveltify";
+  import { sveltify } from "svelte-preprocess-react";
 
   export let data: PageData;
 

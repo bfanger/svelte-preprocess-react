@@ -1,32 +1,33 @@
 import MagicString from "magic-string";
 import { compile, preprocess } from "svelte/compiler";
-import type {
-  CompileOptions,
-  Element,
-  TemplateNode,
-  Transition,
-} from "svelte/types/compiler/interfaces";
-import type {
-  PreprocessorGroup,
-  Processed,
-} from "svelte/types/compiler/preprocess";
 import detectReactVersion from "./internal/detectReactVersion.js";
 
-type Options = {
-  react?: number | "auto";
-  ssr?: boolean; // Set to false to omit renderToString from 'react-dom/server'
-  errorMode?: "throw" | "warn";
-  preprocess?: PreprocessorGroup | PreprocessorGroup[];
-};
+/**
+ * @typedef {import("svelte/compiler").PreprocessorGroup} PreprocessorGroup
+ * @typedef {import("svelte/compiler").Processed} Processed
+ * @typedef {import("svelte/types/compiler/interfaces").TemplateNode} TemplateNode
+ */
 
-const defaults = {
+const defaults = /** @type {const} */ ({
   react: "auto",
   ssr: true,
   errorMode: "throw",
-} as const;
-export default function preprocessReact(
-  options: Options = {},
-): PreprocessorGroup {
+});
+
+/**
+ * Svelte preprocessor to use convert <react:*> tags into Sveltified React components.
+ *
+ * Imports renderToString from 'react-dom/server' unless the `ssr` option is set to false.
+ *
+ * @param {{
+ *   ssr?: boolean;
+ *   react?: number | "auto";
+ *   errorMode?: "throw" | "warn";
+ *   preprocess?: PreprocessorGroup | PreprocessorGroup[];
+ * }} options
+ * @returns {PreprocessorGroup}
+ */
+export default function preprocessReact(options = {}) {
   let react = options.react ?? defaults.react;
   const ssr = options.ssr ?? defaults.ssr;
   const errorMode = options.errorMode ?? defaults.errorMode;
@@ -34,7 +35,8 @@ export default function preprocessReact(
   return {
     async markup({ content, filename }) {
       try {
-        let preprocessed: Processed | undefined;
+        /** @type {Processed | undefined} */
+        let preprocessed;
         if (options.preprocess) {
           preprocessed = await preprocess(content, options.preprocess, {
             filename,
@@ -73,15 +75,21 @@ export default function preprocessReact(
     },
   };
 }
-type TransformOptions = {
-  filename?: string;
-  react: number;
-  ssr: boolean;
-  errorMode: CompileOptions["errorMode"];
-};
-function transform(content: string, options: TransformOptions) {
+
+/**
+ * @param {string} content
+ * @param {{
+ *  filename?: string;
+ *  react: number;
+ *  ssr: boolean;
+ *  errorMode: import("svelte/compiler").CompileOptions["errorMode"]
+ * }} options
+ * @returns
+ */
+function transform(content, options) {
   const prefix = "React$$";
-  let portal: string;
+  /** @type {string} */
+  let portal;
   const imports = [
     `import ${prefix}sveltify from "svelte-preprocess-react/sveltify"`,
   ];
@@ -127,7 +135,8 @@ function transform(content: string, options: TransformOptions) {
   if (!script) {
     s.prepend(`<script>\n${imports.join("; ")}\n\n${wrappers}\n</script>\n\n`);
   } else {
-    const program = script.content as any;
+    /** @type {any} */
+    const program = script.content;
     s.appendRight(program.end, wrappers);
     s.appendRight(program.start, `${imports.join("; ")}; `);
   }
@@ -137,14 +146,18 @@ function transform(content: string, options: TransformOptions) {
   };
 }
 
-function replaceReactTags(
-  node: TemplateNode,
-  content: MagicString,
-  components: Record<string, string> = {},
-) {
+/**
+ * Replace react:* tags by injecting Sveltified versions of the React components.
+ *
+ * @param {TemplateNode} node
+ * @param {MagicString} content
+ * @param {Record<string, string>} components
+ */
+function replaceReactTags(node, content, components = {}) {
   /* eslint-disable no-param-reassign */
   if (node.type === "Element" && node.name.startsWith("react:")) {
-    const tag = node as Element;
+    /** @type {import("svelte/types/compiler/interfaces").Element} */
+    const tag = /** @type {any} */ (node);
     const componentExpression = tag.name.slice(6);
     const alias = `React$${componentExpression.replace(/\./g, "$")}`;
     const tagStart = node.start;
@@ -169,7 +182,7 @@ function replaceReactTags(
     }
     tag.attributes.forEach((attr) => {
       if (attr.type === "EventHandler" && attr.expression !== null) {
-        const event = attr as Transition;
+        const event = attr;
         if (event.modifiers.length > 0) {
           throw new Error(
             "event modifier are not (yet) supported for React components",
@@ -188,9 +201,10 @@ function replaceReactTags(
         node.children.filter(
           (child) => ["Text", "MustacheTag"].includes(child.type) === false,
         ).length === 0;
-      const escaped: string[] = [];
+      /** @type {string[]} */
+      const escaped = [];
       if (isTextContent) {
-        // Convert text & expresions into a children prop.
+        // Convert text & expressions into a children prop.
         escaped.push('"');
         node.children.forEach((child) => {
           if (child.type === "Text") {
@@ -215,21 +229,17 @@ function replaceReactTags(
       }
     }
   }
+  /**
+   * @param {TemplateNode} child
+   */
+  function processChild(child) {
+    replaceReactTags(child, content, components);
+  }
   // traverse children & branching blocks
-  node.children?.forEach((child) => {
-    replaceReactTags(child, content, components);
-  });
-  node.else?.children?.forEach((child: TemplateNode) => {
-    replaceReactTags(child, content, components);
-  });
-  node.pending?.children?.forEach((child: TemplateNode) => {
-    replaceReactTags(child, content, components);
-  });
-  node.then?.children?.forEach((child: TemplateNode) => {
-    replaceReactTags(child, content, components);
-  });
-  node.catch?.children?.forEach((child: TemplateNode) => {
-    replaceReactTags(child, content, components);
-  });
+  node.children?.forEach(processChild);
+  node.else?.children?.forEach(processChild);
+  node.pending?.children?.forEach(processChild);
+  node.then?.children?.forEach(processChild);
+  node.catch?.children?.forEach(processChild);
   return components;
 }

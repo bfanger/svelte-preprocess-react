@@ -4,7 +4,7 @@
   import { renderToString } from "react-dom/server";
   import { setContext } from "svelte";
   import DebugContext from "../../demo/components/DebugContext.svelte";
-  import { reactify, sveltify } from "$lib";
+  import { reactify, sveltify } from "svelte-preprocess-react";
 
   setContext("message", "Hello from svelte route");
 

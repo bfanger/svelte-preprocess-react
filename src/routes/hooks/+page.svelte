@@ -4,7 +4,7 @@
   import { renderToString } from "react-dom/server";
   import { AuthProvider, type Auth } from "./react-auth";
   import Nested from "./HookWithContext.svelte";
-  import { hooks, used } from "$lib";
+  import { hooks, used } from "svelte-preprocess-react";
 
   used(AuthProvider);
 

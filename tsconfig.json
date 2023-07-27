@@ -14,7 +14,14 @@
     "checkJs": true,
     "strict": true,
     "noEmit": true,
-    "jsx": "preserve"
+    "jsx": "preserve",
+    "baseUrl": "./",
+    "paths": {
+      "svelte-preprocess-react": ["./src/lib"],
+      "svelte-preprocess-react/*": ["./src/lib/*"],
+      "$lib": ["./src/lib"],
+      "$lib/*": ["./src/lib/*"]
+    }
   },
-  "exclude": ["build", "package", "src/tests"]
+  "exclude": ["build", "dist", "src/tests"]
 }

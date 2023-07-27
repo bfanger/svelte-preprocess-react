@@ -2,7 +2,7 @@
   import { createElement } from "react";
   import { createPortal } from "react-dom";
   import ReactDOM from "react-dom/client";
-  import sveltify from "$lib/sveltify";
+  import { sveltify } from "svelte-preprocess-react";
 
   function HelloWord() {
     return createElement("div", null, "Hello world");

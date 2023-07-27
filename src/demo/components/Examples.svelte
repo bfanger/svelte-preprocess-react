@@ -4,7 +4,7 @@
   import ClickerReact from "../../tests/fixtures/Clicker";
   import CounterReact from "../react-components/Counter";
   import AlertReact from "../react-components/Alert";
-  import sveltify from "$lib/sveltify";
+  import { sveltify } from "svelte-preprocess-react";
 
   let count = 1;
   export let ReactDOM: any; // The 'react-dom/client' import for React 18+, 'react-dom' for React 16 & 17

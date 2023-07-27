@@ -73,7 +73,7 @@ const React$Alert = React$$sveltify(Alert, React$$createPortal, React$$ReactDOM,
 `;
 
 exports[`svelte-preprocess-react > should process <react:Context.Provider> tags 1`] = `
-"<script lang=\\"ts\\">import React$$sveltify from \\"svelte-preprocess-react/sveltify\\"; import React$$ReactDOM from \\"react-dom/client\\"; import { createPortal as React$$createPortal} from \\"react-dom\\"; import { renderToString as React$$renderToString } from \\"react-dom/server\\"; import used from \\"$lib/used\\";
+"<script lang=\\"ts\\">import React$$sveltify from \\"svelte-preprocess-react/sveltify\\"; import React$$ReactDOM from \\"react-dom/client\\"; import { createPortal as React$$createPortal} from \\"react-dom\\"; import { renderToString as React$$renderToString } from \\"react-dom/server\\"; import { used } from \\"svelte-preprocess-react\\";
 export let Context;
 used(Context);
 const React$Context$Provider = React$$sveltify(Context.Provider, React$$createPortal, React$$ReactDOM, React$$renderToString);</script>

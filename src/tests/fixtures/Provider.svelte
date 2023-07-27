@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Context as ContentType } from "react";
-  import used from "$lib/used";
+  import { used } from "svelte-preprocess-react";
 
   export let Context: ContentType<any>;
 

@@ -7,17 +7,15 @@ type Props = {
   goto?: (url: string, opts?: { replaceState?: boolean }) => void;
 };
 
-const TestRouter: React.FC<Props> = ({ children, url, goto = () => {} }) => {
-  return (
-    <RouterContext.Provider
-      value={{
-        url: new URL(url, "http://localhost/"),
-        params: {},
-        goto,
-      }}
-    >
-      {children}
-    </RouterContext.Provider>
-  );
-};
+const TestRouter: React.FC<Props> = ({ children, url, goto = () => {} }) => (
+  <RouterContext.Provider
+    value={{
+      url: new URL(url, "http://localhost/"),
+      params: {},
+      goto,
+    }}
+  >
+    {children}
+  </RouterContext.Provider>
+);
 export default TestRouter;

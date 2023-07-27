@@ -1,19 +1,10 @@
 import { vitePreprocess } from "@sveltejs/kit/vite";
 import adapter from "@sveltejs/adapter-static";
-
-const skip =
-  process.argv[1].endsWith("svelte-package") || process.argv[2] === "sync";
-let preprocessReact;
-if (!skip) {
-  preprocessReact = (await import("./dist/preprocessReact.js")).default;
-}
+import preprocessReact from "./src/lib/preprocessReact.js";
 
 /** @type {import('@sveltejs/kit').Config} */
 export default {
-  preprocess: skip
-    ? vitePreprocess()
-    : preprocessReact({ preprocess: vitePreprocess() }),
-
+  preprocess: [vitePreprocess(), preprocessReact()],
   kit: {
     adapter: adapter({
       fallback: "index.html",

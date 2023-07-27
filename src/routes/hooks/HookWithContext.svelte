@@ -1,6 +1,6 @@
 <script lang="ts">
   import { useAuth } from "./react-auth";
-  import { hooks } from "$lib";
+  import { hooks } from "svelte-preprocess-react";
 
   const auth = hooks(useAuth);
 </script>

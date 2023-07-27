@@ -1,7 +1,7 @@
 import * as React from "react";
 import type ReactDOMServer from "react-dom/server";
 import { writable, type Readable } from "svelte/store";
-import { getAllContexts, type SvelteComponentTyped } from "svelte";
+import { getAllContexts, type SvelteComponent } from "svelte";
 import type { SvelteInit, TreeNode } from "./internal/types";
 import ReactWrapper from "./internal/ReactWrapper.svelte";
 import Slot from "./internal/Slot.svelte";
@@ -33,7 +33,7 @@ let current:
 declare type Sveltified<P extends Record<string, any>> = new (args: {
   target: any;
   props?: P;
-}) => SvelteComponentTyped<P>;
+}) => SvelteComponent<P>;
 
 /**
  * Convert a React component into a Svelte component.

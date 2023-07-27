@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import * as React from "react";
 import { renderToString } from "react-dom/server";
-import reactify from "../lib/reactify";
+import reactify from "../../src/lib/reactify";
 import DogSvelte from "./fixtures/Dog.svelte";
 
 describe("reactify", () => {

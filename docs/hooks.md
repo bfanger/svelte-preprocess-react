@@ -9,7 +9,7 @@ The `hooks()` function uses Svelte lifecycle functions, so you can only call the
 
 ```svelte
 <script lang="ts">
-  import { hooks } from "$lib";
+  import { hooks } from "svelte-preprocess-react";
 
   const store = hooks(() => useState(0));
 </script>

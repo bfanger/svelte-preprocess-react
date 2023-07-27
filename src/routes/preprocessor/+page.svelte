@@ -1,10 +1,9 @@
 <script lang="ts">
   import Counter from "../../demo/react-components/Counter";
   import Alert from "../../demo/react-components/Alert";
+  import { used } from "svelte-preprocess-react";
 
-  if (!Counter && !Alert) {
-    // Bypass: is declared but its value is never read. (ts)
-  }
+  used(Counter, Alert); // Bypass linting errors: is declared but its value is never read. (ts)
 </script>
 
 <react:Counter initial={10} on:count={console.info} /><br />
