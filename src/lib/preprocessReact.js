@@ -91,7 +91,7 @@ function transform(content, options) {
   /** @type {string} */
   let portal;
   const imports = [
-    `import ${prefix}sveltify from "svelte-preprocess-react/sveltify"`,
+    `import { sveltify as ${prefix}sveltify } from "svelte-preprocess-react"`,
   ];
   if (options.react >= 18) {
     imports.push(
