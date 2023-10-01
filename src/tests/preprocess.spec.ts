@@ -1,5 +1,6 @@
 import { readFile } from "fs/promises";
 import { dirname, resolve } from "path";
+import url from "url";
 import { describe, expect, it } from "vitest";
 import { preprocess } from "svelte/compiler";
 import { vitePreprocess } from "@sveltejs/kit/vite";
@@ -121,7 +122,7 @@ describe("svelte-preprocess-react", () => {
   });
 });
 
-const base = dirname(import.meta.url).replace("file://", "");
+const base = dirname(url.fileURLToPath(import.meta.url));
 function resolveFilename(filename: string) {
   return resolve(base, filename);
 }
