@@ -120,6 +120,16 @@ describe("svelte-preprocess-react", () => {
     );
     expect(output.code).toMatchSnapshot();
   });
+  it("should process on:event forwarding", async () => {
+    const filename = resolveFilename("./fixtures/Forwarding.svelte");
+    const src = await readFile(filename, "utf8");
+    const output = await preprocess(
+      src,
+      preprocessReact({ preprocess: vitePreprocess() }),
+      { filename },
+    );
+    expect(output.code).toMatchSnapshot();
+  });
 });
 
 const base = dirname(url.fileURLToPath(import.meta.url));

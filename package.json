@@ -10,7 +10,7 @@
     "type": "git",
     "url": "https://github.com/bfanger/svelte-preprocess-react.git"
   },
-  "version": "0.16.0",
+  "version": "0.17.0",
   "license": "MIT",
   "type": "module",
   "scripts": {
@@ -32,16 +32,13 @@
     "prepare": "husky install"
   },
   "lint-staged": {
-    "*.ts": [
-      "eslint --max-warnings 0 --no-ignore",
-      "sh -c 'tsc -p tsconfig.json --noEmit'"
+    "*.{ts,svelte}": [
+      "svelte-check --fail-on-warnings"
     ],
-    "*.(c)?js": [
+    "*.{ts,svelte,js,cjs,mjs}": [
       "eslint --max-warnings 0 --no-ignore"
     ],
-    "*.svelte": [
-      "eslint --max-warnings 0 --no-ignore",
-      "svelte-check --fail-on-warnings",
+    "*.{ts,js,svelte,css,scss,json,html}": [
       "prettier --check"
     ]
   },

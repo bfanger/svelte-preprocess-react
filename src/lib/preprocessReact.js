@@ -91,23 +91,24 @@ function transform(content, options) {
   /** @type {string} */
   let portal;
   const imports = [
-    `import { sveltify as ${prefix}sveltify } from "svelte-preprocess-react"`,
+    `import { sveltify as ${prefix}sveltify } from "svelte-preprocess-react";`,
   ];
+
   if (options.react >= 18) {
     imports.push(
-      `import ${prefix}ReactDOM from "react-dom/client"`,
-      `import { createPortal as ${prefix}createPortal} from "react-dom"`,
+      `import ${prefix}ReactDOM from "react-dom/client";`,
+      `import { createPortal as ${prefix}createPortal} from "react-dom";`,
     );
     portal = `${prefix}createPortal`;
   } else {
-    imports.push(`import ${prefix}ReactDOM from "react-dom"`);
+    imports.push(`import ${prefix}ReactDOM from "react-dom";`);
     portal = `${prefix}ReactDOM.createPortal`;
   }
 
   let renderToString = "";
   if (options.ssr) {
     imports.push(
-      `import { renderToString as ${prefix}renderToString } from "react-dom/server"`,
+      `import { renderToString as ${prefix}renderToString } from "react-dom/server";`,
     );
     renderToString = `, ${prefix}renderToString`;
   }
@@ -124,21 +125,27 @@ function transform(content, options) {
   if (aliases.length === 0) {
     return { code: content };
   }
-  const script = compiled.ast.instance || compiled.ast.module;
-  const wrappers = aliases
-    .map(
-      ([alias, expression]) =>
-        `const ${alias} = ${prefix}sveltify(${expression}, ${portal}, ${prefix}ReactDOM${renderToString});`,
-    )
-    .join(";");
 
+  const script = compiled.ast.instance || compiled.ast.module;
+  const wrappers = aliases.map(
+    ([alias, { expression }]) =>
+      `const ${alias} = ${prefix}sveltify(${expression}, ${portal}, ${prefix}ReactDOM${renderToString});`,
+  );
+  if (Object.values(components).find((c) => c.dispatcher)) {
+    imports.push(
+      'import { createEventDispatcher as React$$createEventDispatcher } from "svelte";',
+    );
+    wrappers.push("const React$$dispatch = React$$createEventDispatcher();");
+  }
   if (!script) {
-    s.prepend(`<script>\n${imports.join("; ")}\n\n${wrappers}\n</script>\n\n`);
+    s.prepend(
+      `<script>\n${imports.join(" ")}\n\n${wrappers.join(" ")}\n</script>\n\n`,
+    );
   } else {
     /** @type {any} */
     const program = script.content;
-    s.appendRight(program.end, wrappers);
-    s.appendRight(program.start, `${imports.join("; ")}; `);
+    s.appendRight(program.end, `;${wrappers.join(" ")}`);
+    s.appendRight(program.start, imports.join(" "));
   }
   return {
     code: s.toString(),
@@ -151,7 +158,7 @@ function transform(content, options) {
  *
  * @param {TemplateNode} node
  * @param {MagicString} content
- * @param {Record<string, string>} components
+ * @param {Record<string, { expression: string, dispatcher: boolean }>} components
  */
 function replaceReactTags(node, content, components = {}) {
   /* eslint-disable no-param-reassign */
@@ -175,25 +182,42 @@ function replaceReactTags(node, content, components = {}) {
     }
     if (!components[alias]) {
       if (componentExpression.match(/^[a-z-]+$/)) {
-        components[alias] = `"${componentExpression}"`;
+        components[alias] = {
+          expression: `"${componentExpression}"`,
+          dispatcher: false,
+        };
       } else {
-        components[alias] = componentExpression;
+        components[alias] = {
+          expression: componentExpression,
+          dispatcher: false,
+        };
       }
     }
     tag.attributes.forEach((attr) => {
-      if (attr.type === "EventHandler" && attr.expression !== null) {
+      if (attr.type === "EventHandler") {
         const event = attr;
+        const eventStart = event.start;
         if (event.modifiers.length > 0) {
           throw new Error(
-            "event modifier are not (yet) supported for React components",
+            `event modifiers are not (yet) supported for React components`,
           );
         }
-        const eventStart = event.start;
-        content.overwrite(
-          eventStart,
-          eventStart + 4,
-          `on${event.name[0].toUpperCase()}`,
-        );
+        if (event.expression !== null) {
+          content.overwrite(
+            eventStart,
+            eventStart + 4,
+            `on${event.name[0].toUpperCase()}`,
+          );
+        } else {
+          content.overwrite(
+            eventStart,
+            eventStart + 3 + event.name.length,
+            `on${
+              event.name[0].toUpperCase() + event.name.substring(1)
+            }={(e) => React$$dispatch(${JSON.stringify(event.name)}, e)}`,
+          );
+          components[alias].dispatcher = true;
+        }
       }
     });
     if (node.children && node.children.length > 0) {
