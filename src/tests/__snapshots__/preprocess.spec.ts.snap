@@ -1,22 +1,22 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`svelte-preprocess-react > should convert text content to react children prop 1`] = `
-"<script lang=\\"ts\\">import { sveltify as React$$sveltify } from \\"svelte-preprocess-react\\"; import React$$ReactDOM from \\"react-dom/client\\"; import { createPortal as React$$createPortal} from \\"react-dom\\"; import { renderToString as React$$renderToString } from \\"react-dom/server\\";import Alert from \\"../../demo/react-components/Alert\\";
+"<script lang="ts">import { sveltify as React$$sveltify } from "svelte-preprocess-react"; import React$$ReactDOM from "react-dom/client"; import { createPortal as React$$createPortal} from "react-dom"; import { renderToString as React$$renderToString } from "react-dom/server";import Alert from "../../demo/react-components/Alert";
 const count = 0;
 ;const React$Alert = React$$sveltify(Alert, React$$createPortal, React$$ReactDOM, React$$renderToString);</script>
 
-<React$Alert children=\\"Static Text\\" />
+<React$Alert children="Static Text" />
 
-<React$Alert children=\\"{'\\\\n'}  {'\\"'}Multiline content{'\\"'}. Lorem ipsum dolor sit amet consectetur adipisicing elit.{'\\\\n'}  Suscipit nisi atque asperiores.{'\\\\n'}\\" />
+<React$Alert children="{'\\n'}  {'"'}Multiline content{'"'}. Lorem ipsum dolor sit amet consectetur adipisicing elit.{'\\n'}  Suscipit nisi atque asperiores.{'\\n'}" />
 
-<React$Alert children=\\"Value: {count + 1}\\" />
+<React$Alert children="Value: {count + 1}" />
 "
 `;
 
 exports[`svelte-preprocess-react > should import 'react-dom/server' when ssr is enabled 1`] = `
-"<script>import { sveltify as React$$sveltify } from \\"svelte-preprocess-react\\"; import React$$ReactDOM from \\"react-dom/client\\"; import { createPortal as React$$createPortal} from \\"react-dom\\"; import { renderToString as React$$renderToString } from \\"react-dom/server\\";
+"<script>import { sveltify as React$$sveltify } from "svelte-preprocess-react"; import React$$ReactDOM from "react-dom/client"; import { createPortal as React$$createPortal} from "react-dom"; import { renderToString as React$$renderToString } from "react-dom/server";
   // @ts-nocheck
-  import Clicker from \\"./Clicker\\";
+  import Clicker from "./Clicker";
 
   let count = 1;
 ;const React$Clicker = React$$sveltify(Clicker, React$$createPortal, React$$ReactDOM, React$$renderToString);</script>
@@ -32,7 +32,7 @@ exports[`svelte-preprocess-react > should import 'react-dom/server' when ssr is 
 
 exports[`svelte-preprocess-react > should inject a script tag 1`] = `
 "<script>
-import { sveltify as React$$sveltify } from \\"svelte-preprocess-react\\"; import React$$ReactDOM from \\"react-dom/client\\"; import { createPortal as React$$createPortal} from \\"react-dom\\"; import { renderToString as React$$renderToString } from \\"react-dom/server\\";
+import { sveltify as React$$sveltify } from "svelte-preprocess-react"; import React$$ReactDOM from "react-dom/client"; import { createPortal as React$$createPortal} from "react-dom"; import { renderToString as React$$renderToString } from "react-dom/server";
 
 const React$Counter = React$$sveltify(Counter, React$$createPortal, React$$ReactDOM, React$$renderToString);
 </script>
@@ -43,9 +43,9 @@ const React$Counter = React$$sveltify(Counter, React$$createPortal, React$$React
 `;
 
 exports[`svelte-preprocess-react > should not import 'react-dom/server' when ssr is disabled 1`] = `
-"<script>import { sveltify as React$$sveltify } from \\"svelte-preprocess-react\\"; import React$$ReactDOM from \\"react-dom/client\\"; import { createPortal as React$$createPortal} from \\"react-dom\\";
+"<script>import { sveltify as React$$sveltify } from "svelte-preprocess-react"; import React$$ReactDOM from "react-dom/client"; import { createPortal as React$$createPortal} from "react-dom";
   // @ts-nocheck
-  import Clicker from \\"./Clicker\\";
+  import Clicker from "./Clicker";
 
   let count = 1;
 ;const React$Clicker = React$$sveltify(Clicker, React$$createPortal, React$$ReactDOM);</script>
@@ -60,25 +60,25 @@ exports[`svelte-preprocess-react > should not import 'react-dom/server' when ssr
 `;
 
 exports[`svelte-preprocess-react > should portal slotted content as children 1`] = `
-"<script>import { sveltify as React$$sveltify } from \\"svelte-preprocess-react\\"; import React$$ReactDOM from \\"react-dom/client\\"; import { createPortal as React$$createPortal} from \\"react-dom\\"; import { renderToString as React$$renderToString } from \\"react-dom/server\\";
-  import Alert from \\"../../demo/react-components/Alert\\";
+"<script>import { sveltify as React$$sveltify } from "svelte-preprocess-react"; import React$$ReactDOM from "react-dom/client"; import { createPortal as React$$createPortal} from "react-dom"; import { renderToString as React$$renderToString } from "react-dom/server";
+  import Alert from "../../demo/react-components/Alert";
 
   if (!Alert) {
     // Bypass: 'Alert' is declared but its value is never read. (ts)
   }
 ;const React$Alert = React$$sveltify(Alert, React$$createPortal, React$$ReactDOM, React$$renderToString);</script>
 
-<React$Alert children=\\"A simple primary alert—check it out!\\" />
+<React$Alert children="A simple primary alert—check it out!" />
 "
 `;
 
 exports[`svelte-preprocess-react > should process <react:Context.Provider> tags 1`] = `
-"<script lang=\\"ts\\">import { sveltify as React$$sveltify } from \\"svelte-preprocess-react\\"; import React$$ReactDOM from \\"react-dom/client\\"; import { createPortal as React$$createPortal} from \\"react-dom\\"; import { renderToString as React$$renderToString } from \\"react-dom/server\\";import { used } from \\"svelte-preprocess-react\\";
+"<script lang="ts">import { sveltify as React$$sveltify } from "svelte-preprocess-react"; import React$$ReactDOM from "react-dom/client"; import { createPortal as React$$createPortal} from "react-dom"; import { renderToString as React$$renderToString } from "react-dom/server";import { used } from "svelte-preprocess-react";
 export let Context;
 used(Context);
 ;const React$Context$Provider = React$$sveltify(Context.Provider, React$$createPortal, React$$ReactDOM, React$$renderToString);</script>
 
-<React$Context$Provider children=\\"content\\" />
+<React$Context$Provider children="content" />
 
 <React$Context$Provider>
   <button>ok</button>
@@ -87,9 +87,9 @@ used(Context);
 `;
 
 exports[`svelte-preprocess-react > should process <react:component> tags 1`] = `
-"<script>import { sveltify as React$$sveltify } from \\"svelte-preprocess-react\\"; import React$$ReactDOM from \\"react-dom/client\\"; import { createPortal as React$$createPortal} from \\"react-dom\\"; import { renderToString as React$$renderToString } from \\"react-dom/server\\";
+"<script>import { sveltify as React$$sveltify } from "svelte-preprocess-react"; import React$$ReactDOM from "react-dom/client"; import { createPortal as React$$createPortal} from "react-dom"; import { renderToString as React$$renderToString } from "react-dom/server";
   // @ts-nocheck
-  import Clicker from \\"./Clicker\\";
+  import Clicker from "./Clicker";
 
   let count = 1;
 ;const React$Clicker = React$$sveltify(Clicker, React$$createPortal, React$$ReactDOM, React$$renderToString);</script>
@@ -104,9 +104,9 @@ exports[`svelte-preprocess-react > should process <react:component> tags 1`] = `
 `;
 
 exports[`svelte-preprocess-react > should process <react:component> tags 2`] = `
-"<script>import { sveltify as React$$sveltify } from \\"svelte-preprocess-react\\"; import React$$ReactDOM from \\"react-dom/client\\"; import { createPortal as React$$createPortal} from \\"react-dom\\"; import { renderToString as React$$renderToString } from \\"react-dom/server\\";
+"<script>import { sveltify as React$$sveltify } from "svelte-preprocess-react"; import React$$ReactDOM from "react-dom/client"; import { createPortal as React$$createPortal} from "react-dom"; import { renderToString as React$$renderToString } from "react-dom/server";
   // @ts-nocheck
-  import Clicker from \\"./Clicker\\";
+  import Clicker from "./Clicker";
 
   let count = 1;
 ;const React$Clicker = React$$sveltify(Clicker, React$$createPortal, React$$ReactDOM, React$$renderToString);</script>
@@ -122,7 +122,7 @@ exports[`svelte-preprocess-react > should process <react:component> tags 2`] = `
 <React$Clicker
   count={10}
   onCount={() => {
-    console.info(\\"count\\");
+    console.info("count");
   }}
 />
 <h2>prop</h2>
@@ -134,20 +134,20 @@ exports[`svelte-preprocess-react > should process <react:component> tags 2`] = `
 
 exports[`svelte-preprocess-react > should process <react:element> (lowercase) tags 1`] = `
 "<script>
-import { sveltify as React$$sveltify } from \\"svelte-preprocess-react\\"; import React$$ReactDOM from \\"react-dom/client\\"; import { createPortal as React$$createPortal} from \\"react-dom\\"; import { renderToString as React$$renderToString } from \\"react-dom/server\\";
+import { sveltify as React$$sveltify } from "svelte-preprocess-react"; import React$$ReactDOM from "react-dom/client"; import { createPortal as React$$createPortal} from "react-dom"; import { renderToString as React$$renderToString } from "react-dom/server";
 
-const React$button = React$$sveltify(\\"button\\", React$$createPortal, React$$ReactDOM, React$$renderToString);
+const React$button = React$$sveltify("button", React$$createPortal, React$$ReactDOM, React$$renderToString);
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions a11y-click-events-have-key-events -->
-<React$button onClick={() => console.info(\\"clicked\\")}>
+<React$button onClick={() => console.info("clicked")}>
   <slot />
 </React$button>
 "
 `;
 
 exports[`svelte-preprocess-react > should process {:else} {:then} and {:catch} sections 1`] = `
-"<script lang=\\"ts\\">import { sveltify as React$$sveltify } from \\"svelte-preprocess-react\\"; import React$$ReactDOM from \\"react-dom/client\\"; import { createPortal as React$$createPortal} from \\"react-dom\\"; import { renderToString as React$$renderToString } from \\"react-dom/server\\";const number = 1;
+"<script lang="ts">import { sveltify as React$$sveltify } from "svelte-preprocess-react"; import React$$ReactDOM from "react-dom/client"; import { createPortal as React$$createPortal} from "react-dom"; import { renderToString as React$$renderToString } from "react-dom/server";const number = 1;
 const Component = () => null;
 ;const React$Component = React$$sveltify(Component, React$$createPortal, React$$ReactDOM, React$$renderToString);</script>
 
@@ -176,21 +176,21 @@ const Component = () => null;
 `;
 
 exports[`svelte-preprocess-react > should process on:event forwarding 1`] = `
-"<script>import { sveltify as React$$sveltify } from \\"svelte-preprocess-react\\"; import React$$ReactDOM from \\"react-dom/client\\"; import { createPortal as React$$createPortal} from \\"react-dom\\"; import { renderToString as React$$renderToString } from \\"react-dom/server\\"; import { createEventDispatcher as React$$createEventDispatcher } from \\"svelte\\";
-  import Clicker from \\"./Clicker\\";
-  import { used } from \\"svelte-preprocess-react\\";
+"<script>import { sveltify as React$$sveltify } from "svelte-preprocess-react"; import React$$ReactDOM from "react-dom/client"; import { createPortal as React$$createPortal} from "react-dom"; import { renderToString as React$$renderToString } from "react-dom/server"; import { createEventDispatcher as React$$createEventDispatcher } from "svelte";
+  import Clicker from "./Clicker";
+  import { used } from "svelte-preprocess-react";
 
   used(Clicker);
 
   export let value = 0;
 ;const React$Clicker = React$$sveltify(Clicker, React$$createPortal, React$$ReactDOM, React$$renderToString); const React$$dispatch = React$$createEventDispatcher();</script>
 
-<React$Clicker count={value} onCount={(e) => React$$dispatch(\\"count\\", e)} />
+<React$Clicker count={value} onCount={(e) => React$$dispatch("count", e)} />
 "
 `;
 
 exports[`svelte-preprocess-react > should support typescript when using preprocess 1`] = `
-"<script lang=\\"ts\\">export let title;
+"<script lang="ts">export let title;
 </script>
 
 <h1>{title}</h1>

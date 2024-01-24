@@ -6,7 +6,7 @@ const config: UserConfig = {
   plugins: [sveltekit()],
   css: { devSourcemap: true },
   test: {
-    environment: "jsdom",
+    environment: "happy-dom",
     exclude: [...configDefaults.exclude, "dist", "playwright"],
   },
   resolve: {

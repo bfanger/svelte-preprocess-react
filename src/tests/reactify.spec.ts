@@ -11,7 +11,7 @@ describe("reactify", () => {
     const props: ReactProps = { name: "Fido", onBark() {} };
     const html = renderToString(React.createElement(Dog, props));
     expect(html).toMatchInlineSnapshot(
-      '"<svelte-wrapper style=\\"display:contents\\"></svelte-wrapper>"',
+      `"<svelte-wrapper style="display:contents"></svelte-wrapper>"`,
     );
   });
 });

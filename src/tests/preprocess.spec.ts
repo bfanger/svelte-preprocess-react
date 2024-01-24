@@ -1,9 +1,9 @@
-import { readFile } from "fs/promises";
-import { dirname, resolve } from "path";
-import url from "url";
+import { readFile } from "node:fs/promises";
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+import { vitePreprocess } from "@sveltejs/vite-plugin-svelte";
 import { describe, expect, it } from "vitest";
 import { preprocess } from "svelte/compiler";
-import { vitePreprocess } from "@sveltejs/kit/vite";
 import preprocessReact from "../lib/preprocessReact";
 
 describe("svelte-preprocess-react", () => {
@@ -71,7 +71,6 @@ describe("svelte-preprocess-react", () => {
     expect(output.code).toContain("<script>");
     expect(output.code).toMatchSnapshot();
   });
-
   it("should support typescript when using preprocess", async () => {
     const filename = resolveFilename("./fixtures/Typescript.svelte");
     const src = await readFile(filename, "utf8");
@@ -82,7 +81,6 @@ describe("svelte-preprocess-react", () => {
     );
     expect(output.code).toMatchSnapshot();
   });
-
   it("should convert text content to react children prop", async () => {
     const filename = resolveFilename("./fixtures/SlottedText.svelte");
     const src = await readFile(filename, "utf8");
@@ -93,7 +91,6 @@ describe("svelte-preprocess-react", () => {
     );
     expect(output.code).toMatchSnapshot();
   });
-
   it("should process <react:Context.Provider> tags", async () => {
     const filename = resolveFilename("./fixtures/Provider.svelte");
     const src = await readFile(filename, "utf8");
@@ -132,7 +129,7 @@ describe("svelte-preprocess-react", () => {
   });
 });
 
-const base = dirname(url.fileURLToPath(import.meta.url));
+const base = dirname(fileURLToPath(import.meta.url));
 function resolveFilename(filename: string) {
   return resolve(base, filename);
 }

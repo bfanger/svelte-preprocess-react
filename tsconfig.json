@@ -1,7 +1,7 @@
 {
   "extends": "./.svelte-kit/tsconfig.json",
   "compilerOptions": {
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "module": "es2020",
     "lib": ["es2020", "DOM"],
     "target": "es2020",
@@ -15,13 +15,12 @@
     "strict": true,
     "noEmit": true,
     "jsx": "preserve",
-    "baseUrl": "./",
     "paths": {
       "svelte-preprocess-react": ["./src/lib"],
       "svelte-preprocess-react/*": ["./src/lib/*"],
       "$lib": ["./src/lib"],
-      "$lib/*": ["./src/lib/*"]
-    }
+      "$lib/*": ["./src/lib/*"],
+    },
   },
-  "exclude": ["build", "dist", "src/tests"]
+  "exclude": ["build", "dist", "src/tests"],
 }
