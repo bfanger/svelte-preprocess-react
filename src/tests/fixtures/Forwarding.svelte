@@ -1,10 +1,14 @@
-<script>
+<script lang="ts">
   import Clicker from "./Clicker";
   import { used } from "svelte-preprocess-react";
 
   used(Clicker);
 
-  export let value = 0;
+  // eslint-disable-next-line prefer-const
+  let { value = 0, onCount } = $props<{
+    value: number;
+    onCount: (count: number) => void;
+  }>();
 </script>
 
-<react:Clicker count={value} on:count />
+<react:Clicker count={value} {onCount} />

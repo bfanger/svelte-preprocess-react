@@ -140,7 +140,7 @@ const React$button = React$$sveltify("button", React$$createPortal, React$$React
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions a11y-click-events-have-key-events -->
-<React$button onClick={() => console.info("clicked")}>
+<React$button onclick={() => console.info("clicked")}>
   <slot />
 </React$button>
 "
@@ -176,16 +176,13 @@ const Component = () => null;
 `;
 
 exports[`svelte-preprocess-react > should process on:event forwarding 1`] = `
-"<script>import { sveltify as React$$sveltify } from "svelte-preprocess-react"; import React$$ReactDOM from "react-dom/client"; import { createPortal as React$$createPortal} from "react-dom"; import { renderToString as React$$renderToString } from "react-dom/server"; import { createEventDispatcher as React$$createEventDispatcher } from "svelte";
-  import Clicker from "./Clicker";
-  import { used } from "svelte-preprocess-react";
+"<script lang="ts">import { sveltify as React$$sveltify } from "svelte-preprocess-react"; import React$$ReactDOM from "react-dom/client"; import { createPortal as React$$createPortal} from "react-dom"; import { renderToString as React$$renderToString } from "react-dom/server";import Clicker from "./Clicker";
+import { used } from "svelte-preprocess-react";
+used(Clicker);
+const { value = 0, onCount } = $props();
+;const React$Clicker = React$$sveltify(Clicker, React$$createPortal, React$$ReactDOM, React$$renderToString);</script>
 
-  used(Clicker);
-
-  export let value = 0;
-;const React$Clicker = React$$sveltify(Clicker, React$$createPortal, React$$ReactDOM, React$$renderToString); const React$$dispatch = React$$createEventDispatcher();</script>
-
-<React$Clicker count={value} onCount={(e) => React$$dispatch("count", e)} />
+<React$Clicker count={value} {onCount} />
 "
 `;
 

@@ -13,6 +13,7 @@ type Props = {
 };
 const Counter: React.FC<Props> = ({ initial = 0, onCount }) => {
   const [count, setCount] = React.useState(initial);
+
   function decrease() {
     setCount(count - 1);
     onCount?.(count - 1);

@@ -1,4 +1,5 @@
 import * as React from "react";
+import { createRoot } from "svelte";
 import SvelteWrapper from "./internal/SvelteWrapper.svelte";
 import SvelteToReactContext from "./internal/SvelteToReactContext.js";
 import type { SvelteEventHandlers } from "./internal/types";
@@ -25,10 +26,8 @@ export default function reactify<P = any, E = any>(
     [name](options: any) {
       const { children } = options;
       const props = extractProps(options);
-      const events = extractListeners(options);
-
       const wrapperRef = React.useRef<HTMLElement>();
-      const svelteRef = React.useRef<SvelteWrapper>();
+      const svelteRef = React.useRef<ReturnType<typeof createRoot>>();
       const slotRef = React.useRef<HTMLElement>();
       const childrenRef = React.useRef<HTMLElement>();
 
@@ -40,25 +39,22 @@ export default function reactify<P = any, E = any>(
         if (!target) {
           return undefined;
         }
-        const component = new SvelteWrapper({
+        const component = createRoot(SvelteWrapper, {
           target,
           props: {
             SvelteComponent: SvelteComponent as any,
-            children: detectChildren(children),
+            reactChildren: detectChildren(children),
             props,
-            events,
+            setSlot: (el: HTMLElement | undefined) => {
+              if (el && childrenRef.current) {
+                el.appendChild(childrenRef.current);
+              }
+              slotRef.current = el;
+            },
           },
           context,
         });
-        component.$on(
-          "svelte-slot",
-          ({ detail: el }: CustomEvent<HTMLElement>) => {
-            if (el && childrenRef.current) {
-              el.appendChild(childrenRef.current);
-            }
-            slotRef.current = el;
-          },
-        );
+
         svelteRef.current = component;
         return () => {
           component.$destroy();
@@ -68,7 +64,7 @@ export default function reactify<P = any, E = any>(
       // Sync props & events
       React.useEffect(() => {
         if (svelteRef.current) {
-          svelteRef.current.$set({ props, events });
+          svelteRef.current.$set({ props });
         }
       }, [props, svelteRef]);
 
@@ -129,25 +125,11 @@ export default function reactify<P = any, E = any>(
 function extractProps(options: Record<string, any>): Record<string, any> {
   const props: Record<string, any> = {};
   Object.entries(options).forEach(([prop, value]) => {
-    if (prop !== "children" && isEventProp(prop) === false) {
+    if (prop !== "children") {
       props[prop] = value;
     }
   });
   return props;
-}
-
-function extractListeners(options: Record<string, any>): Record<string, any> {
-  const listeners: Record<string, any> = {};
-  Object.entries(options).forEach(([prop, value]) => {
-    if (isEventProp(prop)) {
-      listeners[prop[2].toLowerCase() + prop.slice(3)] = value;
-    }
-  });
-  return listeners;
-}
-
-function isEventProp(prop: string) {
-  return /^on[A-Z]/.test(prop);
 }
 
 function detectChildren(

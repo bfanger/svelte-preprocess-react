@@ -5,6 +5,6 @@
   }
 </script>
 
-<react:input {value} on:change={onChange} />
+<react:input {value} {onChange} />
 
 {value}

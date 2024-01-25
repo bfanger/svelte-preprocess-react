@@ -7,7 +7,7 @@
 
 <react:Clicker
   {count}
-  on:count={(next) => {
+  onCount={(next) => {
     count = next;
   }}
 />

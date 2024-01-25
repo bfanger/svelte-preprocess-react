@@ -8,7 +8,7 @@
 <h2>prop and event</h2>
 <react:Clicker
   {count}
-  on:count={(next) => {
+  onCount={(next) => {
     count = next;
   }}
 />

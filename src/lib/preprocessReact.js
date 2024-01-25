@@ -1,5 +1,5 @@
 import MagicString from "magic-string";
-import { compile, preprocess } from "svelte/compiler";
+import { compile, parse, preprocess } from "svelte/compiler";
 import detectReactVersion from "./internal/detectReactVersion.js";
 
 /**
@@ -11,7 +11,6 @@ import detectReactVersion from "./internal/detectReactVersion.js";
 const defaults = /** @type {const} */ ({
   react: "auto",
   ssr: true,
-  errorMode: "throw",
 });
 
 /**
@@ -22,7 +21,6 @@ const defaults = /** @type {const} */ ({
  * @param {{
  *   ssr?: boolean;
  *   react?: number | "auto";
- *   errorMode?: "throw" | "warn";
  *   preprocess?: PreprocessorGroup | PreprocessorGroup[];
  * }} options
  * @returns {PreprocessorGroup}
@@ -30,48 +28,38 @@ const defaults = /** @type {const} */ ({
 export default function preprocessReact(options = {}) {
   let react = options.react ?? defaults.react;
   const ssr = options.ssr ?? defaults.ssr;
-  const errorMode = options.errorMode ?? defaults.errorMode;
 
   return {
     async markup({ content, filename }) {
-      try {
-        /** @type {Processed | undefined} */
-        let preprocessed;
-        if (options.preprocess) {
-          preprocessed = await preprocess(content, options.preprocess, {
-            filename,
-          });
-          // eslint-disable-next-line no-param-reassign
-          content = preprocessed.code;
-        }
-
-        if (react === "auto") {
-          react = await detectReactVersion();
-        }
-        const processed = transform(content, {
+      /** @type {Processed | undefined} */
+      let preprocessed;
+      if (options.preprocess) {
+        preprocessed = await preprocess(content, options.preprocess, {
           filename,
-          react,
-          ssr,
-          errorMode,
         });
-        if (!preprocessed) {
-          return processed;
-        }
-        if (!processed.map) {
-          return preprocessed;
-        }
-        return {
-          code: processed.code,
-          map: preprocessed.map ?? processed.map, // @todo apply sourcemaps
-          dependencies: preprocessed.dependencies,
-        };
-      } catch (err) {
-        if (errorMode === "throw") {
-          throw err;
-        }
-        console.warn(err);
-        return { code: content };
+        // eslint-disable-next-line no-param-reassign
+        content = preprocessed.code;
       }
+
+      if (react === "auto") {
+        react = await detectReactVersion();
+      }
+      const processed = transform(content, {
+        filename,
+        react,
+        ssr,
+      });
+      if (!preprocessed) {
+        return processed;
+      }
+      if (!processed.map) {
+        return preprocessed;
+      }
+      return {
+        code: processed.code,
+        map: preprocessed.map ?? processed.map, // @todo apply sourcemaps
+        dependencies: preprocessed.dependencies,
+      };
     },
   };
 }
@@ -82,7 +70,6 @@ export default function preprocessReact(options = {}) {
  *  filename?: string;
  *  react: number;
  *  ssr: boolean;
- *  errorMode: import("svelte/compiler").CompileOptions["errorMode"]
  * }} options
  * @returns
  */
@@ -113,20 +100,21 @@ function transform(content, options) {
     renderToString = `, ${prefix}renderToString`;
   }
 
-  const compiled = compile(content, {
-    filename: options.filename,
-    errorMode: options.errorMode,
-    generate: false,
-  });
+  const ast = /** @type {import("svelte/compiler").LegacyRoot} */ (
+    parse(content, {
+      filename: options.filename,
+      modern: false,
+    })
+  );
   const s = new MagicString(content, { filename: options.filename });
-  const components = replaceReactTags(compiled.ast.html, s);
+  const components = replaceReactTags(ast.html, s);
   const aliases = Object.entries(components);
 
   if (aliases.length === 0) {
     return { code: content };
   }
 
-  const script = compiled.ast.instance || compiled.ast.module;
+  const script = ast.instance || ast.module;
   const wrappers = aliases.map(
     ([alias, { expression }]) =>
       `const ${alias} = ${prefix}sveltify(${expression}, ${portal}, ${prefix}ReactDOM${renderToString});`,

@@ -1,53 +1,56 @@
 <script lang="ts">
   import { writable } from "svelte/store";
   import {
-    beforeUpdate,
     getAllContexts,
     getContext,
     onDestroy,
     setContext,
+    type Snippet,
   } from "svelte";
   import type { FunctionComponent } from "react";
   import type { SvelteInit, TreeNode } from "./types";
 
-  export let svelteInit: (options: SvelteInit) => TreeNode;
+  // eslint-disable-next-line prefer-const
+  let { svelteInit, children, ...reactProps } = $props<{
+    svelteInit: (options: SvelteInit) => TreeNode;
+    children?: Snippet;
+  }>();
 
-  const props = writable<Record<string, any>>(extractProps($$props));
+  const propsStore = writable<Record<string, any>>(reactProps);
   const target = writable<HTMLElement | undefined>();
   const slot = writable<HTMLElement | undefined>();
   const hooks = writable<Array<{ Hook: FunctionComponent; key: number }>>([]);
   const listeners: Array<() => void> = [];
 
-  const parent = getContext<TreeNode | undefined>("ReactWrapper");
+  $effect(() => {
+    propsStore.set({ ...reactProps });
+  });
 
-  const node = svelteInit({
-    parent,
-    props,
-    target,
-    slot,
-    hooks,
-    contexts: getAllContexts(),
-    onDestroy(callback) {
-      listeners.push(callback);
-    },
-  });
-  setContext("ReactWrapper", node);
-  beforeUpdate(() => {
-    props.set(extractProps($$props));
-  });
+  const parent = getContext<TreeNode | undefined>("ReactWrapper");
+  setContext(
+    "ReactWrapper",
+    svelteInit({
+      parent,
+      props: propsStore,
+      target,
+      slot,
+      hooks,
+      contexts: getAllContexts(),
+      onDestroy(callback) {
+        listeners.push(callback);
+      },
+    }),
+  );
+
   onDestroy(() => {
     listeners.forEach((callback) => callback());
   });
-  function extractProps(values: Record<string, any>) {
-    const { svelteInit: excluded, ...rest } = values;
-    return rest;
-  }
 </script>
 
 <react-portal-target bind:this={$target} />
 
-{#if $$slots.default}
-  <svelte-slot bind:this={$slot}><slot /></svelte-slot>
+{#if children}
+  <svelte-slot bind:this={$slot}>{@render children()}</svelte-slot>
 {/if}
 
 <style>

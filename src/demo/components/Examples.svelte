@@ -6,8 +6,9 @@
   import AlertReact from "../react-components/Alert";
   import { sveltify } from "svelte-preprocess-react";
 
-  let count = 1;
-  export let ReactDOM: any; // The 'react-dom/client' import for React 18+, 'react-dom' for React 16 & 17
+  const { ReactDOM } = $props(); // The 'react-dom/client' import for React 18+, 'react-dom' for React 16 & 17
+
+  let count = $state(1);
 
   const Counter = sveltify(
     CounterReact,

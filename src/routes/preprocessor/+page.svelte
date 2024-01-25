@@ -6,9 +6,9 @@
   used(Counter, Alert); // Bypass linting errors: is declared but its value is never read. (ts)
 </script>
 
-<react:Counter initial={10} on:count={console.info} /><br />
+<react:Counter initial={10} onCount={console.info} /><br />
 
-<react:Counter initial={25} on:count={console.info} />
+<react:Counter initial={25} onCount={console.info} />
 
 <react:Alert>A simple alert</react:Alert>
 

@@ -17,7 +17,7 @@ The `hooks()` function uses Svelte lifecycle functions, so you can only call the
 {#if $store}
   {@const [count, setCount] = $store}
   <h2>Count: {count}</h2>
-  <button on:click={() => setCount(count + 1)}>+</button>
+  <button onclick={() => setCount(count + 1)}>+</button>
 {/if}
 ```
 

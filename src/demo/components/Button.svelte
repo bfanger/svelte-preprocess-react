@@ -1,4 +1,15 @@
-<button on:click><slot /></button>
+<script lang="ts">
+  import type { Snippet } from "svelte";
+
+  let { children, onClick } = $props<{
+    children?: Snippet;
+    onClick: () => void;
+  }>();
+</script>
+
+<button onclick={onClick}>
+  {#if children}{@render children()}{/if}
+</button>
 
 <style>
   button {

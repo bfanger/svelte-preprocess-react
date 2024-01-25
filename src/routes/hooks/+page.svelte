@@ -23,7 +23,7 @@
   {@const [count, setCount] = $countHook}
 
   <div>Count: <span data-testid="count">{count}</span></div>
-  <button data-testid="add" on:click={() => setCount(count + 1)}>+</button>
+  <button data-testid="add" onclick={() => setCount(count + 1)}>+</button>
   <hr />
 {/if}
 <react:AuthProvider value={auth}>
@@ -31,7 +31,7 @@
 </react:AuthProvider>
 
 {#if auth.authenticated}
-  <button on:click={onLogout} data-testid="logout">Logout</button>
+  <button onclick={onLogout} data-testid="logout">Logout</button>
 {:else}
-  <button on:click={onLogin} data-testid="login">Login</button>
+  <button onclick={onLogin} data-testid="login">Login</button>
 {/if}
