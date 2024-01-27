@@ -1,9 +1,13 @@
 import * as React from "react";
 import { createRoot } from "svelte";
+import { render } from "svelte/server";
 import SvelteWrapper from "./internal/SvelteWrapper.svelte";
 import SvelteToReactContext from "./internal/SvelteToReactContext.js";
 import type { SvelteEventHandlers } from "./internal/types";
 
+const server = typeof document === "undefined";
+
+let $$payload: any;
 export type SvelteConstructor<Props = any, Events = any, Slot = any> = {
   name: string;
   prototype: {
@@ -30,7 +34,6 @@ export default function reactify<P = any, E = any>(
       const svelteRef = React.useRef<ReturnType<typeof createRoot>>();
       const slotRef = React.useRef<HTMLElement>();
       const childrenRef = React.useRef<HTMLElement>();
-
       const context = React.useContext(SvelteToReactContext);
 
       // Mount Svelte component
@@ -82,22 +85,25 @@ export default function reactify<P = any, E = any>(
         }
       }, [childrenRef]);
 
-      const ssr = SvelteComponent as any;
-      if (ssr.render) {
-        const $$slots: any = {};
-        if (typeof children === "string") {
-          $$slots.default = () => children;
+      if (server) {
+        let html = "";
+        if ($$payload) {
+          const len = $$payload.out.length;
+          (SvelteComponent as any)($$payload, props);
+          html = $$payload.out.slice(len);
+          $$payload.out = $$payload.out.slice(0, len);
+        } else {
+          const result = render(SvelteComponent as any, { props, context });
+          html = result.html;
         }
-        const result = ssr.render(props, {
-          context,
-          $$slots,
-        });
-        return React.createElement("svelte-wrapper", {
-          style: {
-            display: "contents",
-          },
-          dangerouslySetInnerHTML: { __html: result.html },
-        });
+        return [
+          React.createElement("svelte-wrapper", {
+            style: {
+              display: "contents",
+            },
+            dangerouslySetInnerHTML: { __html: html },
+          }),
+        ];
       }
 
       return React.createElement(
@@ -142,4 +148,8 @@ function detectChildren(
     return false;
   }
   return true;
+}
+
+export function setPayload(payload: any) {
+  $$payload = payload;
 }

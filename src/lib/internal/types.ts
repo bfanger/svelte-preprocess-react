@@ -1,5 +1,6 @@
 import type { ComponentClass, FunctionComponent } from "react";
 import type { Readable, Writable } from "svelte/store";
+import type { BridgeProps } from "./Bridge";
 
 export type HandlerName<T extends string> = `on${Capitalize<T>}`;
 export type EventName<T extends string> = T extends `on${infer N}`
@@ -48,19 +49,20 @@ export type OmitEventProps<ReactProps> = Omit<
   ExcludeProps<keyof ReactProps>
 >;
 
-export type TreeNode = Omit<SvelteInit, "onDestroy"> & {
+export type TreeNode = SvelteInit & {
   reactComponent: FunctionComponent<any> | ComponentClass<any>;
-  key: number;
+  key: string;
+  autoKey: number;
   hooks: Writable<Array<{ Hook: FunctionComponent; key: number }>>;
   nodes: TreeNode[];
+  rerender?: () => void;
 };
 
 export type SvelteInit = {
-  parent?: TreeNode;
-  props: Readable<Record<string, any>>;
-  target: Readable<HTMLElement | undefined>;
-  slot: Readable<HTMLElement | undefined>;
-  contexts: Map<any, any>;
+  props: Readable<Record<string, any>>; // The react props
+  target: Readable<HTMLElement | undefined>; // An element to mount/portal the React component into
+  slot: Readable<HTMLElement | undefined>; // An element containing the slotted Svelte components, inject as children into the React component
+  contexts: Map<any, any>; // The full Svelte context
   hooks: Writable<Array<{ Hook: FunctionComponent; key: number }>>;
-  onDestroy: (callback: () => void) => void;
+  parent?: TreeNode;
 };

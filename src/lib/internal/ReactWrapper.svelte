@@ -20,17 +20,17 @@
     ...reactProps,
     children: react$Children,
   });
+  let portal: HTMLElement | undefined = $state(undefined);
   const target = writable<HTMLElement | undefined>();
   const slot = writable<HTMLElement | undefined>();
   const hooks = writable<Array<{ Hook: FunctionComponent; key: number }>>([]);
-  const listeners: Array<() => void> = [];
 
   $effect(() => {
     propsStore.set({ ...reactProps, children: react$Children });
   });
 
   const parent = getContext<TreeNode | undefined>("ReactWrapper");
-  setContext(
+  const node = setContext(
     "ReactWrapper",
     svelteInit({
       parent,
@@ -39,21 +39,30 @@
       slot,
       hooks,
       contexts: getAllContexts(),
-      onDestroy(callback) {
-        listeners.push(callback);
-      },
     }),
   );
 
+  $effect(() => {
+    if (portal) {
+      portal.innerHTML = "";
+      target.set(portal);
+    }
+  });
+
   onDestroy(() => {
-    listeners.forEach((callback) => callback());
+    if (node.parent) {
+      node.parent.nodes = node.parent.nodes.filter((n) => n !== node);
+      node.rerender?.();
+    }
   });
 </script>
 
-<react-portal-target bind:this={$target} />
+<react-portal-target sveltify={node.key} bind:this={portal} />
 
 {#if children}
-  <svelte-slot bind:this={$slot}>{@render children()}</svelte-slot>
+  <svelte-slot sveltify={node.key} bind:this={$slot}
+    >{@render children()}</svelte-slot
+  >
 {/if}
 
 <style>
