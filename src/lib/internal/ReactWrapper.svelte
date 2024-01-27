@@ -10,20 +10,23 @@
   import type { FunctionComponent } from "react";
   import type { SvelteInit, TreeNode } from "./types";
 
-  // eslint-disable-next-line prefer-const
-  let { svelteInit, children, ...reactProps } = $props<{
+  let { svelteInit, children, react$Children, ...reactProps } = $props<{
     svelteInit: (options: SvelteInit) => TreeNode;
     children?: Snippet;
+    react$Children?: unknown;
   }>();
 
-  const propsStore = writable<Record<string, any>>(reactProps);
+  const propsStore = writable<Record<string, any>>({
+    ...reactProps,
+    children: react$Children,
+  });
   const target = writable<HTMLElement | undefined>();
   const slot = writable<HTMLElement | undefined>();
   const hooks = writable<Array<{ Hook: FunctionComponent; key: number }>>([]);
   const listeners: Array<() => void> = [];
 
   $effect(() => {
-    propsStore.set({ ...reactProps });
+    propsStore.set({ ...reactProps, children: react$Children });
   });
 
   const parent = getContext<TreeNode | undefined>("ReactWrapper");

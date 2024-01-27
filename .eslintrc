@@ -2,13 +2,28 @@
   "extends": ["triple/svelte"],
   "env": {
     "browser": true,
-    "node": true
+    "node": true,
+  },
+  "globals": {
+    "$props": true,
+    "$state": true,
+    "$derived": true,
+    "$effect": true,
   },
   "parserOptions": {
-    "project": "./tsconfig.eslint.json"
+    "project": "./tsconfig.eslint.json",
   },
   "rules": {
     "import/extensions": "off",
-    "@typescript-eslint/no-unused-vars": "off"
-  }
+    "@typescript-eslint/no-unused-vars": "off",
+  },
+  "overrides": [
+    {
+      "files": ["*.svelte"],
+      "rules": {
+        "svelte/valid-compile": "off",
+        "prefer-const": "off",
+      },
+    },
+  ],
 }

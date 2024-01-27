@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount } from "svelte";
+  import { createRoot, onMount } from "svelte";
   import { createPortal } from "react-dom";
   import ClickerReact from "../../tests/fixtures/Clicker";
   import type { PageData } from "./$types";
@@ -14,6 +14,7 @@
 
   onMount(() => {
     const win: any = window;
+    win.svelteCreateRoot = createRoot;
     win.sveltify = sveltify;
     win.ReactDOM = ReactDOM;
     win.ClickerReact = ClickerReact;

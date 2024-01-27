@@ -63,6 +63,7 @@ export default function sveltify<P>(
   }
   function Sveltified($$anchorOrPayload: any, $$props: any) {
     const ssr = typeof $$anchorOrPayload.appendChild === "undefined";
+    // eslint-disable-next-line no-param-reassign
     $$props.svelteInit = (init: SvelteInit) => {
       autokey += 1;
       const node = {
@@ -83,8 +84,8 @@ export default function sveltify<P>(
           parent.nodes = parent.nodes.filter((n) => n.key !== node.key);
           rerender({ createPortal, node: tree });
         });
-        return node;
       }
+      return node;
     };
     (ReactWrapper as any)($$anchorOrPayload, $$props);
   }

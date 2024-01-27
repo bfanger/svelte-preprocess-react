@@ -43,7 +43,7 @@ export default function reactify<P = any, E = any>(
           target,
           props: {
             SvelteComponent: SvelteComponent as any,
-            reactChildren: detectChildren(children),
+            react$Children: detectChildren(children),
             props,
             setSlot: (el: HTMLElement | undefined) => {
               if (el && childrenRef.current) {

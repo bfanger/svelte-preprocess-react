@@ -5,11 +5,11 @@ exports[`svelte-preprocess-react > should convert text content to react children
 const count = 0;
 ;const React$Alert = React$$sveltify(Alert, React$$createPortal, React$$ReactDOM, React$$renderToString);</script>
 
-<React$Alert children="Static Text" />
+<React$Alert react$Children="Static Text" />
 
-<React$Alert children="{'\\n'}  {'"'}Multiline content{'"'}. Lorem ipsum dolor sit amet consectetur adipisicing elit.{'\\n'}  Suscipit nisi atque asperiores.{'\\n'}" />
+<React$Alert react$Children="{'\\n'}  {'"'}Multiline content{'"'}. Lorem ipsum dolor sit amet consectetur adipisicing elit.{'\\n'}  Suscipit nisi atque asperiores.{'\\n'}" />
 
-<React$Alert children="Value: {count + 1}" />
+<React$Alert react$Children="Value: {count + 1}" />
 "
 `;
 
@@ -68,7 +68,7 @@ exports[`svelte-preprocess-react > should portal slotted content as children 1`]
   }
 ;const React$Alert = React$$sveltify(Alert, React$$createPortal, React$$ReactDOM, React$$renderToString);</script>
 
-<React$Alert children="A simple primary alert—check it out!" />
+<React$Alert react$Children="A simple primary alert—check it out!" />
 "
 `;
 
@@ -78,7 +78,7 @@ export let Context;
 used(Context);
 ;const React$Context$Provider = React$$sveltify(Context.Provider, React$$createPortal, React$$ReactDOM, React$$renderToString);</script>
 
-<React$Context$Provider children="content" />
+<React$Context$Provider react$Children="content" />
 
 <React$Context$Provider>
   <button>ok</button>
@@ -179,7 +179,7 @@ exports[`svelte-preprocess-react > should process on:event forwarding 1`] = `
 "<script lang="ts">import { sveltify as React$$sveltify } from "svelte-preprocess-react"; import React$$ReactDOM from "react-dom/client"; import { createPortal as React$$createPortal} from "react-dom"; import { renderToString as React$$renderToString } from "react-dom/server";import Clicker from "./Clicker";
 import { used } from "svelte-preprocess-react";
 used(Clicker);
-const { value = 0, onCount } = $props();
+let { value = 0, onCount } = $props();
 ;const React$Clicker = React$$sveltify(Clicker, React$$createPortal, React$$ReactDOM, React$$renderToString);</script>
 
 <React$Clicker count={value} {onCount} />

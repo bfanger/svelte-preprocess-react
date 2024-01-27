@@ -1,11 +1,10 @@
 import MagicString from "magic-string";
-import { compile, parse, preprocess } from "svelte/compiler";
+import { parse, preprocess } from "svelte/compiler";
 import detectReactVersion from "./internal/detectReactVersion.js";
 
 /**
  * @typedef {import("svelte/compiler").PreprocessorGroup} PreprocessorGroup
  * @typedef {import("svelte/compiler").Processed} Processed
- * @typedef {import("svelte/types/compiler/interfaces").TemplateNode} TemplateNode
  */
 
 const defaults = /** @type {const} */ ({
@@ -144,14 +143,13 @@ function transform(content, options) {
 /**
  * Replace react:* tags by injecting Sveltified versions of the React components.
  *
- * @param {TemplateNode} node
+ * @param {any} node
  * @param {MagicString} content
  * @param {Record<string, { expression: string, dispatcher: boolean }>} components
  */
 function replaceReactTags(node, content, components = {}) {
   /* eslint-disable no-param-reassign */
   if (node.type === "Element" && node.name.startsWith("react:")) {
-    /** @type {import("svelte/types/compiler/interfaces").Element} */
     const tag = /** @type {any} */ (node);
     const componentExpression = tag.name.slice(6);
     const alias = `React$${componentExpression.replace(/\./g, "$")}`;
@@ -181,7 +179,7 @@ function replaceReactTags(node, content, components = {}) {
         };
       }
     }
-    tag.attributes.forEach((attr) => {
+    tag.attributes.forEach((/** @type {any} */ attr) => {
       if (attr.type === "EventHandler") {
         const event = attr;
         const eventStart = event.start;
@@ -211,14 +209,15 @@ function replaceReactTags(node, content, components = {}) {
     if (node.children && node.children.length > 0) {
       const isTextContent =
         node.children.filter(
-          (child) => ["Text", "MustacheTag"].includes(child.type) === false,
+          (/** @type {any} */ child) =>
+            ["Text", "MustacheTag"].includes(child.type) === false,
         ).length === 0;
       /** @type {string[]} */
       const escaped = [];
       if (isTextContent) {
         // Convert text & expressions into a children prop.
         escaped.push('"');
-        node.children.forEach((child) => {
+        node.children.forEach((/** @type {any} */ child) => {
           if (child.type === "Text") {
             escaped.push(
               child.data.replace(/"/g, `{'"'}`).replace(/\n/g, `{'\\n'}`),
@@ -234,7 +233,7 @@ function replaceReactTags(node, content, components = {}) {
         // slot was converted to children prop
         content.appendRight(
           node.children[0].start - 1,
-          ` children=${escaped.join("")} /`,
+          ` react$Children=${escaped.join("")} /`,
         );
         content.remove(node.children[0].start, node.end);
         return components;
@@ -242,7 +241,7 @@ function replaceReactTags(node, content, components = {}) {
     }
   }
   /**
-   * @param {TemplateNode} child
+   * @param {any} child
    */
   function processChild(child) {
     replaceReactTags(child, content, components);

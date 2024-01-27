@@ -1,11 +1,11 @@
 <script lang="ts">
   import type { SvelteComponent as SvelteComponentType } from "svelte";
 
-  // eslint-disable-next-line prefer-const
-  let { SvelteComponent, props, reactChildren, setSlot } = $props<{
+  // eslint-disable-next-line @typescript-eslint/no-use-before-define
+  let { SvelteComponent, props, react$Children, setSlot } = $props<{
     SvelteComponent: typeof SvelteComponentType;
     props: Record<string, any>;
-    reactChildren: boolean;
+    react$Children: boolean;
     setSlot: (slot: HTMLElement | undefined) => void;
   }>();
 
@@ -16,7 +16,7 @@
   });
 </script>
 
-{#if reactChildren}
+{#if react$Children}
   <svelte:component this={SvelteComponent} {...props}
     ><svelte-slot bind:this={slot} /></svelte:component
   >

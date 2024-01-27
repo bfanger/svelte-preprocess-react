@@ -4,7 +4,6 @@
 
   used(Clicker);
 
-  // eslint-disable-next-line prefer-const
   let { value = 0, onCount } = $props<{
     value: number;
     onCount: (count: number) => void;

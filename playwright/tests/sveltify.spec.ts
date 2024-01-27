@@ -8,7 +8,7 @@ test.describe("sveltify", () => {
     await page.evaluate(() => {
       const win = window as any;
       const target = document.getElementById("playground");
-      win.app = new win.Clicker({
+      win.app = win.svelteCreateRoot(win.Clicker, {
         target,
         props: {
           count: 123,
