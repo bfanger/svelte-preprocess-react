@@ -1,6 +1,6 @@
 import * as React from "react";
 import type ReactDOMServer from "react-dom/server";
-import { writable, type Readable } from "svelte/store";
+import { writable, type Readable, get } from "svelte/store";
 import type { SvelteInit, TreeNode } from "./internal/types";
 import ReactWrapper from "./internal/ReactWrapper.svelte";
 import Bridge, { type BridgeProps } from "./internal/Bridge.js";
@@ -24,16 +24,17 @@ export default function sveltify<P>(
     // eslint-disable-next-line no-param-reassign
     $$props.svelteInit = (init: SvelteInit) => {
       if (!init.parent && !sharedRoot) {
-        const target = writable<HTMLElement>();
+        const portalTarget = writable<HTMLElement>();
         const rootNode: TreeNode = {
-          key: anchorOrPayload?.anchor ?? "client",
+          key: anchorOrPayload.anchor ? `${anchorOrPayload.anchor}/` : "/",
           autoKey: 0,
           reactComponent: ({ children }: any) => children,
-          target,
+          portalTarget,
           props: writable({}),
-          slot: writable() as Readable<any>,
+          leaf: writable(false),
+          childrenSource: writable() as Readable<any>,
           nodes: [],
-          contexts: new Map(),
+          context: new Map(),
           hooks: writable([]),
         };
         sharedRoot = rootNode;
@@ -41,20 +42,20 @@ export default function sveltify<P>(
           const rootEl = document.createElement("react-root");
           const root = ReactDOMClient.createRoot?.(rootEl);
           const targetEl = document.createElement("bridge-root");
-          target.set(targetEl);
+          portalTarget.set(targetEl);
           document.head.appendChild(rootEl);
           document.head.appendChild(targetEl);
 
           if (root) {
             rootNode.rerender = () => {
               root.render(
-                React.createElement(Bridge, { createPortal, node: rootNode }),
+                React.createElement(Bridge, { node: rootNode, createPortal }),
               );
             };
           } else {
             rootNode.rerender = () => {
               ReactDOMClient.render(
-                React.createElement(Bridge, { createPortal, node: rootNode }),
+                React.createElement(Bridge, { node: rootNode, createPortal }),
                 rootEl,
               );
             };
@@ -63,16 +64,17 @@ export default function sveltify<P>(
       }
       const parent = init.parent ?? (sharedRoot as TreeNode);
       parent.autoKey += 1;
-      const key = `${parent.key}_${parent.autoKey}`;
+      const key = `${parent.key}${parent.autoKey}/`;
       const node: TreeNode = {
         key,
         autoKey: 0,
         reactComponent,
         props: init.props,
-        slot: init.slot,
-        target: init.target,
+        childrenSource: init.childrenSource,
+        portalTarget: init.portalTarget,
         hooks: init.hooks,
-        contexts: init.contexts,
+        leaf: init.leaf,
+        context: init.context,
         nodes: [],
         rerender: parent.rerender,
       };
@@ -83,12 +85,15 @@ export default function sveltify<P>(
       return node;
     };
     (ReactWrapper as any)(anchorOrPayload, $$props);
-
     if (standalone && !client) {
       if (renderToString && sharedRoot) {
         setPayload(anchorOrPayload);
-        const html = renderToString(buildReactDOM(sharedRoot));
-        applyPortals(anchorOrPayload, sharedRoot, { html });
+        const html = renderToString(
+          React.createElement(Bridge, { node: sharedRoot }),
+        );
+        const before = { svelte: anchorOrPayload.out, react: html };
+        const source = { html };
+        applyPortals(anchorOrPayload, sharedRoot, source);
         setPayload(undefined);
       }
       sharedRoot = undefined;
@@ -97,49 +102,99 @@ export default function sveltify<P>(
   return Sveltified as any;
 }
 
-function buildReactDOM(node: TreeNode) {
-  const props: any = {
-    key: node.key,
-    ...node.props,
-  };
-  if (node.nodes.length > 0) {
-    props.children = node.nodes.map((subnode) => buildReactDOM(subnode));
+/**
+ * Merge output rendered by React into the correct place of the html.
+ * (Mutates target and source objects)
+ */
+function applyPortals(
+  $$payload: { out: string },
+  node: TreeNode,
+  source: { html: string },
+) {
+  node.nodes.forEach((subnode) => applyPortals($$payload, subnode, source));
+  if (node === sharedRoot) {
+    return;
   }
-  return React.createElement(
-    "react-portal-source",
-    { key: node.key, sveltify: node.key },
-    React.createElement(node.reactComponent, props),
-  );
+  applyPortal($$payload, node, source);
 }
 
-function applyPortals(target: any, node: TreeNode, source: { html: string }) {
-  node.nodes.forEach((subnode) => applyPortals(target, subnode, source));
-  const startTag = `<react-portal-source sveltify="${node.key}">`;
-  const endTag = `</react-portal-source>`;
-  const start = source.html.indexOf(startTag);
-  if (start === -1) {
-    return;
+function applyPortal(
+  $$payload: { out: string },
+  node: TreeNode,
+  source: { html: string },
+) {
+  if (!get(node.props).leaf) {
+    try {
+      const child = extract(
+        `<svelte-children-source node="${node.key}" style="display:none">`,
+        `</svelte-children-source>`,
+        $$payload.out,
+      );
+      // eslint-disable-next-line no-param-reassign
+      source.html = inject(
+        `<react-children-target node="${node.key}" style="display:contents">`,
+        "</react-children-target>",
+        child.innerHtml,
+        source.html,
+      );
+    } catch (err: any) {
+      // console.warn(err.message);
+    }
   }
-  const end = source.html.indexOf(endTag, start) + endTag.length;
-  const html = source.html.substring(
-    start + startTag.length,
-    end - endTag.length,
+  const portal = extract(
+    `<react-portal-source node="${node.key}" style="display:none">`,
+    `</react-portal-source>`,
+    source.html,
   );
   // eslint-disable-next-line no-param-reassign
-  source.html = source.html.substring(0, start) + source.html.substring(end);
-  if (!html) {
-    return;
+  source.html = portal.outerRemoved;
+  try {
+    // eslint-disable-next-line no-param-reassign
+    $$payload.out = inject(
+      `<svelte-portal-target node="${node.key}" style="display:contents">`,
+      "</svelte-portal-target>",
+      portal.innerHtml,
+      $$payload.out,
+    );
+  } catch (err: any) {
+    console.warn(err.message);
   }
-  applyPortal(target, node.key, html);
 }
-function applyPortal(target: any, key: string, html: string) {
-  const startTag = `<react-portal-target sveltify="${key}"`;
-  const start = target.out.indexOf(startTag);
+
+function extract(open: string, close: string, html: string): any {
+  const start = html.indexOf(open);
   if (start === -1) {
-    return;
+    throw new Error(`Couldn't find ${open}`);
   }
-  const pos = target.out.indexOf(">", start);
-  // eslint-disable-next-line no-param-reassign
-  target.out =
-    target.out.substring(0, pos + 1) + html + target.out.substring(pos + 1);
+  const end = html.indexOf(close, start);
+  if (start === -1) {
+    throw new Error(`Couldn't find ${close}`);
+  }
+  const outerHtml = html.substring(start, end + close.length);
+  const innerHtml = html.substring(start + open.length, end);
+  const outerRemoved =
+    html.substring(0, start) + html.substring(end + close.length);
+  const innerRemoved =
+    html.substring(0, start + open.length) + html.substring(end);
+
+  return {
+    innerHtml,
+    outerHtml,
+    innerRemoved,
+    outerRemoved,
+  };
+}
+
+function inject(open: string, close: string, content: string, target: string) {
+  const start = target.indexOf(open);
+  if (start === -1) {
+    throw new Error(`Couldn't find ${open}`);
+  }
+  const end = target.indexOf(close, start);
+  if (start === -1) {
+    throw new Error(`Couldn't find ${close}`);
+  }
+  return (
+    target.substring(0, start + open.length) + content + target.substring(end)
+  );
 }

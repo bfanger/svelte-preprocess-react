@@ -1,4 +1,9 @@
 <script lang="ts">
+  /**
+   * Helper for sveltify()
+   * - Render a placeholder where the React component can portal into.
+   * - Render the Svelte children, that can be injected into the React component.
+   */
   import { writable } from "svelte/store";
   import {
     getAllContexts,
@@ -20,13 +25,14 @@
     ...reactProps,
     children: react$Children,
   });
-  let portal: HTMLElement | undefined = $state(undefined);
-  const target = writable<HTMLElement | undefined>();
-  const slot = writable<HTMLElement | undefined>();
+  const portalTarget = writable<HTMLElement | undefined>();
+  const leaf = writable<boolean>(typeof children === "undefined");
+  const childrenSource = writable<HTMLElement | undefined>();
   const hooks = writable<Array<{ Hook: FunctionComponent; key: number }>>([]);
 
   $effect(() => {
     propsStore.set({ ...reactProps, children: react$Children });
+    leaf.set(typeof children === "undefined");
   });
 
   const parent = getContext<TreeNode | undefined>("ReactWrapper");
@@ -35,19 +41,13 @@
     svelteInit({
       parent,
       props: propsStore,
-      target,
-      slot,
+      portalTarget,
+      leaf,
+      childrenSource,
       hooks,
-      contexts: getAllContexts(),
+      context: getAllContexts(),
     }),
   );
-
-  $effect(() => {
-    if (portal) {
-      portal.innerHTML = "";
-      target.set(portal);
-    }
-  });
 
   onDestroy(() => {
     if (node.parent) {
@@ -55,21 +55,23 @@
       node.rerender?.();
     }
   });
+
+  function clearSSR(el: HTMLElement) {
+    el.innerHTML = "";
+  }
 </script>
 
-<react-portal-target sveltify={node.key} bind:this={portal} />
+<svelte-portal-target
+  node={node.key}
+  style="display:contents"
+  bind:this={$portalTarget}
+  use:clearSSR
+/>
 
 {#if children}
-  <svelte-slot sveltify={node.key} bind:this={$slot}
-    >{@render children()}</svelte-slot
+  <svelte-children-source
+    node={node.key}
+    style="display:none"
+    bind:this={$childrenSource}>{@render children()}</svelte-children-source
   >
 {/if}
-
-<style>
-  react-portal-target {
-    display: contents;
-  }
-  svelte-slot {
-    display: none;
-  }
-</style>

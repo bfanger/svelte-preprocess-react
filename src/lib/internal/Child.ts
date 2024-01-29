@@ -1,9 +1,10 @@
 import * as React from "react";
 
 type Props = {
+  node: string;
   el: HTMLElement | undefined;
 };
-const Child: React.FC<Props> = ({ el }) => {
+const Child: React.FC<Props> = ({ node, el }) => {
   const ref = React.useRef<HTMLElement>();
   React.useEffect(() => {
     if (!ref.current) {
@@ -15,8 +16,9 @@ const Child: React.FC<Props> = ({ el }) => {
       ref.current.appendChild(el);
     }
   }, [ref, el]);
-  return React.createElement("react-child", {
+  return React.createElement("react-children-target", {
     ref,
+    node,
     style: { display: "contents" },
   });
 };

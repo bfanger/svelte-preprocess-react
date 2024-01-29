@@ -60,9 +60,10 @@ export type TreeNode = SvelteInit & {
 
 export type SvelteInit = {
   props: Readable<Record<string, any>>; // The react props
-  target: Readable<HTMLElement | undefined>; // An element to mount/portal the React component into
-  slot: Readable<HTMLElement | undefined>; // An element containing the slotted Svelte components, inject as children into the React component
-  contexts: Map<any, any>; // The full Svelte context
+  portalTarget: Readable<HTMLElement | undefined>; // An element to portal the React component into
+  leaf: Readable<boolean>; // No children
+  childrenSource: Readable<HTMLElement | undefined>; // An element containing the children from Svelte, inject as children into the React component
+  context: Map<any, any>; // The full Svelte context
   hooks: Writable<Array<{ Hook: FunctionComponent; key: number }>>;
   parent?: TreeNode;
 };

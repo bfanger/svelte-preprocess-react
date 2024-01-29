@@ -29,7 +29,7 @@ test.describe("sveltify", () => {
   test("react context", async ({ page }) => {
     await page.goto("/context-react");
     await expect(
-      page.locator('text="Hello from react context provider"'),
+      page.getByRole("heading", { name: "Hello from react context" }),
     ).toBeVisible();
   });
 

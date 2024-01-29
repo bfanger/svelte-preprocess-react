@@ -63,3 +63,10 @@ For smaller bundle size you can disable this feature by passing `ssr: false` to 
 ssr-portals: The default slot (svelte) is rendered first, if the slot contains react components a placeholder string is rendered. These child components are passed as children to the react component and are wrapped with marker tags.
 This allows both frameworks to maintain their component trees (needed for context)
 Then the html partials are extracted moved into place so the resulting html looks like it was one component tree.
+
+# Wrappers elements
+
+`<svelte-*>` are wrappers rendered by Svelte  
+`<react-*>` are wrappers rendered by React
+
+-

@@ -1,31 +1,39 @@
 <script lang="ts">
+  /**
+   * Helper for reactify()
+   */
+  import type React from "react";
   import type { SvelteComponent as SvelteComponentType } from "svelte";
 
   // eslint-disable-next-line @typescript-eslint/no-use-before-define
-  let { SvelteComponent, props, react$Children, setSlot } = $props<{
+  let { SvelteComponent, nodeKey, props, react$Children, setSlot } = $props<{
     SvelteComponent: typeof SvelteComponentType;
+    nodeKey: string;
     props: Record<string, any>;
-    react$Children: boolean;
-    setSlot: (slot: HTMLElement | undefined) => void;
+    react$Children?: React.ReactNode;
+    setSlot?: (slot: HTMLElement | undefined) => void;
   }>();
 
-  let slot: HTMLElement | undefined = $state(undefined);
-
-  $effect(() => {
-    setSlot(slot);
-  });
+  function slot(el: HTMLElement) {
+    setSlot?.(el);
+    return {
+      destroy() {
+        setSlot?.(undefined);
+      },
+    };
+  }
 </script>
 
-{#if react$Children}
-  <svelte:component this={SvelteComponent} {...props}
-    ><svelte-slot bind:this={slot} /></svelte:component
-  >
-{:else}
-  <svelte:component this={SvelteComponent} {...props} />
-{/if}
-
-<style>
-  svelte-slot {
-    display: contents;
-  }
-</style>
+<svelte-portal-source node={nodeKey} style="display:contents"
+  >{#if typeof react$Children === "undefined"}
+    <svelte:component this={SvelteComponent} {...props} />
+  {:else}
+    <svelte:component this={SvelteComponent} {...props}
+      >{#if typeof react$Children === "string"}{react$Children}{:else}<svelte-children
+          node={nodeKey}
+          style="display:contents"
+          use:slot
+        />{/if}</svelte:component
+    >
+  {/if}</svelte-portal-source
+>

@@ -28,13 +28,13 @@ export default function reactify<P = any, E = any>(
   const { name } = SvelteComponent as any;
   const named = {
     [name](options: any) {
-      const { children } = options;
-      const props = extractProps(options);
+      const { children, ...props } = options;
       const wrapperRef = React.useRef<HTMLElement>();
       const svelteRef = React.useRef<ReturnType<typeof createRoot>>();
-      const slotRef = React.useRef<HTMLElement>();
-      const childrenRef = React.useRef<HTMLElement>();
-      const context = React.useContext(SvelteToReactContext);
+      const svelteChildrenRef = React.useRef<HTMLElement>();
+      const reactChildrenRef = React.useRef<HTMLElement>();
+      const node = React.useContext(SvelteToReactContext);
+      const { key, context } = node ?? {};
 
       // Mount Svelte component
       React.useEffect(() => {
@@ -46,13 +46,14 @@ export default function reactify<P = any, E = any>(
           target,
           props: {
             SvelteComponent: SvelteComponent as any,
-            react$Children: detectChildren(children),
+            nodeKey: key,
+            react$Children: children,
             props,
             setSlot: (el: HTMLElement | undefined) => {
-              if (el && childrenRef.current) {
-                el.appendChild(childrenRef.current);
+              if (el && reactChildrenRef.current) {
+                el.appendChild(reactChildrenRef.current);
               }
-              slotRef.current = el;
+              svelteChildrenRef.current = el;
             },
           },
           context,
@@ -73,51 +74,72 @@ export default function reactify<P = any, E = any>(
 
       // Sync children/slot
       React.useEffect(() => {
-        if (childrenRef.current) {
+        if (reactChildrenRef.current) {
           if (
-            slotRef.current &&
-            childrenRef.current.parentElement !== slotRef.current
+            svelteChildrenRef.current &&
+            reactChildrenRef.current.parentElement !== svelteChildrenRef.current
           ) {
-            slotRef.current.appendChild(childrenRef.current);
+            svelteChildrenRef.current.appendChild(reactChildrenRef.current);
           }
-        } else if (slotRef.current) {
-          slotRef.current.innerHTML = "";
+        } else if (svelteChildrenRef.current) {
+          svelteChildrenRef.current.innerHTML = "";
         }
-      }, [childrenRef]);
+      }, [reactChildrenRef]);
 
       if (server) {
         let html = "";
         if ($$payload) {
           const len = $$payload.out.length;
-          (SvelteComponent as any)($$payload, props);
+          (SvelteWrapper as any)($$payload, {
+            SvelteComponent,
+            nodeKey: key,
+            props,
+            react$Children: children,
+          });
           html = $$payload.out.slice(len);
           $$payload.out = $$payload.out.slice(0, len);
         } else {
-          const result = render(SvelteComponent as any, { props, context });
+          const result = render(SvelteComponent as any, {
+            props,
+            context,
+          });
           html = result.html;
         }
         return [
-          React.createElement("svelte-wrapper", {
-            style: {
-              display: "contents",
-            },
+          React.createElement("react-portal-target", {
+            node: key,
+            style: { display: "contents" },
             dangerouslySetInnerHTML: { __html: html },
           }),
+          ...(children
+            ? [
+                React.createElement(
+                  "react-children",
+                  {
+                    node: key,
+                    style: { display: "none" },
+                  },
+                  children,
+                ),
+              ]
+            : []),
         ];
       }
 
       return React.createElement(
-        "svelte-wrapper",
+        "react-portal-target",
         {
           ref: wrapperRef,
+          node: key,
           style: { display: "contents" },
         },
         children
           ? React.createElement(
               "react-children",
               {
-                ref: childrenRef,
-                style: { display: "contents" },
+                ref: reactChildrenRef,
+                node: key,
+                style: { display: "none" },
               },
               children,
             )
@@ -126,28 +148,6 @@ export default function reactify<P = any, E = any>(
     },
   };
   return named[name];
-}
-
-function extractProps(options: Record<string, any>): Record<string, any> {
-  const props: Record<string, any> = {};
-  Object.entries(options).forEach(([prop, value]) => {
-    if (prop !== "children") {
-      props[prop] = value;
-    }
-  });
-  return props;
-}
-
-function detectChildren(
-  children: React.ReactNode | React.ReactNode[] | undefined,
-): boolean {
-  if (children === undefined) {
-    return false;
-  }
-  if (Array.isArray(children) && children.length === 0) {
-    return false;
-  }
-  return true;
 }
 
 export function setPayload(payload: any) {

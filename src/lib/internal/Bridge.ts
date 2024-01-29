@@ -5,24 +5,22 @@ import Child from "./Child.js";
 import type { TreeNode } from "./types";
 
 export type BridgeProps = {
-  createPortal: (
+  node: TreeNode;
+  createPortal?: (
     children: React.ReactNode,
     container: Element | DocumentFragment,
     key?: null | string,
   ) => React.ReactPortal;
-  node: TreeNode;
 };
-const Bridge: React.FC<BridgeProps> = ({ createPortal, node }) => {
-  const target = useStore(node.target);
+const Bridge: React.FC<BridgeProps> = ({ node, createPortal }) => {
   let props = useStore(node.props);
-  const slot = useStore(node.slot);
+  const portalTarget = useStore(node.portalTarget);
+  const leaf = useStore(node.leaf);
+  const svelteChildren = useStore(node.childrenSource);
   const hooks = useStore(node.hooks);
 
-  if (!target) {
-    return null;
-  }
   let children: React.ReactElement[] | undefined;
-  if (node.nodes.length === 0 && slot === undefined && hooks.length === 0) {
+  if (node.nodes.length === 0 && leaf && hooks.length === 0) {
     if (props.children) {
       children = props.children;
       props = { ...props };
@@ -41,9 +39,13 @@ const Bridge: React.FC<BridgeProps> = ({ createPortal, node }) => {
       props = { ...props };
       delete props.children;
     }
-    if (slot) {
+    if (!leaf) {
       children.push(
-        React.createElement(Child, { key: "svelte-slot", el: slot }),
+        React.createElement(Child, {
+          node: node.key,
+          key: "svelte$Children",
+          el: svelteChildren,
+        }),
       );
     }
     if (hooks.length >= 0) {
@@ -54,15 +56,23 @@ const Bridge: React.FC<BridgeProps> = ({ createPortal, node }) => {
       );
     }
   }
-  return createPortal(
-    React.createElement(
-      SvelteToReactContext.Provider,
-      { value: node.contexts },
-      children === undefined
-        ? React.createElement(node.reactComponent, props)
-        : React.createElement(node.reactComponent, props, children),
-    ),
-    target,
+  const vdom = React.createElement(
+    SvelteToReactContext.Provider,
+    { value: node },
+    children === undefined
+      ? React.createElement(node.reactComponent, props)
+      : React.createElement(node.reactComponent, props, children),
+  );
+  if (portalTarget && createPortal) {
+    return createPortal(vdom, portalTarget);
+  }
+  if (createPortal) {
+    return null;
+  }
+  return React.createElement(
+    "react-portal-source",
+    { node: node.key, style: { display: "none" } },
+    vdom,
   );
 };
 export default Bridge;
