@@ -26,13 +26,15 @@
     children: react$Children,
   });
   const portalTarget = writable<HTMLElement | undefined>();
-  const leaf = writable<boolean>(typeof children === "undefined");
+  const svelteChildren = writable<Snippet | undefined>(children);
   const childrenSource = writable<HTMLElement | undefined>();
   const hooks = writable<Array<{ Hook: FunctionComponent; key: number }>>([]);
 
   $effect(() => {
     propsStore.set({ ...reactProps, children: react$Children });
-    leaf.set(typeof children === "undefined");
+  });
+  $effect(() => {
+    svelteChildren.set(children);
   });
 
   const parent = getContext<TreeNode | undefined>("ReactWrapper");
@@ -42,8 +44,8 @@
       parent,
       props: propsStore,
       portalTarget,
-      leaf,
       childrenSource,
+      svelteChildren,
       hooks,
       context: getAllContexts(),
     }),
@@ -55,17 +57,12 @@
       node.rerender?.();
     }
   });
-
-  function clearSSR(el: HTMLElement) {
-    el.innerHTML = "";
-  }
 </script>
 
 <svelte-portal-target
   node={node.key}
   style="display:contents"
   bind:this={$portalTarget}
-  use:clearSSR
 />
 
 {#if children}

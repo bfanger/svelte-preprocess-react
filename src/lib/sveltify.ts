@@ -31,8 +31,8 @@ export default function sveltify<P>(
           reactComponent: ({ children }: any) => children,
           portalTarget,
           props: writable({}),
-          leaf: writable(false),
-          childrenSource: writable() as Readable<any>,
+          childrenSource: writable(),
+          svelteChildren: writable(),
           nodes: [],
           context: new Map(),
           hooks: writable([]),
@@ -72,8 +72,8 @@ export default function sveltify<P>(
         props: init.props,
         childrenSource: init.childrenSource,
         portalTarget: init.portalTarget,
+        svelteChildren: init.svelteChildren,
         hooks: init.hooks,
-        leaf: init.leaf,
         context: init.context,
         nodes: [],
         rerender: parent.rerender,
@@ -123,13 +123,17 @@ function applyPortal(
   node: TreeNode,
   source: { html: string },
 ) {
-  if (!get(node.props).leaf) {
+  const init = {
+    props: get(node.props),
+    svelteChildren: get(node.svelteChildren),
+  };
+  if (init.svelteChildren !== undefined) {
+    const child = extract(
+      `<svelte-children-source node="${node.key}" style="display:none">`,
+      `</svelte-children-source>`,
+      $$payload.out,
+    );
     try {
-      const child = extract(
-        `<svelte-children-source node="${node.key}" style="display:none">`,
-        `</svelte-children-source>`,
-        $$payload.out,
-      );
       // eslint-disable-next-line no-param-reassign
       source.html = inject(
         `<react-children-target node="${node.key}" style="display:contents">`,
@@ -138,7 +142,7 @@ function applyPortal(
         source.html,
       );
     } catch (err: any) {
-      // console.warn(err.message);
+      // The React component, didn't render the childrenThe rendering of children can be conditional.
     }
   }
   const portal = extract(
@@ -161,7 +165,7 @@ function applyPortal(
   }
 }
 
-function extract(open: string, close: string, html: string): any {
+function extract(open: string, close: string, html: string) {
   const start = html.indexOf(open);
   if (start === -1) {
     throw new Error(`Couldn't find ${open}`);
@@ -170,17 +174,12 @@ function extract(open: string, close: string, html: string): any {
   if (start === -1) {
     throw new Error(`Couldn't find ${close}`);
   }
-  const outerHtml = html.substring(start, end + close.length);
   const innerHtml = html.substring(start + open.length, end);
   const outerRemoved =
     html.substring(0, start) + html.substring(end + close.length);
-  const innerRemoved =
-    html.substring(0, start + open.length) + html.substring(end);
 
   return {
     innerHtml,
-    outerHtml,
-    innerRemoved,
     outerRemoved,
   };
 }

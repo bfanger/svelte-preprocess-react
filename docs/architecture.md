@@ -36,7 +36,7 @@ and React needs to act as if the tree is:
 
 ### Client mode
 
-sveltifyReact creates a single React Root and based on the Hierachy of the ReactWrapper components we're able to built the React tree:
+`sveltify()` creates a single React Root and based on the Hierarchy of the ReactWrapper components we're able to built the React tree:
 
 ```jsx
 <Bridge>
@@ -50,23 +50,23 @@ sveltifyReact creates a single React Root and based on the Hierachy of the React
 
 The `<Bridge>`s use React Portals to render the components into the DOM of the ReactWrapper Svelte component.
 
-This is why the childeren prop passed to your React component is an array, even when you manually pass a children prop.
+This is why the children prop passed to your React component is an array, even when you manually pass a children prop.
 This array allows svelte-preprocess-react to inject the slotted content into the correct place in the React tree.
 
 ### Server mode
 
-Based off on how the Svelte component is compiled we can detect SSR and utilize the renderToString method to generate the html. (limited to leaf nodes a.t.m.)
-
-This detection is done at runtime, so the client will also ship with the renderToStringYou server code.
+Server detection is done at runtime, so the client will also ship with the renderToStringYou server code.
 For smaller bundle size you can disable this feature by passing `ssr: false` to the preprocess function.
 
-ssr-portals: The default slot (svelte) is rendered first, if the slot contains react components a placeholder string is rendered. These child components are passed as children to the react component and are wrapped with marker tags.
-This allows both frameworks to maintain their component trees (needed for context)
-Then the html partials are extracted moved into place so the resulting html looks like it was one component tree.
+Svelte is rendered first, while building the vdom for React.
+Using string based methods:
+`<svelte-children-source>` from the Svelte is injected into the React's `<react-children-target>`
+`<react-portal-source>` from the React is then injected into the Svelte's `<svelte-portal-target>`
+
+This allows React to maintain it's component trees (needed for context)
+Note: Components created with `reactify` have trouble preserving the Svelte context
 
 # Wrappers elements
 
 `<svelte-*>` are wrappers rendered by Svelte  
 `<react-*>` are wrappers rendered by React
-
--

@@ -1,5 +1,6 @@
 import type { ComponentClass, FunctionComponent } from "react";
 import type { Readable, Writable } from "svelte/store";
+import type { Snippet } from "svelte";
 import type { BridgeProps } from "./Bridge";
 
 export type HandlerName<T extends string> = `on${Capitalize<T>}`;
@@ -61,8 +62,8 @@ export type TreeNode = SvelteInit & {
 export type SvelteInit = {
   props: Readable<Record<string, any>>; // The react props
   portalTarget: Readable<HTMLElement | undefined>; // An element to portal the React component into
-  leaf: Readable<boolean>; // No children
   childrenSource: Readable<HTMLElement | undefined>; // An element containing the children from Svelte, inject as children into the React component
+  svelteChildren: Readable<Snippet | undefined>; // The svelte children prop (snippet/slot)
   context: Map<any, any>; // The full Svelte context
   hooks: Writable<Array<{ Hook: FunctionComponent; key: number }>>;
   parent?: TreeNode;
