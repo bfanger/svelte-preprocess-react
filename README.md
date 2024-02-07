@@ -91,7 +91,7 @@ export default {
 
 > Extend
 
-Once you've converted a React component to Svelte, you'd want delete that React component, but some if other React components depended on that component you can use `reactify` to use the new Svelte component as a React component.
+Once you've converted a React component to Svelte, you'd want delete that React component, but when other React components depended on that component use `reactify` to convert the Svelte component to a React component.
 
 ```jsx
 import { reactify } from "svelte-preprocess-react";
@@ -108,7 +108,7 @@ function MyComponent() {
 
 > Extinguish
 
-Using multiple frontend frameworks adds overhead both in User and Developer experience.
+Using multiple frontend frameworks adds overhead in both User and Developer experience.
 
 - Increased download size
 - Slower (each framework boundary adds overhead)
