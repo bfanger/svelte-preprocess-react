@@ -8,5 +8,6 @@ node_modules
 /test-results
 .env
 /test-results/
+/vite.config.ts.timestamp-*.mjs
 /playwright-report/
 /playwright/.cache/

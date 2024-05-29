@@ -6,6 +6,9 @@ import preprocessReact from "./src/lib/preprocessReact.js";
 export default {
   preprocess: [vitePreprocess(), preprocessReact()],
   kit: {
+    alias: {
+      "svelte-preprocess-react": "src/lib",
+    },
     adapter: adapter({
       fallback: "index.html",
     }),
