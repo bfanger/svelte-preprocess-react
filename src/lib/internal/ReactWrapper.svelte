@@ -33,7 +33,6 @@
   const hooks = writable<Array<{ Hook: FunctionComponent; key: number }>>([]);
 
   $effect(() => {
-    deepRead(reactProps);
     propsStore.set({ ...reactProps, children: react$Children });
   });
   $effect(() => {

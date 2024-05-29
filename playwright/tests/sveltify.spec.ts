@@ -16,7 +16,7 @@ test.describe("sveltify", () => {
         props: { ReactDOM: win.ReactDOM },
       });
     });
-    const message = page.locator('[data-testid="message"]');
+    const message = page.getByTestId("message");
     await expect(message).toContainText("You clicked 0 times");
     await page.click("text=+");
     await expect(message).toContainText("You clicked 1 times");

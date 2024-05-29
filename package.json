@@ -10,7 +10,7 @@
     "type": "git",
     "url": "https://github.com/bfanger/svelte-preprocess-react.git"
   },
-  "version": "2.0.0-beta.0",
+  "version": "2.0.0-beta.2",
   "license": "MIT",
   "type": "module",
   "scripts": {
@@ -28,6 +28,7 @@
     "test:playwright": "playwright test",
     "vitest:watch": "vitest watch",
     "preinstall": "npx only-allow pnpm",
+    "prepublishOnly": "npm run package",
     "prepare": "husky || true"
   },
   "lint-staged": {

@@ -34,7 +34,7 @@ const Bridge: React.FC<BridgeProps> = ({ node, createPortal }) => {
       console.warn("Can't have both React & Svelte children");
     }
   }
-  if (node.nodes.length !== 0) {
+  if (node.nodes.length !== 0 || hooks.length !== 0) {
     children = [
       children,
       ...node.nodes.map((subnode) =>
@@ -44,21 +44,18 @@ const Bridge: React.FC<BridgeProps> = ({ node, createPortal }) => {
           node: subnode,
         }),
       ),
+      ...hooks.map(({ Hook, key }) =>
+        React.createElement(Hook, { key: `hook${key}` }),
+      ),
     ];
   }
 
   const vdom = React.createElement(
     SvelteToReactContext.Provider,
     { value: node },
-    [
-      children === undefined
-        ? React.createElement(node.reactComponent, props)
-        : React.createElement(node.reactComponent, props, children),
-
-      ...hooks.map(({ Hook, key }) =>
-        React.createElement(Hook, { key: `hook${key}` }),
-      ),
-    ],
+    children === undefined
+      ? React.createElement(node.reactComponent, props)
+      : React.createElement(node.reactComponent, props, children),
   );
   if (portalTarget && createPortal) {
     if (firstRender.current) {
