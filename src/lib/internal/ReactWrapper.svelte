@@ -4,7 +4,6 @@
    * - Render a placeholder where the React component can portal into.
    * - Render the Svelte children, that can be injected into the React component.
    */
-  import { writable } from "svelte/store";
   import {
     getAllContexts,
     getContext,
@@ -12,43 +11,44 @@
     setContext,
     type Snippet,
   } from "svelte";
-  import type { FunctionComponent } from "react";
+  import type { FunctionComponent, ReactNode } from "react";
   import type { SvelteInit, TreeNode } from "./types";
-  import deepRead from "./deepRead";
 
   type Props = {
     svelteInit: (options: SvelteInit) => TreeNode;
     children?: Snippet;
-    react$Children?: unknown;
+    react$Children?: ReactNode;
   };
   let { svelteInit, children, react$Children, ...reactProps }: Props = $props();
 
-  const propsStore = writable<Record<string, any>>({
-    ...reactProps,
-    children: react$Children,
-  });
-  const portalTarget = writable<HTMLElement | undefined>();
-  const svelteChildren = writable<Snippet | undefined>(children);
-  const childrenSource = writable<HTMLElement | undefined>();
-  const hooks = writable<Array<{ Hook: FunctionComponent; key: number }>>([]);
+  let portalTarget = $state<HTMLElement | undefined>();
 
-  $effect(() => {
-    propsStore.set({ ...reactProps, children: react$Children });
-  });
-  $effect(() => {
-    svelteChildren.set(children);
-  });
+  let childrenSource = $state<HTMLElement | undefined>();
+  let hooks = $state<Array<{ Hook: FunctionComponent; key: number }>>([]);
 
   const parent = getContext<TreeNode | undefined>("ReactWrapper");
   const node = setContext(
     "ReactWrapper",
     svelteInit({
       parent,
-      props: propsStore,
-      portalTarget,
-      childrenSource,
-      svelteChildren,
-      hooks,
+      get props() {
+        return {
+          reactProps,
+          children: react$Children as ReactNode,
+        };
+      },
+      get portalTarget() {
+        return portalTarget;
+      },
+      get childrenSource() {
+        return childrenSource;
+      },
+      get svelteChildren() {
+        return children;
+      },
+      get hooks() {
+        return hooks;
+      },
       context: getAllContexts(),
     }),
   );
@@ -64,13 +64,13 @@
 <svelte-portal-target
   node={node.key}
   style="display:contents"
-  bind:this={$portalTarget}
+  bind:this={portalTarget}
 ></svelte-portal-target>
 
 {#if children}
   <svelte-children-source
     node={node.key}
     style="display:none"
-    bind:this={$childrenSource}>{@render children()}</svelte-children-source
+    bind:this={childrenSource}>{@render children()}</svelte-children-source
   >
 {/if}

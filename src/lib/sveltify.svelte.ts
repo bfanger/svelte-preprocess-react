@@ -1,10 +1,9 @@
 import * as React from "react";
 import type ReactDOMServer from "react-dom/server";
-import { writable, get } from "svelte/store";
-import type { SvelteInit, TreeNode } from "./internal/types";
+import type { SvelteInit, TreeNode } from "./internal/types.js";
 import ReactWrapper from "./internal/ReactWrapper.svelte";
-import Bridge, { type BridgeProps } from "./internal/Bridge.js";
-import { setPayload } from "./reactify";
+import Bridge, { type BridgeProps } from "./internal/Bridge.svelte.js";
+import { setPayload } from "./reactify.js";
 
 let sharedRoot: TreeNode | undefined;
 
@@ -24,27 +23,34 @@ export default function sveltify<P>(
     // eslint-disable-next-line no-param-reassign
     $$props.svelteInit = (init: SvelteInit) => {
       if (!init.parent && !sharedRoot) {
-        const portalTarget = writable<HTMLElement>();
+        let portalTarget = $state<HTMLElement | undefined>();
+        const hooks = $state<
+          Array<{ Hook: React.FunctionComponent; key: number }>
+        >([]);
+
         const rootNode: TreeNode = {
           key: anchorOrPayload.anchor ? `${anchorOrPayload.anchor}/` : "/",
           autoKey: 0,
           reactComponent: ({ children }: any) => children as React.ReactNode,
-          portalTarget,
-          props: writable({}),
-          childrenSource: writable(),
-          svelteChildren: writable(),
+          get portalTarget() {
+            return portalTarget;
+          },
+          props: { reactProps: {}, children: null },
+          childrenSource: undefined,
+          svelteChildren: undefined,
           nodes: [],
           context: new Map(),
-          hooks: writable([]),
+          get hooks() {
+            return hooks;
+          },
         };
         sharedRoot = rootNode;
         if (client) {
           const rootEl = document.createElement("react-root");
           const root = ReactDOMClient.createRoot?.(rootEl);
-          const targetEl = document.createElement("bridge-root");
-          portalTarget.set(targetEl);
+          portalTarget = document.createElement("bridge-root");
           document.head.appendChild(rootEl);
-          document.head.appendChild(targetEl);
+          document.head.appendChild(portalTarget);
 
           if (root) {
             rootNode.rerender = () => {
@@ -65,19 +71,13 @@ export default function sveltify<P>(
       const parent = init.parent ?? (sharedRoot as TreeNode);
       parent.autoKey += 1;
       const key = `${parent.key}${parent.autoKey}/`;
-      const node: TreeNode = {
+      const node: TreeNode = Object.assign(init, {
         key,
         autoKey: 0,
         reactComponent,
-        props: init.props,
-        childrenSource: init.childrenSource,
-        portalTarget: init.portalTarget,
-        svelteChildren: init.svelteChildren,
-        hooks: init.hooks,
-        context: init.context,
         nodes: [],
         rerender: parent.rerender,
-      };
+      });
       parent.nodes.push(node);
       if (client) {
         parent.rerender?.();
@@ -123,11 +123,7 @@ function applyPortal(
   node: TreeNode,
   source: { html: string },
 ) {
-  const init = {
-    props: get(node.props),
-    svelteChildren: get(node.svelteChildren),
-  };
-  if (init.svelteChildren !== undefined) {
+  if (node.svelteChildren !== undefined) {
     const child = extract(
       `<svelte-children-source node="${node.key}" style="display:none">`,
       `</svelte-children-source>`,

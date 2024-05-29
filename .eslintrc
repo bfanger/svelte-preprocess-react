@@ -25,5 +25,11 @@
         "prefer-const": "off",
       },
     },
+    {
+      "files": ["*.svelte.ts"],
+      "rules": {
+        "filenames/match-exported": ["warn", null, "\\.svelte$"],
+      },
+    },
   ],
 }

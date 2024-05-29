@@ -19,9 +19,12 @@ export default function hooks<T>(
 
   if (parent) {
     const hook = { Hook, key: autoKey(parent) };
-    parent.hooks.update(($hooks) => [...$hooks, hook]);
+    parent.hooks.push(hook);
     onDestroy(() => {
-      parent.hooks.update(($hooks) => $hooks.filter((entry) => entry !== hook));
+      const index = parent.hooks.findIndex((h) => h === hook);
+      if (index !== -1) {
+        parent.hooks.splice(index, 1);
+      }
     });
   } else if (ReactDOMClient) {
     onDestroy(standalone(Hook, ReactDOMClient, renderToString));

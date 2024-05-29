@@ -1,8 +1,7 @@
 import * as React from "react";
-import useStore from "../useStore.js";
 import SvelteToReactContext from "./SvelteToReactContext.js";
 import Child from "./Child.js";
-import type { TreeNode } from "./types";
+import type { TreeNode } from "./types.js";
 
 export type BridgeProps = {
   node: TreeNode;
@@ -13,15 +12,36 @@ export type BridgeProps = {
   ) => React.ReactPortal;
 };
 const Bridge: React.FC<BridgeProps> = ({ node, createPortal }) => {
-  const props = { ...useStore(node.props) };
-  props.key = "component";
-  let { children } = props;
+  const fresh = React.useRef(false);
+  const [result, setResult] = React.useState<React.ReactNode>(() =>
+    renderBridge(node, createPortal, true),
+  );
+  React.useEffect(
+    () =>
+      $effect.root(() => {
+        $effect(() => {
+          fresh.current = true;
+          setResult(renderBridge(node, createPortal, false));
+        });
+      }),
+    [],
+  );
+  if (fresh.current) {
+    fresh.current = false;
+    return result;
+  }
+  return renderBridge(node, createPortal, false);
+};
+
+function renderBridge(
+  node: TreeNode,
+  createPortal: BridgeProps["createPortal"],
+  initialRender: boolean,
+) {
+  let { children } = node.props;
+  const props = { ...node.props.reactProps };
   delete props.children;
-  const portalTarget = useStore(node.portalTarget);
-  const childrenSource = useStore(node.childrenSource);
-  const svelteChildren = useStore(node.svelteChildren);
-  const hooks = useStore(node.hooks);
-  const firstRender = React.useRef(true);
+  const { portalTarget, svelteChildren, childrenSource, hooks } = node;
 
   if (svelteChildren) {
     if (!children) {
@@ -58,8 +78,7 @@ const Bridge: React.FC<BridgeProps> = ({ node, createPortal }) => {
       : React.createElement(node.reactComponent, props, children),
   );
   if (portalTarget && createPortal) {
-    if (firstRender.current) {
-      firstRender.current = false;
+    if (initialRender) {
       portalTarget.innerHTML = ""; // Remove injected SSR content
     }
     return createPortal(vdom, portalTarget);
@@ -70,5 +89,5 @@ const Bridge: React.FC<BridgeProps> = ({ node, createPortal }) => {
     { node: node.key, style: { display: "none" } },
     vdom,
   );
-};
+}
 export default Bridge;
