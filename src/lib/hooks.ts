@@ -18,7 +18,7 @@ export default function hooks<T>(
   }
 
   if (parent) {
-    const hook = { Hook, key: getKey(parent) };
+    const hook = { Hook, key: autoKey(parent) };
     parent.hooks.update(($hooks) => [...$hooks, hook]);
     onDestroy(() => {
       parent.hooks.update(($hooks) => $hooks.filter((entry) => entry !== hook));
@@ -61,17 +61,20 @@ function standalone(
   };
 }
 
-const autokeys = new WeakMap();
-function getKey(node: TreeNode | undefined) {
+const keys = new WeakMap();
+/**
+ * Get incrementing number per node.
+ */
+function autoKey(node: TreeNode | undefined) {
   if (!node) {
-    return undefined;
+    return -1;
   }
-  let autokey = autokeys.get(node);
-  if (autokey === undefined) {
-    autokey = 0;
+  let key: number | undefined = keys.get(node);
+  if (key === undefined) {
+    key = 0;
   } else {
-    autokey += 1;
+    key += 1;
   }
-  autokeys.set(node, autokey);
-  return autokey;
+  keys.set(node, key);
+  return key;
 }

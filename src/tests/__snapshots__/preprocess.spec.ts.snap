@@ -62,10 +62,6 @@ exports[`svelte-preprocess-react > should not import 'react-dom/server' when ssr
 exports[`svelte-preprocess-react > should portal slotted content as children 1`] = `
 "<script>import { sveltify as React$$sveltify } from "svelte-preprocess-react"; import React$$ReactDOM from "react-dom/client"; import { createPortal as React$$createPortal} from "react-dom"; import { renderToString as React$$renderToString } from "react-dom/server";
   import Alert from "../../demo/react-components/Alert";
-
-  if (!Alert) {
-    // Bypass: 'Alert' is declared but its value is never read. (ts)
-  }
 ;const React$Alert = React$$sveltify(Alert, React$$createPortal, React$$ReactDOM, React$$renderToString);</script>
 
 <React$Alert react$Children="A simple primary alert—check it out!" />
@@ -139,7 +135,6 @@ import { sveltify as React$$sveltify } from "svelte-preprocess-react"; import Re
 const React$button = React$$sveltify("button", React$$createPortal, React$$ReactDOM, React$$renderToString);
 </script>
 
-<!-- svelte-ignore a11y-no-static-element-interactions a11y-click-events-have-key-events -->
 <React$button onclick={() => console.info("clicked")}>
   <slot />
 </React$button>
@@ -151,8 +146,10 @@ exports[`svelte-preprocess-react > should process {:else} {:then} and {:catch} s
 const Component = () => null;
 ;const React$Component = React$$sveltify(Component, React$$createPortal, React$$ReactDOM, React$$renderToString);</script>
 
+<!-- eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -->
 {#if number === 1}
   <React$Component />
+  <!-- eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -->
 {:else if number === 2}
   <React$Component />
 {:else}

@@ -1,6 +1,6 @@
 import * as React from "react";
 import type ReactDOMServer from "react-dom/server";
-import { writable, type Readable, get } from "svelte/store";
+import { writable, get } from "svelte/store";
 import type { SvelteInit, TreeNode } from "./internal/types";
 import ReactWrapper from "./internal/ReactWrapper.svelte";
 import Bridge, { type BridgeProps } from "./internal/Bridge.js";
@@ -28,7 +28,7 @@ export default function sveltify<P>(
         const rootNode: TreeNode = {
           key: anchorOrPayload.anchor ? `${anchorOrPayload.anchor}/` : "/",
           autoKey: 0,
-          reactComponent: ({ children }: any) => children,
+          reactComponent: ({ children }: any) => children as React.ReactNode,
           portalTarget,
           props: writable({}),
           childrenSource: writable(),

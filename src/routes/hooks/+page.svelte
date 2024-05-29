@@ -10,7 +10,7 @@
 
   const countHook = hooks(() => useState(0), ReactDOMClient, renderToString);
 
-  const auth: Auth = { authenticated: false };
+  const auth: Auth = $state({ authenticated: false });
   function onLogin() {
     auth.authenticated = true;
   }

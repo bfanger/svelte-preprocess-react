@@ -8,22 +8,21 @@ test.describe("sveltify", () => {
     await page.evaluate(() => {
       const win = window as any;
       const target = document.getElementById("playground");
-      win.app = win.svelteCreateRoot(win.Clicker, {
+      if (win.app) {
+        win.svelteUnmount(win.app);
+      }
+      win.app = win.svelteMount(win.StatefulClicker, {
         target,
-        props: {
-          count: 123,
-          onCount(count) {
-            win.app.$set({ count });
-          },
-        },
+        props: { ReactDOM: win.ReactDOM },
       });
     });
     const message = page.locator('[data-testid="message"]');
-    await expect(message).toContainText("You clicked 123 times");
+    await expect(message).toContainText("You clicked 0 times");
     await page.click("text=+");
-    await expect(message).toContainText("You clicked 124 times");
-    await page.evaluate("app.$set({ count: 200 })");
-    await expect(message).toContainText("You clicked 200 times");
+    await expect(message).toContainText("You clicked 1 times");
+    await page.click("text=+");
+    await page.click("text=+");
+    await expect(message).toContainText("You clicked 3 times");
   });
 
   test("react context", async ({ page }) => {

@@ -6,8 +6,10 @@
   const Component: React.FC = () => null;
 </script>
 
+<!-- eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -->
 {#if number === 1}
   <react:Component />
+  <!-- eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -->
 {:else if number === 2}
   <react:Component />
 {:else}

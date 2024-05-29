@@ -1,5 +1,5 @@
 import * as React from "react";
-import { createRoot } from "svelte";
+import { mount, unmount } from "svelte";
 import { render } from "svelte/server";
 import SvelteWrapper from "./internal/SvelteWrapper.svelte";
 import SvelteToReactContext from "./internal/SvelteToReactContext.js";
@@ -30,19 +30,19 @@ export default function reactify<P = any, E = any>(
     [name](options: any) {
       const { children, ...props } = options;
       const wrapperRef = React.useRef<HTMLElement>();
-      const svelteRef = React.useRef<ReturnType<typeof createRoot>>();
+      const sveltePropsRef = React.useRef<(props: P) => void>();
       const svelteChildrenRef = React.useRef<HTMLElement>();
       const reactChildrenRef = React.useRef<HTMLElement>();
       const node = React.useContext(SvelteToReactContext);
       const { key, context } = node ?? {};
 
-      // Mount Svelte component
+      // Mount the Svelte component
       React.useEffect(() => {
         const target = wrapperRef.current;
         if (!target) {
           return undefined;
         }
-        const component = createRoot(SvelteWrapper, {
+        const component = mount(SvelteWrapper, {
           target,
           props: {
             SvelteComponent: SvelteComponent as any,
@@ -58,19 +58,19 @@ export default function reactify<P = any, E = any>(
           },
           context,
         });
+        sveltePropsRef.current = (globalThis as any).$$reactifySetProps;
 
-        svelteRef.current = component;
         return () => {
-          component.$destroy();
+          unmount(component);
         };
       }, [wrapperRef]);
 
       // Sync props & events
       React.useEffect(() => {
-        if (svelteRef.current) {
-          svelteRef.current.$set({ props });
+        if (sveltePropsRef.current) {
+          sveltePropsRef.current(props);
         }
-      }, [props, svelteRef]);
+      }, [props, sveltePropsRef]);
 
       // Sync children/slot
       React.useEffect(() => {

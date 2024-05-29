@@ -166,6 +166,7 @@ function replaceReactTags(node, content, components = {}) {
         alias,
       );
     }
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (!components[alias]) {
       if (componentExpression.match(/^[a-z-]+$/)) {
         components[alias] = {

@@ -1,8 +1,7 @@
 <script lang="ts">
-  import { createRoot, onMount } from "svelte";
-  import { createPortal } from "react-dom";
-  import ClickerReact from "../../tests/fixtures/Clicker";
+  import { mount, onMount, unmount } from "svelte";
   import type { PageData } from "./$types";
+  import StatefulClicker from "./StatefulClicker.svelte";
   import { sveltify } from "svelte-preprocess-react";
 
   export let data: PageData;
@@ -14,12 +13,10 @@
 
   onMount(() => {
     const win: any = window;
-    win.svelteCreateRoot = createRoot;
-    win.sveltify = sveltify;
+    win.svelteMount = mount;
+    win.svelteUnmount = unmount;
     win.ReactDOM = ReactDOM;
-    win.ClickerReact = ClickerReact;
-    win.Clicker = sveltify(ClickerReact, createPortal, ReactDOM);
-
+    win.StatefulClicker = StatefulClicker;
     loading = false;
   });
 </script>
@@ -33,7 +30,7 @@
   {/if}
 </div>
 
-<div id="playground" />
+<div id="playground"></div>
 
 <style lang="scss">
   .ui {

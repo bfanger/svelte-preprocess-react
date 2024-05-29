@@ -5,14 +5,21 @@
   import type React from "react";
   import type { SvelteComponent as SvelteComponentType } from "svelte";
 
-  // eslint-disable-next-line @typescript-eslint/no-use-before-define
-  let { SvelteComponent, nodeKey, props, react$Children, setSlot } = $props<{
+  type Props = {
     SvelteComponent: typeof SvelteComponentType;
     nodeKey: string;
     props: Record<string, any>;
     react$Children?: React.ReactNode;
     setSlot?: (slot: HTMLElement | undefined) => void;
-  }>();
+  };
+  let { SvelteComponent, nodeKey, props, react$Children, setSlot }: Props =
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
+    $props();
+
+  // eslint-disable-next-line no-undef
+  (globalThis as any).$$reactifySetProps = (update: Record<string, any>) => {
+    props = update;
+  };
 
   function slot(el: HTMLElement) {
     setSlot?.(el);
@@ -33,7 +40,7 @@
           node={nodeKey}
           style="display:contents"
           use:slot
-        />{/if}</svelte:component
+        ></svelte-children>{/if}</svelte:component
     >
   {/if}</svelte-portal-source
 >

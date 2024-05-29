@@ -14,12 +14,14 @@
   } from "svelte";
   import type { FunctionComponent } from "react";
   import type { SvelteInit, TreeNode } from "./types";
+  import deepRead from "./deepRead";
 
-  let { svelteInit, children, react$Children, ...reactProps } = $props<{
+  type Props = {
     svelteInit: (options: SvelteInit) => TreeNode;
     children?: Snippet;
     react$Children?: unknown;
-  }>();
+  };
+  let { svelteInit, children, react$Children, ...reactProps }: Props = $props();
 
   const propsStore = writable<Record<string, any>>({
     ...reactProps,
@@ -31,6 +33,7 @@
   const hooks = writable<Array<{ Hook: FunctionComponent; key: number }>>([]);
 
   $effect(() => {
+    deepRead(reactProps);
     propsStore.set({ ...reactProps, children: react$Children });
   });
   $effect(() => {
@@ -53,7 +56,7 @@
 
   onDestroy(() => {
     if (node.parent) {
-      node.parent.nodes = node.parent.nodes.filter((n) => n !== node);
+      node.parent.nodes = node.parent.nodes.filter((n: any) => n !== node);
       node.rerender?.();
     }
   });
@@ -63,7 +66,7 @@
   node={node.key}
   style="display:contents"
   bind:this={$portalTarget}
-/>
+></svelte-portal-target>
 
 {#if children}
   <svelte-children-source
