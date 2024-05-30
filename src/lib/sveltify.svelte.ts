@@ -27,9 +27,11 @@ export default function sveltify<P>(
         const hooks = $state<
           Array<{ Hook: React.FunctionComponent; key: number }>
         >([]);
-
         const rootNode: TreeNode = {
-          key: anchorOrPayload.anchor ? `${anchorOrPayload.anchor}/` : "/",
+          key:
+            typeof anchorOrPayload.anchor === "undefined"
+              ? "/"
+              : `${anchorOrPayload.anchor}-${anchorOrPayload.out.length}/}`,
           autoKey: 0,
           reactComponent: ({ children }: any) => children as React.ReactNode,
           get portalTarget() {
@@ -84,7 +86,9 @@ export default function sveltify<P>(
       }
       return node;
     };
+
     (ReactWrapper as any)(anchorOrPayload, $$props);
+
     if (standalone && !client) {
       if (renderToString && sharedRoot) {
         setPayload(anchorOrPayload);
