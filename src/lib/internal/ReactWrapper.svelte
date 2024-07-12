@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { writable } from "svelte/store";
+  import type { FunctionComponent } from "react";
   import {
     beforeUpdate,
     getAllContexts,
@@ -7,7 +7,7 @@
     onDestroy,
     setContext,
   } from "svelte";
-  import type { FunctionComponent } from "react";
+  import { writable } from "svelte/store";
   import type { SvelteInit, TreeNode } from "./types";
 
   export let svelteInit: (options: SvelteInit) => TreeNode;
@@ -15,8 +15,8 @@
   const props = writable<Record<string, any>>(extractProps($$props));
   const target = writable<HTMLElement | undefined>();
   const slot = writable<HTMLElement | undefined>();
-  const hooks = writable<Array<{ Hook: FunctionComponent; key: number }>>([]);
-  const listeners: Array<() => void> = [];
+  const hooks = writable<{ Hook: FunctionComponent; key: number }[]>([]);
+  const listeners: (() => void)[] = [];
 
   const parent = getContext<TreeNode | undefined>("ReactWrapper");
 

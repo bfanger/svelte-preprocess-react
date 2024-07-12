@@ -1,9 +1,9 @@
 <script lang="ts">
-  import Menu from "./Menu";
-  import { RouterProvider } from "svelte-preprocess-react/react-router";
-  import { page } from "$app/stores";
-  import { goto } from "$app/navigation";
   import { used } from "svelte-preprocess-react";
+  import { RouterProvider } from "svelte-preprocess-react/react-router";
+  import { goto } from "$app/navigation";
+  import { page } from "$app/stores";
+  import Menu from "./Menu";
 
   used(RouterProvider, Menu);
 </script>

@@ -2,8 +2,8 @@ import { readFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { vitePreprocess } from "@sveltejs/vite-plugin-svelte";
-import { describe, expect, it } from "vitest";
 import { preprocess } from "svelte/compiler";
+import { describe, expect, it } from "vitest";
 import preprocessReact from "../lib/preprocessReact";
 
 describe("svelte-preprocess-react", () => {

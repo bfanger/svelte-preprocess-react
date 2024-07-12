@@ -1,6 +1,6 @@
 <script>
-  import Clicker from "./Clicker";
   import { used } from "svelte-preprocess-react";
+  import Clicker from "./Clicker";
 
   used(Clicker);
 

@@ -1,8 +1,8 @@
 import * as React from "react";
-import Link, { type LinkProps } from "./Link.js";
-import useRouterContext from "./internal/useRouterContext.js";
-import locationToUrl from "./internal/locationToUrl.js";
 import type { RouteCondition } from "./types.js";
+import locationToUrl from "./internal/locationToUrl.js";
+import useRouterContext from "./internal/useRouterContext.js";
+import Link, { type LinkProps } from "./Link.js";
 
 export type NavLinkProps = Omit<
   LinkProps,

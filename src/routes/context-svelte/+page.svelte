@@ -3,8 +3,8 @@
   import ReactDOM from "react-dom/client";
   import { renderToString } from "react-dom/server";
   import { setContext } from "svelte";
-  import DebugContext from "../../demo/components/DebugContext.svelte";
   import { reactify, sveltify } from "svelte-preprocess-react";
+  import DebugContext from "../../demo/components/DebugContext.svelte";
 
   setContext("message", "Hello from svelte route");
 

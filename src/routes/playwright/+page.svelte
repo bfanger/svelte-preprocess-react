@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { onMount } from "svelte";
   import { createPortal } from "react-dom";
-  import ClickerReact from "../../tests/fixtures/Clicker";
-  import type { PageData } from "./$types";
+  import { onMount } from "svelte";
   import { sveltify } from "svelte-preprocess-react";
+  import type { PageData } from "./$types";
+  import ClickerReact from "../../tests/fixtures/Clicker";
 
   export let data: PageData;
 

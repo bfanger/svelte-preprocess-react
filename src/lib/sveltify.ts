@@ -1,11 +1,11 @@
-import * as React from "react";
 import type ReactDOMServer from "react-dom/server";
-import { writable, type Readable } from "svelte/store";
+import * as React from "react";
 import { getAllContexts, type SvelteComponent } from "svelte";
+import { type Readable, writable } from "svelte/store";
 import type { SvelteInit, TreeNode } from "./internal/types";
+import Bridge, { type BridgeProps } from "./internal/Bridge.js";
 import ReactWrapper from "./internal/ReactWrapper.svelte";
 import Slot from "./internal/Slot.svelte";
-import Bridge, { type BridgeProps } from "./internal/Bridge.js";
 import SvelteToReactContext from "./internal/SvelteToReactContext.js";
 
 let rerender: (props: BridgeProps) => void;

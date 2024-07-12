@@ -6,12 +6,10 @@ export type EventName<T extends string> = T extends `on${infer N}`
   ? Uncapitalize<N>
   : never;
 
-export type SvelteEventHandlers<T> = T extends Record<
-  infer Key extends string,
-  infer Value
->
-  ? Partial<Record<HandlerName<Key>, (e: Value) => void | boolean>>
-  : never;
+export type SvelteEventHandlers<T> =
+  T extends Record<infer Key extends string, infer Value>
+    ? Partial<Record<HandlerName<Key>, (e: Value) => void | boolean>>
+    : never;
 
 type Uppercase =
   | "A"
@@ -54,7 +52,7 @@ export type TreeNode = Omit<SvelteInit, "onDestroy"> & {
   svelteInstance: Readable<any>;
   reactComponent: FunctionComponent<any> | ComponentClass<any>;
   key: number;
-  hooks: Writable<Array<{ Hook: FunctionComponent; key: number }>>;
+  hooks: Writable<{ Hook: FunctionComponent; key: number }[]>;
   nodes: TreeNode[];
 };
 
@@ -64,6 +62,6 @@ export type SvelteInit = {
   target: Readable<HTMLElement | undefined>;
   slot: Readable<HTMLElement | undefined>;
   contexts: Map<any, any>;
-  hooks: Writable<Array<{ Hook: FunctionComponent; key: number }>>;
+  hooks: Writable<{ Hook: FunctionComponent; key: number }[]>;
   onDestroy: (callback: () => void) => void;
 };

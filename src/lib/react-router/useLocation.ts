@@ -1,6 +1,6 @@
 import * as React from "react";
-import useRouterContext from "./internal/useRouterContext.js";
 import type { Location } from "./types";
+import useRouterContext from "./internal/useRouterContext.js";
 
 export default function useLocation(): Location {
   const {

@@ -177,8 +177,8 @@ const Component = () => null;
 
 exports[`svelte-preprocess-react > should process on:event forwarding 1`] = `
 "<script>import { sveltify as React$$sveltify } from "svelte-preprocess-react"; import React$$ReactDOM from "react-dom/client"; import { createPortal as React$$createPortal} from "react-dom"; import { renderToString as React$$renderToString } from "react-dom/server"; import { createEventDispatcher as React$$createEventDispatcher } from "svelte";
-  import Clicker from "./Clicker";
   import { used } from "svelte-preprocess-react";
+  import Clicker from "./Clicker";
 
   used(Clicker);
 

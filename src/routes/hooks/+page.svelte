@@ -2,9 +2,9 @@
   import { useState } from "react";
   import ReactDOMClient from "react-dom/client"; // React 18+,(use "react-dom" for older versions)
   import { renderToString } from "react-dom/server";
-  import { AuthProvider, type Auth } from "./react-auth";
-  import Nested from "./HookWithContext.svelte";
   import { hooks, used } from "svelte-preprocess-react";
+  import Nested from "./HookWithContext.svelte";
+  import { type Auth, AuthProvider } from "./react-auth";
 
   used(AuthProvider);
 

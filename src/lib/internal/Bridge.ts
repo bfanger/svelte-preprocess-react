@@ -1,8 +1,8 @@
 import * as React from "react";
-import useStore from "../useStore.js";
-import SvelteToReactContext from "./SvelteToReactContext.js";
-import Child from "./Child.js";
 import type { TreeNode } from "./types";
+import useStore from "../useStore.js";
+import Child from "./Child.js";
+import SvelteToReactContext from "./SvelteToReactContext.js";
 
 export type BridgeProps = {
   createPortal: (

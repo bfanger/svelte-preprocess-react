@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { createEventDispatcher, onMount, tick } from "svelte";
   import type { SvelteComponent as SvelteComponentType } from "svelte";
+  import { createEventDispatcher, onMount, tick } from "svelte";
 
   const dispatch = createEventDispatcher();
 
@@ -15,10 +15,11 @@
     syncEvents(events);
   }
 
-  let offs: Array<() => void> = [];
+  let offs: (() => void)[] = [];
   function syncEvents(listeners: Record<string, any>) {
     offs.forEach((off) => off());
     offs = [];
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (listeners) {
       Object.entries(listeners).forEach(([event, listener]) => {
         offs.push(instance.$on(event, listener));
@@ -27,10 +28,9 @@
   }
 
   $: dispatch("svelte-slot", slot);
-  onMount(() => {
-    tick().then(() => {
-      dispatch("svelte-slot", slot);
-    });
+  onMount(async () => {
+    await tick();
+    dispatch("svelte-slot", slot);
   });
 </script>
 

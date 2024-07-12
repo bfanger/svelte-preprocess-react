@@ -1,7 +1,7 @@
 import * as React from "react";
-import SvelteWrapper from "./internal/SvelteWrapper.svelte";
-import SvelteToReactContext from "./internal/SvelteToReactContext.js";
 import type { SvelteEventHandlers } from "./internal/types";
+import SvelteToReactContext from "./internal/SvelteToReactContext.js";
+import SvelteWrapper from "./internal/SvelteWrapper.svelte";
 
 export type SvelteConstructor<Props = any, Events = any, Slot = any> = {
   name: string;

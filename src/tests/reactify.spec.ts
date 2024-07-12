@@ -1,6 +1,6 @@
-import { describe, expect, it } from "vitest";
 import * as React from "react";
 import { renderToString } from "react-dom/server";
+import { describe, expect, it } from "vitest";
 import reactify from "../lib/reactify";
 import DogSvelte from "./fixtures/Dog.svelte";
 

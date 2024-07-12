@@ -1,7 +1,7 @@
-import * as React from "react";
-import { writable, type Readable } from "svelte/store";
 import type ReactDOMServer from "react-dom/server";
+import * as React from "react";
 import { getContext, onDestroy } from "svelte";
+import { type Readable, writable } from "svelte/store";
 import type { TreeNode } from "./internal/types";
 
 export default function hooks<T>(
@@ -61,7 +61,8 @@ function standalone(
   };
 }
 
-const autokeys = new WeakMap();
+const autokeys = new WeakMap<TreeNode, number>();
+function getKey(node: TreeNode): number;
 function getKey(node: TreeNode | undefined) {
   if (!node) {
     return undefined;
