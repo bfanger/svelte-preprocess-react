@@ -44,6 +44,15 @@ export default function sveltify<P>(
   ReactDOMClient: any,
   renderToString?: typeof ReactDOMServer.renderToString,
 ): Sveltified<Omit<P, "children">> {
+  if (
+    typeof reactComponent !== "function" &&
+    typeof reactComponent === "object" &&
+    "default" in reactComponent &&
+    typeof (reactComponent as any).default === "function"
+  ) {
+    // Fix SSR import issue where node doesn't import the esm version. 'react-youtube'
+    reactComponent = (reactComponent as any).default; // eslint-disable-line no-param-reassign
+  }
   const Wrapper = ReactWrapper as any;
   const ssr = typeof Wrapper.$$render === "function";
   if (ssr) {
