@@ -62,6 +62,6 @@ export type SvelteInit = {
   childrenSource: HTMLElement | undefined; // An element containing the children from Svelte, inject as children into the React component
   svelteChildren: Snippet | undefined; // The svelte children prop (snippet/slot)
   context: Map<any, any>; // The full Svelte context
-  hooks: Array<{ Hook: FunctionComponent; key: number }>;
+  hooks: { Hook: FunctionComponent; key: number }[];
   parent?: TreeNode;
 };

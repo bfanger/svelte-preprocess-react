@@ -1,9 +1,9 @@
 import * as React from "react";
 import { mount, unmount } from "svelte";
 import { render } from "svelte/server";
-import SvelteWrapper from "./internal/SvelteWrapper.svelte";
-import SvelteToReactContext from "./internal/SvelteToReactContext.js";
 import type { SvelteEventHandlers } from "./internal/types";
+import SvelteToReactContext from "./internal/SvelteToReactContext.js";
+import SvelteWrapper from "./internal/SvelteWrapper.svelte";
 
 const server = typeof document === "undefined";
 

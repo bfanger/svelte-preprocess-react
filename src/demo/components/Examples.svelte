@@ -1,10 +1,10 @@
 <script lang="ts">
-  import { renderToString } from "react-dom/server";
   import { createPortal } from "react-dom";
-  import ClickerReact from "../../tests/fixtures/Clicker";
-  import CounterReact from "../react-components/Counter";
-  import AlertReact from "../react-components/Alert";
+  import { renderToString } from "react-dom/server";
   import { sveltify } from "svelte-preprocess-react";
+  import ClickerReact from "../../tests/fixtures/Clicker";
+  import AlertReact from "../react-components/Alert";
+  import CounterReact from "../react-components/Counter";
 
   const { ReactDOM } = $props(); // The 'react-dom/client' import for React 18+, 'react-dom' for React 16 & 17
 

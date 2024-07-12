@@ -1,7 +1,7 @@
 <script lang="ts">
   import { createPortal } from "react-dom";
-  import ClickerReact from "../../tests/fixtures/Clicker";
   import { sveltify } from "svelte-preprocess-react";
+  import ClickerReact from "../../tests/fixtures/Clicker";
 
   type Props = { ReactDOM: any };
   const { ReactDOM }: Props = $props();

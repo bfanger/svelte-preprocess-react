@@ -1,7 +1,7 @@
 <script lang="ts">
-  import Counter from "../../demo/react-components/Counter";
-  import Alert from "../../demo/react-components/Alert";
   import { used } from "svelte-preprocess-react";
+  import Alert from "../../demo/react-components/Alert";
+  import Counter from "../../demo/react-components/Counter";
 
   used(Counter, Alert); // Bypass linting errors: is declared but its value is never read. (ts)
 </script>

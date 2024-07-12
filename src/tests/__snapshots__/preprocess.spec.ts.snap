@@ -173,8 +173,8 @@ const Component = () => null;
 `;
 
 exports[`svelte-preprocess-react > should process on:event forwarding 1`] = `
-"<script lang="ts">import { sveltify as React$$sveltify } from "svelte-preprocess-react"; import React$$ReactDOM from "react-dom/client"; import { createPortal as React$$createPortal} from "react-dom"; import { renderToString as React$$renderToString } from "react-dom/server";import Clicker from "./Clicker";
-import { used } from "svelte-preprocess-react";
+"<script lang="ts">import { sveltify as React$$sveltify } from "svelte-preprocess-react"; import React$$ReactDOM from "react-dom/client"; import { createPortal as React$$createPortal} from "react-dom"; import { renderToString as React$$renderToString } from "react-dom/server";import { used } from "svelte-preprocess-react";
+import Clicker from "./Clicker";
 used(Clicker);
 let { value = 0, onCount } = $props();
 ;const React$Clicker = React$$sveltify(Clicker, React$$createPortal, React$$ReactDOM, React$$renderToString);</script>

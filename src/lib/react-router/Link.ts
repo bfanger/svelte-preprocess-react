@@ -1,7 +1,7 @@
 import * as React from "react";
+import type { To } from "./types";
 import locationToUrl from "./internal/locationToUrl.js";
 import RouterContext from "./internal/RouterContext.js";
-import type { To } from "./types";
 
 export type LinkProps = Omit<
   React.AnchorHTMLAttributes<HTMLAnchorElement>,

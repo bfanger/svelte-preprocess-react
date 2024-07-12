@@ -1,5 +1,6 @@
 <script lang="ts">
-  import React, { createContext, createElement, useContext } from "react";
+  import type React from "react";
+  import { createContext, createElement, useContext } from "react";
   import { createPortal } from "react-dom";
   import ReactDOM from "react-dom/client";
   import { renderToString } from "react-dom/server";

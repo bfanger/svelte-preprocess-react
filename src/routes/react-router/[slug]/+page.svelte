@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { page } from "$app/stores";
   import { used } from "svelte-preprocess-react";
   import { Link } from "svelte-preprocess-react/react-router";
+  import { page } from "$app/stores";
 
   used(Link);
 </script>

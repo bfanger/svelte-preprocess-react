@@ -100,12 +100,10 @@ function transform(content, options) {
     renderToString = `, ${prefix}renderToString`;
   }
 
-  const ast = /** @type {import("svelte/compiler").LegacyRoot} */ (
-    parse(content, {
-      filename: options.filename,
-      modern: false,
-    })
-  );
+  const ast = parse(content, {
+    filename: options.filename,
+    modern: false,
+  });
   const s = new MagicString(content, { filename: options.filename });
   const components = replaceReactTags(ast.html, s);
   const aliases = Object.entries(components);

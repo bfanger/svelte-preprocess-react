@@ -1,8 +1,8 @@
-import * as React from "react";
 import type ReactDOMServer from "react-dom/server";
+import * as React from "react";
 import type { SvelteInit, TreeNode } from "./internal/types.js";
-import ReactWrapper from "./internal/ReactWrapper.svelte";
 import Bridge, { type BridgeProps } from "./internal/Bridge.svelte.js";
+import ReactWrapper from "./internal/ReactWrapper.svelte";
 import { setPayload } from "./reactify.js";
 
 let sharedRoot: TreeNode | undefined;
@@ -16,6 +16,15 @@ export default function sveltify<P>(
   ReactDOMClient: any,
   renderToString?: typeof ReactDOMServer.renderToString,
 ): any {
+  if (
+    typeof reactComponent !== "function" &&
+    typeof reactComponent === "object" &&
+    "default" in reactComponent &&
+    typeof (reactComponent as any).default === "function"
+  ) {
+    // Fix SSR import issue where node doesn't import the esm version. 'react-youtube'
+    reactComponent = (reactComponent as any).default; // eslint-disable-line no-param-reassign
+  }
   const client = typeof document !== "undefined";
 
   function Sveltified(anchorOrPayload: any, $$props: any) {
@@ -24,9 +33,9 @@ export default function sveltify<P>(
     $$props.svelteInit = (init: SvelteInit) => {
       if (!init.parent && !sharedRoot) {
         let portalTarget = $state<HTMLElement | undefined>();
-        const hooks = $state<
-          Array<{ Hook: React.FunctionComponent; key: number }>
-        >([]);
+        const hooks = $state<{ Hook: React.FunctionComponent; key: number }[]>(
+          [],
+        );
         const rootNode: TreeNode = {
           key:
             typeof anchorOrPayload.anchor === "undefined"

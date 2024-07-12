@@ -1,7 +1,7 @@
 import * as React from "react";
-import SvelteToReactContext from "./SvelteToReactContext.js";
-import Child from "./Child.js";
 import type { TreeNode } from "./types.js";
+import Child from "./Child.js";
+import SvelteToReactContext from "./SvelteToReactContext.js";
 
 export type BridgeProps = {
   node: TreeNode;
