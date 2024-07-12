@@ -90,8 +90,9 @@ function transform(content, options) {
   const prefix = "React$$";
   /** @type {string} */
   let portal;
+  const packageName = "svelte-preprocess-react";
   const imports = [
-    `import { sveltify as ${prefix}sveltify } from "svelte-preprocess-react";`,
+    `import { sveltify as ${prefix}sveltify } from "${packageName}";`,
   ];
 
   if (options.react >= 18) {
