@@ -16,6 +16,8 @@
   "rules": {
     "import/extensions": "off",
     "@typescript-eslint/no-unused-vars": "off",
+    "@typescript-eslint/lines-between-class-members": 0,
+    "@typescript-eslint/no-throw-literal": 0,
   },
   "overrides": [
     {

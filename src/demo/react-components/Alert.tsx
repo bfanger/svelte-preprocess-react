@@ -2,7 +2,8 @@
  * A react component using a Svelte Button component
  */
 import * as React from "react";
-import $ from "./Alert.module.scss";
+
+import $ from "./Alert.module.css";
 
 type Props = {
   type?: "primary";

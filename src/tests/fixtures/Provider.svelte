@@ -3,12 +3,13 @@
   import { used } from "svelte-preprocess-react";
 
   export let Context: ContentType<any>;
+  $: Provider = Context.Provider;
 
-  used(Context);
+  used(Provider);
 </script>
 
-<react:Context.Provider>content</react:Context.Provider>
+<react:Provider>content</react:Provider>
 
-<react:Context.Provider>
+<react:Provider>
   <button>ok</button>
-</react:Context.Provider>
+</react:Provider>

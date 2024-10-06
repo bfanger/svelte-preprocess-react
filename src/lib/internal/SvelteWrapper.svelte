@@ -33,14 +33,14 @@
 
 <svelte-portal-source node={nodeKey} style="display:contents"
   >{#if typeof react$Children === "undefined"}
-    <svelte:component this={SvelteComponent} {...props} />
+    <SvelteComponent {...props} />
   {:else}
-    <svelte:component this={SvelteComponent} {...props}
+    <SvelteComponent {...props}
       >{#if typeof react$Children === "string"}{react$Children}{:else}<svelte-children
           node={nodeKey}
           style="display:contents"
           use:slot
-        ></svelte-children>{/if}</svelte:component
+        ></svelte-children>{/if}</SvelteComponent
     >
   {/if}</svelte-portal-source
 >
