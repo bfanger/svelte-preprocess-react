@@ -34,7 +34,7 @@
 
 <div id="playground" />
 
-<style lang="scss">
+<style>
   .ui {
     text-align: center;
     margin: 10px;
