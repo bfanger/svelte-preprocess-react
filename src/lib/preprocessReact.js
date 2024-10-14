@@ -36,7 +36,7 @@ export default function preprocessReact(options = {}) {
         preprocessed = await preprocess(content, options.preprocess, {
           filename,
         });
-        // eslint-disable-next-line no-param-reassign
+
         content = preprocessed.code;
       }
 
@@ -147,7 +147,6 @@ function transform(content, options) {
  * @param {Record<string, { expression: string, dispatcher: boolean }>} components
  */
 function replaceReactTags(node, content, components = {}) {
-  /* eslint-disable no-param-reassign */
   if (node.type === "Element" && node.name.startsWith("react:")) {
     const tag = /** @type {any} */ (node);
     const componentExpression = tag.name.slice(6);
@@ -165,7 +164,7 @@ function replaceReactTags(node, content, components = {}) {
         alias,
       );
     }
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+
     if (!components[alias]) {
       if (componentExpression.match(/^[a-z-]+$/)) {
         components[alias] = {

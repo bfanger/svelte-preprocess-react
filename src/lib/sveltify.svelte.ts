@@ -23,13 +23,13 @@ export default function sveltify<P>(
     typeof (reactComponent as any).default === "function"
   ) {
     // Fix SSR import issue where node doesn't import the esm version. 'react-youtube'
-    reactComponent = (reactComponent as any).default; // eslint-disable-line no-param-reassign
+    reactComponent = (reactComponent as any).default;
   }
   const client = typeof document !== "undefined";
 
   function Sveltified(anchorOrPayload: any, $$props: any) {
     const standalone = !sharedRoot;
-    // eslint-disable-next-line no-param-reassign
+
     $$props.svelteInit = (init: SvelteInit) => {
       if (!init.parent && !sharedRoot) {
         let portalTarget = $state<HTMLElement | undefined>();
@@ -104,7 +104,6 @@ export default function sveltify<P>(
         const html = renderToString(
           React.createElement(Bridge, { node: sharedRoot }),
         );
-        const before = { svelte: anchorOrPayload.out, react: html };
         const source = { html };
         applyPortals(anchorOrPayload, sharedRoot, source);
         setPayload(undefined);
@@ -143,14 +142,13 @@ function applyPortal(
       $$payload.out,
     );
     try {
-      // eslint-disable-next-line no-param-reassign
       source.html = inject(
         `<react-children-target node="${node.key}" style="display:contents">`,
         "</react-children-target>",
         child.innerHtml,
         source.html,
       );
-    } catch (err: any) {
+    } catch {
       // The React component, didn't render the childrenThe rendering of children can be conditional.
     }
   }
@@ -159,10 +157,9 @@ function applyPortal(
     `</react-portal-source>`,
     source.html,
   );
-  // eslint-disable-next-line no-param-reassign
+
   source.html = portal.outerRemoved;
   try {
-    // eslint-disable-next-line no-param-reassign
     $$payload.out = inject(
       `<svelte-portal-target node="${node.key}" style="display:contents">`,
       "</svelte-portal-target>",

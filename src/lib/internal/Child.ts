@@ -11,7 +11,6 @@ const Child: React.FC<Props> = ({ node, el }) => {
       return;
     }
     if (el) {
-      // eslint-disable-next-line no-param-reassign
       el.style.display = "contents";
       ref.current.appendChild(el);
     }

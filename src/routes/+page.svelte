@@ -13,4 +13,6 @@
 
   <li><a href="/react-router/home">react-router</a></li>
   <li><a href="/lazy">react lazy</a></li>
+  <li><a href="/youtube/react">sveltefied react-youtube</a></li>
+  <li><a href="/youtube/svelte">reactified svelte-youtube-lite</a></li>
 </ul>

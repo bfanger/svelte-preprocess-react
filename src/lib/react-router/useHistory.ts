@@ -2,16 +2,17 @@ import * as React from "react";
 import useRouterContext from "./internal/useRouterContext.js";
 
 export default function useHistory() {
-  const { goto } = useRouterContext();
+  const router = useRouterContext();
   return React.useMemo(
     () => ({
       push(url: string) {
-        goto(url);
+        router.goto(url);
       },
       replace(url: string) {
-        goto(url, { replaceState: true });
+        router.goto(url, { replaceState: true });
       },
     }),
-    [goto],
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    [router.goto],
   );
 }

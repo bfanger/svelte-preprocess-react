@@ -1,6 +1,5 @@
 <script lang="ts">
   import { mount, onMount, unmount } from "svelte";
-  import { sveltify } from "svelte-preprocess-react";
   import type { PageData } from "./$types";
   import StatefulClicker from "./StatefulClicker.svelte";
 

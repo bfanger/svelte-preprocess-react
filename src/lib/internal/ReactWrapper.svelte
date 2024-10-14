@@ -34,7 +34,7 @@
       get props() {
         return {
           reactProps,
-          children: react$Children as ReactNode,
+          children: react$Children,
         };
       },
       get portalTarget() {

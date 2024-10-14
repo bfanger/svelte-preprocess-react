@@ -10,4 +10,4 @@
   }>();
 </script>
 
-<react:Clicker count={value} {onCount} />
+<react:Clicker count={value} {onCount}></react:Clicker>

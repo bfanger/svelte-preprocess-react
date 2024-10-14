@@ -11,7 +11,7 @@ export default async function detectReactVersion() {
       return parseInt(match[1], 10);
     }
     throw new Error("No react in dependencies");
-  } catch (err) {
+  } catch {
     console.warn('Could not detect React version. Assuming "react@18"');
     return 18;
   }

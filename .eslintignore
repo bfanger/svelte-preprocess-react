@@ -1,8 +1,0 @@
-/node_modules
-/build
-/dist
-/.svelte-kit
-/src/tests/fixtures/Binding.svelte
-# Parsing error: Unknown type:RenderTag
-/src/lib/internal/ReactWrapper.svelte
-/src/demo/components/Button.svelte

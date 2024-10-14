@@ -6,7 +6,7 @@ import TestRouter from "./TestRouter";
 
 describe("NavLink (react-router v6)", () => {
   describe("when it does not match", () => {
-    it("does not apply an 'active' className to the underlying <a>", async () => {
+    it("does not apply an 'active' className to the underlying <a>", () => {
       const { container } = render(
         <TestRouter url="/home">
           <NavLink to="somewhere-else">Somewhere else</NavLink>

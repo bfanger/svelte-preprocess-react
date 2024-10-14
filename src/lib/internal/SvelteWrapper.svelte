@@ -13,10 +13,8 @@
     setSlot?: (slot: HTMLElement | undefined) => void;
   };
   let { SvelteComponent, nodeKey, props, react$Children, setSlot }: Props =
-    // eslint-disable-next-line @typescript-eslint/no-use-before-define
     $props();
 
-  // eslint-disable-next-line no-undef
   (globalThis as any).$$reactifySetProps = (update: Record<string, any>) => {
     props = update;
   };

@@ -8,5 +8,5 @@
 </script>
 
 {#if browser}
-  <react:Counter />
+  <react:Counter></react:Counter>
 {/if}

@@ -9,6 +9,6 @@
 </script>
 
 <react:RouterProvider value={{ url: $page.url, params: $page.params, goto }}>
-  <react:Menu />
+  <react:Menu></react:Menu>
   <slot />
 </react:RouterProvider>

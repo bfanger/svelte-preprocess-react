@@ -1,5 +1,8 @@
 <script lang="ts">
+  import { used } from "svelte-preprocess-react";
   import Alert from "../../demo/react-components/Alert";
+
+  used(Alert);
 
   const count = 0;
 </script>
