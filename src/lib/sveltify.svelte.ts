@@ -1,21 +1,66 @@
 import type ReactDOMServer from "react-dom/server";
 import * as React from "react";
-import type { SvelteInit, TreeNode } from "./internal/types.js";
+import type {
+  ChildrenPropsAsSnippet,
+  SvelteInit,
+  Sveltified,
+  TreeNode,
+} from "./internal/types.js";
 import Bridge, { type BridgeProps } from "./internal/Bridge.svelte.js";
 import ReactWrapper from "./internal/ReactWrapper.svelte";
 import { setPayload } from "./reactify.js";
+import type { Component } from "svelte";
 
 let sharedRoot: TreeNode | undefined;
 
+export default function sveltify<
+  T extends {
+    [key: string]: React.JSXElementConstructor<any>;
+  },
+>(
+  components: T,
+  createPortal: BridgeProps["createPortal"],
+  ReactDOMClient: any,
+  renderToString?: typeof ReactDOMServer.renderToString,
+): {
+  [K in keyof T]: Sveltified<T[K]>;
+};
 /**
  * Convert a React component into a Svelte component.
  */
-export default function sveltify<P>(
-  reactComponent: React.FunctionComponent<P> | React.ComponentClass<P>,
+export default function sveltify<T extends React.JSXElementConstructor<any>>(
+  components: T,
+  createPortal: BridgeProps["createPortal"],
+  ReactDOMClient: any,
+  renderToString?: typeof ReactDOMServer.renderToString,
+): Sveltified<T>;
+export default function sveltify(
+  components: any,
   createPortal: BridgeProps["createPortal"],
   ReactDOMClient: any,
   renderToString?: typeof ReactDOMServer.renderToString,
 ): any {
+  if (
+    typeof components === "function" ||
+    ("render" in components && typeof components.render === "function") ||
+    "_context" in components // a Context.Provider
+  ) {
+    return single(
+      components as React.FC,
+      createPortal,
+      ReactDOMClient,
+      renderToString,
+    );
+  }
+  return multiple(components, createPortal, ReactDOMClient, renderToString);
+}
+
+function single<T extends React.FC | React.ComponentClass>(
+  reactComponent: T,
+  createPortal: BridgeProps["createPortal"],
+  ReactDOMClient: any,
+  renderToString?: typeof ReactDOMServer.renderToString,
+): Component<ChildrenPropsAsSnippet<React.ComponentProps<T>>> {
   if (
     typeof reactComponent !== "function" &&
     typeof reactComponent === "object" &&
@@ -202,4 +247,26 @@ function inject(open: string, close: string, content: string, target: string) {
   return (
     target.substring(0, start + open.length) + content + target.substring(end)
   );
+}
+
+function multiple<
+  T extends {
+    [key: string]: React.FC | React.ComponentClass;
+  },
+>(
+  reactComponents: T,
+  createPortal: BridgeProps["createPortal"],
+  ReactDOMClient: any,
+  renderToString?: typeof ReactDOMServer.renderToString,
+): {
+  [K in keyof T]: Component<ChildrenPropsAsSnippet<React.ComponentProps<T[K]>>>;
+} {
+  return Object.fromEntries(
+    Object.entries(reactComponents).map(([key, reactComponent]) => {
+      return [
+        key,
+        single(reactComponent, createPortal, ReactDOMClient, renderToString),
+      ];
+    }),
+  ) as any;
 }

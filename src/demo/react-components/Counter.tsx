@@ -7,11 +7,11 @@ import { reactify } from "svelte-preprocess-react";
 
 const Button = reactify(ButtonSvelte);
 
-type Props = {
+type CounterProps = {
   initial?: number;
   onCount?: (count: number) => void;
 };
-const Counter: React.FC<Props> = ({ initial = 0, onCount }) => {
+const Counter: React.FC<CounterProps> = ({ initial = 0, onCount }) => {
   const [count, setCount] = React.useState(initial);
 
   function decrease() {

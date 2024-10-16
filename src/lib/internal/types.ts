@@ -1,5 +1,5 @@
 import type { ComponentClass, FunctionComponent, ReactNode } from "react";
-import type { Snippet } from "svelte";
+import type { Component, Snippet } from "svelte";
 
 export type HandlerName<T extends string> = `on${Capitalize<T>}`;
 export type EventName<T extends string> = T extends `on${infer N}`
@@ -65,3 +65,15 @@ export type SvelteInit = {
   hooks: { Hook: FunctionComponent; key: number }[];
   parent?: TreeNode;
 };
+
+export type ChildrenPropsAsSnippet<T> = T extends {
+  children: React.ReactNode;
+}
+  ? Omit<T, "children"> & { children: Snippet }
+  : T extends { children?: React.ReactNode }
+    ? Omit<T, "children"> & { children?: Snippet }
+    : T;
+
+export type Sveltified<T extends React.JSXElementConstructor<any>> = Component<
+  ChildrenPropsAsSnippet<React.ComponentProps<T>>
+>;
