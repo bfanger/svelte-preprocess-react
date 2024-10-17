@@ -5,7 +5,7 @@
   import ReactDOM from "react-dom/client";
   import { createPortal } from "react-dom";
 
-  const react = sveltify({ Counter, Alert }, createPortal, ReactDOM);
+  const react = sveltify({ Counter, Alert }, { createPortal, ReactDOM });
 
   let count = $state(1);
 </script>

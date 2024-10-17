@@ -12,13 +12,9 @@
     const ctx = useContext(Context);
     return createElement("h1", {}, ctx);
   };
-  const Provider = sveltify(
-    ProviderReact,
-    createPortal,
-    ReactDOM,
-    renderToString,
-  );
-  const Child = sveltify(ChildReact, createPortal, ReactDOM, renderToString);
+  const deps = { createPortal, ReactDOM, renderToString };
+  const Provider = sveltify(ProviderReact, deps);
+  const Child = sveltify(ChildReact, deps);
 </script>
 
 <Provider value="Hello from react context provider">

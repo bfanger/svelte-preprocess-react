@@ -5,7 +5,7 @@
 
   type Props = { ReactDOM: any };
   const { ReactDOM }: Props = $props();
-  const Clicker = sveltify(ClickerReact, createPortal, ReactDOM);
+  const Clicker = sveltify(ClickerReact, { createPortal, ReactDOM });
 
   let count = $state(0);
 

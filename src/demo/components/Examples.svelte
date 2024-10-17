@@ -5,24 +5,17 @@
   import ClickerReact from "../../tests/fixtures/Clicker";
   import AlertReact from "../react-components/Alert";
   import CounterReact from "../react-components/Counter";
+  import type { ReactDependencies } from "svelte-preprocess-react/internal/types";
 
-  const { ReactDOM } = $props(); // The 'react-dom/client' import for React 18+, 'react-dom' for React 16 & 17
+  const { ReactDOM }: { ReactDOM: ReactDependencies["ReactDOM"] } = $props(); // The 'react-dom/client' import for React 18+, 'react-dom' for React 16 & 17
 
   let count = $state(1);
 
-  const Counter = sveltify(
-    CounterReact,
-    createPortal,
-    ReactDOM,
-    renderToString,
-  );
-  const Clicker = sveltify(
-    ClickerReact,
-    createPortal,
-    ReactDOM,
-    renderToString,
-  );
-  const Alert = sveltify(AlertReact, createPortal, ReactDOM, renderToString);
+  const deps = { createPortal, ReactDOM, renderToString };
+
+  const Counter = sveltify(CounterReact, deps);
+  const Clicker = sveltify(ClickerReact, deps);
+  const Alert = sveltify(AlertReact, deps);
 </script>
 
 <Counter initial={10} onCount={console.info} />

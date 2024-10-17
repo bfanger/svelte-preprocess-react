@@ -97,7 +97,7 @@ function transform(content, options) {
     imports.push(
       `import { renderToString as ${prefix}renderToString } from "react-dom/server";`,
     );
-    renderToString = `, ${prefix}renderToString`;
+    renderToString = `, renderToString: ${prefix}renderToString`;
   }
 
   const ast = parse(content, {
@@ -115,7 +115,7 @@ function transform(content, options) {
   const script = ast.instance || ast.module;
   const wrappers = aliases.map(
     ([alias, { expression }]) =>
-      `const ${alias} = ${prefix}sveltify(${expression}, ${portal}, ${prefix}ReactDOM${renderToString});`,
+      `const ${alias} = ${prefix}sveltify(${expression}, { createPortal: ${portal}, ReactDOM: ${prefix}ReactDOM${renderToString} });`,
   );
   if (Object.values(components).find((c) => c.dispatcher)) {
     imports.push(
@@ -232,7 +232,7 @@ function replaceReactTags(node, content, components = {}) {
         // slot was converted to children prop
         content.appendRight(
           node.children[0].start - 1,
-          ` react$Children=${escaped.join("")} /`,
+          ` react$children=${escaped.join("")} /`,
         );
         content.remove(node.children[0].start, node.end);
         return components;

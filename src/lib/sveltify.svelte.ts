@@ -1,65 +1,67 @@
-import type ReactDOMServer from "react-dom/server";
 import * as React from "react";
 import type {
   ChildrenPropsAsSnippet,
+  ReactDependencies,
   SvelteInit,
   Sveltified,
   TreeNode,
 } from "./internal/types.js";
-import Bridge, { type BridgeProps } from "./internal/Bridge.svelte.js";
+import Bridge from "./internal/Bridge.svelte.js";
 import ReactWrapper from "./internal/ReactWrapper.svelte";
 import { setPayload } from "./reactify.js";
 import type { Component } from "svelte";
 
 let sharedRoot: TreeNode | undefined;
 
-export default function sveltify<
+export default sveltify;
+
+function sveltify<
   T extends {
     [key: string]: React.JSXElementConstructor<any>;
   },
 >(
   components: T,
-  createPortal: BridgeProps["createPortal"],
-  ReactDOMClient: any,
-  renderToString?: typeof ReactDOMServer.renderToString,
+  dependencies?: ReactDependencies,
 ): {
   [K in keyof T]: Sveltified<T[K]>;
 };
 /**
  * Convert a React component into a Svelte component.
  */
-export default function sveltify<T extends React.JSXElementConstructor<any>>(
-  components: T,
-  createPortal: BridgeProps["createPortal"],
-  ReactDOMClient: any,
-  renderToString?: typeof ReactDOMServer.renderToString,
-): Sveltified<T>;
-export default function sveltify(
-  components: any,
-  createPortal: BridgeProps["createPortal"],
-  ReactDOMClient: any,
-  renderToString?: typeof ReactDOMServer.renderToString,
-): any {
+function sveltify<
+  T extends React.FC | React.ComponentClass | React.JSXElementConstructor<any>,
+>(components: T, dependencies?: ReactDependencies): Sveltified<T>;
+function sveltify(components: any, dependencies?: ReactDependencies): any {
   if (
-    typeof components === "function" ||
-    ("render" in components && typeof components.render === "function") ||
+    typeof components !== "object" || // React.FC or JSXIntrinsicElements
+    ("render" in components && typeof components.render === "function") || // React.ComponentClass
     "_context" in components // a Context.Provider
   ) {
-    return single(
-      components as React.FC,
-      createPortal,
-      ReactDOMClient,
-      renderToString,
-    );
+    return single(components as React.FC, dependencies);
   }
-  return multiple(components, createPortal, ReactDOMClient, renderToString);
+  return multiple(components, dependencies);
+}
+
+function multiple<
+  T extends {
+    [key: string]: React.FC | React.ComponentClass;
+  },
+>(
+  reactComponents: T,
+  dependencies?: ReactDependencies,
+): {
+  [K in keyof T]: Component<ChildrenPropsAsSnippet<React.ComponentProps<T[K]>>>;
+} {
+  return Object.fromEntries(
+    Object.entries(reactComponents).map(([key, reactComponent]) => {
+      return [key, single(reactComponent, dependencies)];
+    }),
+  ) as any;
 }
 
 function single<T extends React.FC | React.ComponentClass>(
   reactComponent: T,
-  createPortal: BridgeProps["createPortal"],
-  ReactDOMClient: any,
-  renderToString?: typeof ReactDOMServer.renderToString,
+  dependencies: ReactDependencies = {},
 ): Component<ChildrenPropsAsSnippet<React.ComponentProps<T>>> {
   if (
     typeof reactComponent !== "function" &&
@@ -70,10 +72,15 @@ function single<T extends React.FC | React.ComponentClass>(
     // Fix SSR import issue where node doesn't import the esm version. 'react-youtube'
     reactComponent = (reactComponent as any).default;
   }
+  const { createPortal, ReactDOM, renderToString } = dependencies;
+
   const client = typeof document !== "undefined";
 
   function Sveltified(anchorOrPayload: any, $$props: any) {
     const standalone = !sharedRoot;
+    if (!createPortal || !ReactDOM) {
+      throw new Error("createPortal & ReactDOM dependencies are required");
+    }
 
     $$props.svelteInit = (init: SvelteInit) => {
       if (!init.parent && !sharedRoot) {
@@ -103,7 +110,8 @@ function single<T extends React.FC | React.ComponentClass>(
         sharedRoot = rootNode;
         if (client) {
           const rootEl = document.createElement("react-root");
-          const root = ReactDOMClient.createRoot?.(rootEl);
+          const root =
+            "createRoot" in ReactDOM ? ReactDOM.createRoot(rootEl) : undefined;
           portalTarget = document.createElement("bridge-root");
           document.head.appendChild(rootEl);
           document.head.appendChild(portalTarget);
@@ -115,8 +123,11 @@ function single<T extends React.FC | React.ComponentClass>(
               );
             };
           } else {
+            if (!("render" in ReactDOM)) {
+              throw new Error("ReactDOM.render is required to use sveltify");
+            }
             rootNode.rerender = () => {
-              ReactDOMClient.render(
+              ReactDOM.render(
                 React.createElement(Bridge, { node: rootNode, createPortal }),
                 rootEl,
               );
@@ -247,26 +258,4 @@ function inject(open: string, close: string, content: string, target: string) {
   return (
     target.substring(0, start + open.length) + content + target.substring(end)
   );
-}
-
-function multiple<
-  T extends {
-    [key: string]: React.FC | React.ComponentClass;
-  },
->(
-  reactComponents: T,
-  createPortal: BridgeProps["createPortal"],
-  ReactDOMClient: any,
-  renderToString?: typeof ReactDOMServer.renderToString,
-): {
-  [K in keyof T]: Component<ChildrenPropsAsSnippet<React.ComponentProps<T[K]>>>;
-} {
-  return Object.fromEntries(
-    Object.entries(reactComponents).map(([key, reactComponent]) => {
-      return [
-        key,
-        single(reactComponent, createPortal, ReactDOMClient, renderToString),
-      ];
-    }),
-  ) as any;
 }

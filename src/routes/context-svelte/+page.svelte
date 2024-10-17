@@ -9,12 +9,11 @@
   setContext("message", "Hello from svelte route");
 
   const DebugContextReact = reactify(DebugContext);
-  const DebugContextReactSvelte = sveltify(
-    DebugContextReact,
+  const DebugContextReactSvelte = sveltify(DebugContextReact, {
     createPortal,
     ReactDOM,
     renderToString,
-  );
+  });
 </script>
 
 <DebugContextReactSvelte id="message" />

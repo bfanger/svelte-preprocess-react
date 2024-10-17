@@ -47,12 +47,11 @@ The snippet above would be generate:
   import { renderToString } from "react-dom/server";
   import YouTube from "react-youtube";
 
-  const ReactYouTube = sveltify(
-    YouTube,
+  const ReactYouTube = sveltify(YouTube, {
     createPortal,
     ReactDOM,
     renderToString,
-  );
+  });
 </script>
 
 <ReactYouTube videoId="AdNJ3fydeao" />

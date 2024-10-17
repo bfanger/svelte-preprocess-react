@@ -10,7 +10,7 @@
     "type": "git",
     "url": "https://github.com/bfanger/svelte-preprocess-react.git"
   },
-  "version": "2.0.0-beta.7",
+  "version": "2.0.0-next.8",
   "license": "MIT",
   "type": "module",
   "scripts": {

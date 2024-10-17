@@ -12,14 +12,15 @@
     type Snippet,
   } from "svelte";
   import type { FunctionComponent, ReactNode } from "react";
-  import type { SvelteInit, TreeNode } from "./types";
+  import type { SvelteInit, TreeNode, ReactDependencies } from "./types";
 
   type Props = {
     svelteInit: (options: SvelteInit) => TreeNode;
     children?: Snippet;
-    react$Children?: ReactNode;
+    react$children?: ReactNode;
+    react$dependencies?: ReactDependencies;
   };
-  let { svelteInit, children, react$Children, ...reactProps }: Props = $props();
+  let { svelteInit, children, react$children, ...reactProps }: Props = $props();
 
   let portalTarget = $state<HTMLElement | undefined>();
 
@@ -34,7 +35,7 @@
       get props() {
         return {
           reactProps,
-          children: react$Children,
+          children: react$children,
         };
       },
       get portalTarget() {

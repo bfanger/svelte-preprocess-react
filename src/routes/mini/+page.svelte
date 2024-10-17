@@ -8,7 +8,11 @@
   function HelloWord() {
     return createElement("h1", null, "Hello world");
   }
-  const Component = sveltify(HelloWord, createPortal, ReactDOM, renderToString);
+  const Component = sveltify(HelloWord, {
+    createPortal,
+    ReactDOM,
+    renderToString,
+  });
 </script>
 
 <Component />

@@ -47,7 +47,7 @@ export default function reactify<P = any, E = any>(
           props: {
             SvelteComponent: SvelteComponent as any,
             nodeKey: key,
-            react$Children: children,
+            react$children: children,
             props,
             setSlot: (el: HTMLElement | undefined) => {
               if (el && reactChildrenRef.current) {
@@ -94,7 +94,7 @@ export default function reactify<P = any, E = any>(
             SvelteComponent,
             nodeKey: key,
             props,
-            react$Children: children,
+            react$children: children,
           });
           html = $$payload.out.slice(len);
           $$payload.out = $$payload.out.slice(0, len);

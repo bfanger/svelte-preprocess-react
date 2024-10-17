@@ -1,4 +1,6 @@
+import type ReactDOMServer from "react-dom/server";
 import type { ComponentClass, FunctionComponent, ReactNode } from "react";
+import type { Root } from "react-dom/client";
 import type { Component, Snippet } from "svelte";
 
 export type HandlerName<T extends string> = `on${Capitalize<T>}`;
@@ -77,3 +79,19 @@ export type ChildrenPropsAsSnippet<T> = T extends {
 export type Sveltified<T extends React.JSXElementConstructor<any>> = Component<
   ChildrenPropsAsSnippet<React.ComponentProps<T>>
 >;
+
+export type ReactDependencies = {
+  ReactDOM?:
+    | {
+        createRoot: (container: Element) => Root; // React 18 and above
+      }
+    | {
+        render(component: React.ReactNode, container: Element): void; // React 17 and below
+      };
+  createPortal?: (
+    children: React.ReactNode,
+    container: Element | DocumentFragment,
+    key?: null | string,
+  ) => React.ReactPortal;
+  renderToString?: typeof ReactDOMServer.renderToString;
+};
