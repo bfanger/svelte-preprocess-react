@@ -12,6 +12,9 @@ importers:
 
   .:
     dependencies:
+      estree-walker:
+        specifier: ^3.0.3
+        version: 3.0.3
       magic-string:
         specifier: ^0.30.12
         version: 0.30.12

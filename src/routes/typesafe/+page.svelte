@@ -1,11 +1,9 @@
 <script lang="ts">
+  import { sveltify } from "svelte-preprocess-react";
   import Counter from "../../demo/react-components/Counter";
   import Alert from "../../demo/react-components/Alert";
-  import { sveltify } from "svelte-preprocess-react";
-  import ReactDOM from "react-dom/client";
-  import { createPortal } from "react-dom";
 
-  const react = sveltify({ Counter, Alert }, { createPortal, ReactDOM });
+  const react = sveltify({ Counter, Alert });
 
   let count = $state(1);
 </script>

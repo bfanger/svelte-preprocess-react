@@ -1,6 +1,7 @@
 import MagicString from "magic-string";
 import { parse, preprocess } from "svelte/compiler";
 import detectReactVersion from "./internal/detectReactVersion.js";
+import { walk } from "estree-walker";
 
 /**
  * @typedef {import("svelte/compiler").PreprocessorGroup} PreprocessorGroup
@@ -77,9 +78,7 @@ function transform(content, options) {
   /** @type {string} */
   let portal;
   const packageName = "svelte-preprocess-react";
-  const imports = [
-    `import { sveltify as ${prefix}sveltify } from "${packageName}";`,
-  ];
+  const imports = [];
 
   if (options.react >= 18) {
     imports.push(
@@ -93,11 +92,16 @@ function transform(content, options) {
   }
 
   let renderToString = "";
+  const deps = [
+    `createPortal: ${portal}`,
+    `ReactDOM: ${prefix}ReactDOM${renderToString}`,
+  ];
   if (options.ssr) {
     imports.push(
       `import { renderToString as ${prefix}renderToString } from "react-dom/server";`,
     );
     renderToString = `, renderToString: ${prefix}renderToString`;
+    deps.push(`renderToString: ${prefix}renderToString`);
   }
 
   const ast = parse(content, {
@@ -107,10 +111,34 @@ function transform(content, options) {
   const s = new MagicString(content, { filename: options.filename });
   const components = replaceReactTags(ast.html, s);
   const aliases = Object.entries(components);
+  let injected = false;
 
-  if (aliases.length === 0) {
+  if (ast.instance) {
+    walk(ast.instance, {
+      enter(node, parent) {
+        if (
+          node.type === "Identifier" &&
+          node.name === "sveltify" &&
+          parent?.type === "CallExpression" &&
+          parent?.arguments.length === 1
+        ) {
+          if (
+            "end" in parent.arguments[0] &&
+            typeof parent.arguments[0].end === "number"
+          ) {
+            injected = true;
+            s.appendRight(parent.arguments[0].end, `, { ${deps.join(", ")} }`);
+          }
+        }
+      },
+    });
+  }
+  if (!injected && aliases.length === 0) {
     return { code: content };
   }
+  imports.push(
+    `import { sveltify as ${prefix}sveltify } from "${packageName}";`,
+  );
 
   const script = ast.instance || ast.module;
   const wrappers = aliases.map(
