@@ -10,11 +10,11 @@ This document describes design-decisions and implementation details of the prepr
 
 ```jsx
 <App>
-  <react:ReduxProvider value={store}>
+  <react.ReduxProvider value={store}>
     <Layout>
-      <react:Info />
+      <react.Info />
     </Layout>
-  </react:ReduxProvider>
+  </react.ReduxProvider>
 </App>
 ```
 
@@ -29,9 +29,9 @@ Both Svelte and React have component trees, for context to work in both, Svelte 
 and React needs to act as if the tree is:
 
 ```jsx
-<react:ReduxProvider value={store}>
-  <react:Info />
-</react:ReduxProvider>
+<react.ReduxProvider value={store}>
+  <react.Info />
+</react.ReduxProvider>
 ```
 
 ### Client mode

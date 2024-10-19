@@ -17,7 +17,9 @@ export default sveltify;
 
 function sveltify<
   T extends {
-    [key: string]: React.JSXElementConstructor<any>;
+    [key: string]:
+      | keyof JSX.IntrinsicElements
+      | React.JSXElementConstructor<any>;
   },
 >(
   components: T,
@@ -72,7 +74,18 @@ function single<T extends React.FC | React.ComponentClass>(
     // Fix SSR import issue where node doesn't import the esm version. 'react-youtube'
     reactComponent = (reactComponent as any).default;
   }
-  const { createPortal, ReactDOM, renderToString } = dependencies;
+  let { createPortal, ReactDOM, renderToString } = dependencies;
+  if ("inject$$createPortal" in dependencies) {
+    createPortal =
+      dependencies.inject$$createPortal as ReactDependencies["createPortal"];
+  }
+  if ("inject$$ReactDOM" in dependencies) {
+    ReactDOM = dependencies.inject$$ReactDOM as ReactDependencies["ReactDOM"];
+  }
+  if ("inject$$renderToString" in dependencies) {
+    renderToString =
+      dependencies.inject$$renderToString as ReactDependencies["renderToString"];
+  }
 
   const client = typeof document !== "undefined";
 

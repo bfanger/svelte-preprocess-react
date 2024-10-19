@@ -44,12 +44,12 @@ In src/routes/+layout.svelte
   import { page } from "$app/stores";
   import { goto } from "$app/navigation";
 
-  used(RouterProvider);
+  const react = sveltify({ RouterProvider });
 </script>
 
-<react:RouterProvider value={{ url: $page.url, params: $page.params, goto }}>
+<react.RouterProvider value={{ url: $page.url, params: $page.params, goto }}>
   <slot />
-</react:RouterProvider>
+</react.RouterProvider>
 ```
 
 the actual navigation and url updates are done by the SvelteKit router. The `<RouterProvider>` exposed the current url and push & replace actions

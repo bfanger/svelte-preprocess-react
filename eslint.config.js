@@ -29,7 +29,12 @@ export default ts.config(
     languageOptions: {
       ecmaVersion: 2022,
       sourceType: "module",
-      globals: { ...globals.node, ...globals.browser },
+      globals: {
+        ...globals.node,
+        ...globals.browser,
+        sveltify: true,
+        react: true,
+      },
       parser: svelteParser,
       parserOptions: {
         parser: ts.parser,

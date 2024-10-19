@@ -2,15 +2,16 @@
   import { useState } from "react";
   import ReactDOMClient from "react-dom/client"; // React 18+,(use "react-dom" for older versions)
   import { renderToString } from "react-dom/server";
-  import { hooks, used } from "svelte-preprocess-react";
+  import { hooks } from "svelte-preprocess-react";
   import Nested from "./HookWithContext.svelte";
   import { type Auth, AuthProvider } from "./react-auth";
 
-  used(AuthProvider);
+  const react = sveltify({ AuthProvider });
 
   const countHook = hooks(() => useState(0), ReactDOMClient, renderToString);
 
   const auth: Auth = $state({ authenticated: false });
+
   function onLogin() {
     auth.authenticated = true;
   }
@@ -31,9 +32,9 @@
   >
   <hr />
 {/if}
-<react:AuthProvider value={auth}>
+<react.AuthProvider value={auth}>
   <Nested />
-</react:AuthProvider>
+</react.AuthProvider>
 
 {#if auth.authenticated}
   <button onclick={onLogout} data-testid="logout">Logout</button>

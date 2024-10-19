@@ -1,5 +1,9 @@
 import type ReactDOMServer from "react-dom/server";
-import type { ComponentClass, FunctionComponent, ReactNode } from "react";
+import {
+  type ComponentClass,
+  type FunctionComponent,
+  type ReactNode,
+} from "react";
 import type { Root } from "react-dom/client";
 import type { Component, Snippet } from "svelte";
 
@@ -76,9 +80,9 @@ export type ChildrenPropsAsSnippet<T> = T extends {
     ? Omit<T, "children"> & { children?: Snippet }
     : T;
 
-export type Sveltified<T extends React.JSXElementConstructor<any>> = Component<
-  ChildrenPropsAsSnippet<React.ComponentProps<T>>
->;
+export type Sveltified<
+  T extends keyof JSX.IntrinsicElements | React.JSXElementConstructor<any>,
+> = Component<ChildrenPropsAsSnippet<React.ComponentProps<T>>>;
 
 export type ReactDependencies = {
   ReactDOM?:

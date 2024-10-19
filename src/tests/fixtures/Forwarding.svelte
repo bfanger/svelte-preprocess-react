@@ -1,8 +1,7 @@
 <script lang="ts">
-  import { used } from "svelte-preprocess-react";
   import Clicker from "./Clicker";
 
-  used(Clicker);
+  const react = sveltify({ Clicker });
 
   let { value = 0, onCount } = $props<{
     value: number;
@@ -10,4 +9,4 @@
   }>();
 </script>
 
-<react:Clicker count={value} {onCount}></react:Clicker>
+<react.Clicker count={value} {onCount}></react.Clicker>

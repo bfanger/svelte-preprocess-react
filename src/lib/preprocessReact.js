@@ -74,7 +74,7 @@ export default function preprocessReact(options = {}) {
  * @returns
  */
 function transform(content, options) {
-  const prefix = "React$$";
+  const prefix = "inject$$";
   /** @type {string} */
   let portal;
   const packageName = "svelte-preprocess-react";
@@ -88,20 +88,15 @@ function transform(content, options) {
     portal = `${prefix}createPortal`;
   } else {
     imports.push(`import ${prefix}ReactDOM from "react-dom";`);
-    portal = `${prefix}ReactDOM.createPortal`;
+    portal = `${prefix}createPortal: ${prefix}ReactDOM.createPortal`;
   }
 
-  let renderToString = "";
-  const deps = [
-    `createPortal: ${portal}`,
-    `ReactDOM: ${prefix}ReactDOM${renderToString}`,
-  ];
+  const deps = [portal, `${prefix}ReactDOM`];
   if (options.ssr) {
     imports.push(
       `import { renderToString as ${prefix}renderToString } from "react-dom/server";`,
     );
-    renderToString = `, renderToString: ${prefix}renderToString`;
-    deps.push(`renderToString: ${prefix}renderToString`);
+    deps.push(`${prefix}renderToString`);
   }
 
   const ast = parse(content, {
@@ -111,40 +106,71 @@ function transform(content, options) {
   const s = new MagicString(content, { filename: options.filename });
   const components = replaceReactTags(ast.html, s);
   const aliases = Object.entries(components);
-  let injected = false;
 
-  if (ast.instance) {
-    walk(ast.instance, {
-      enter(node, parent) {
-        if (
-          node.type === "Identifier" &&
-          node.name === "sveltify" &&
-          parent?.type === "CallExpression" &&
-          parent?.arguments.length === 1
-        ) {
-          if (
-            "end" in parent.arguments[0] &&
-            typeof parent.arguments[0].end === "number"
-          ) {
-            injected = true;
-            s.appendRight(parent.arguments[0].end, `, { ${deps.join(", ")} }`);
-          }
-        }
-      },
-    });
+  let depsInjected = false;
+  let imported = false;
+  let defined = false;
+
+  /**
+   * Detect sveltify import and usage
+   *
+   * @param {import('estree-walker').Node} node
+   * @param {import('estree-walker').Node|null} parent
+   */
+  function enter(node, parent) {
+    if (node.type === "Identifier" && node.name === "sveltify" && parent) {
+      if (parent.type === "ImportSpecifier") {
+        imported = true;
+      }
+      if (
+        parent.type === "CallExpression" &&
+        parent?.arguments.length === 1 &&
+        "end" in parent.arguments[0] &&
+        typeof parent.arguments[0].end === "number"
+      ) {
+        s.appendRight(parent.arguments[0].end, `, { ${deps.join(", ")} }`);
+        depsInjected = true;
+      }
+      if (parent.type === "ImportDeclaration") {
+        imported = true;
+      }
+    }
+    if (
+      node.type === "Identifier" &&
+      node.name === "react" &&
+      parent?.type === "VariableDeclarator"
+    ) {
+      defined = true;
+    }
   }
-  if (!injected && aliases.length === 0) {
+  if (ast.module) {
+    walk(ast.module, { enter });
+  }
+  if (ast.instance) {
+    walk(ast.instance, { enter });
+  }
+  if (!depsInjected && aliases.length === 0) {
     return { code: content };
   }
-  imports.push(
-    `import { sveltify as ${prefix}sveltify } from "${packageName}";`,
-  );
-
+  // console.log(aliases);
+  if ((depsInjected && !imported) || (!imported && !defined)) {
+    imports.push(`import { sveltify } from "${packageName}";`);
+  }
   const script = ast.instance || ast.module;
-  const wrappers = aliases.map(
-    ([alias, { expression }]) =>
-      `const ${alias} = ${prefix}sveltify(${expression}, { createPortal: ${portal}, ReactDOM: ${prefix}ReactDOM${renderToString} });`,
-  );
+  let wrappers = [];
+  if (!defined) {
+    wrappers.push(
+      `const react = sveltify({ ${Object.keys(components)
+        .map((component) => {
+          if (component.toLowerCase() === component) {
+            return `${component.match(/^[a-z]+$/) ? component : JSON.stringify(component)}: ${JSON.stringify(component)}`;
+          }
+          return component;
+        })
+        .join(", ")} }, { ${deps.join(", ")} });`,
+    );
+  }
+
   if (Object.values(components).find((c) => c.dispatcher)) {
     imports.push(
       'import { createEventDispatcher as React$$createEventDispatcher } from "svelte";',
@@ -172,48 +198,33 @@ function transform(content, options) {
  *
  * @param {any} node
  * @param {MagicString} content
- * @param {Record<string, { expression: string, dispatcher: boolean }>} components
+ * @param {Record<string, { dispatcher: boolean }>} components
  */
 function replaceReactTags(node, content, components = {}) {
-  if (node.type === "Element" && node.name.startsWith("react:")) {
-    const tag = /** @type {any} */ (node);
-    const componentExpression = tag.name.slice(6);
-    const alias = `React$${componentExpression.replace(/\./g, "$")}`;
-    const tagStart = node.start;
-    const tagEnd = node.end;
-    const closeStart = tagEnd - tag.name.length - 3;
-    const hasCloseTag =
-      content.slice(closeStart, closeStart + 8) === `</react:`;
-    content.overwrite(tagStart + 1, tagStart + 1 + tag.name.length, alias);
-    if (hasCloseTag) {
-      content.overwrite(
-        closeStart + 2,
-        closeStart + 2 + tag.name.length,
-        alias,
-      );
-    }
-
-    if (!components[alias]) {
-      if (componentExpression.match(/^[a-z-]+$/)) {
-        components[alias] = {
-          expression: `"${componentExpression}"`,
-          dispatcher: false,
-        };
-      } else {
-        components[alias] = {
-          expression: componentExpression,
-          dispatcher: false,
-        };
+  if (
+    (node.type === "Element" && node.name.startsWith("react:")) ||
+    (node.type === "InlineComponent" && node.name.startsWith("react."))
+  ) {
+    let legacy = node.name.startsWith("react:");
+    if (legacy) {
+      console.warn("'<react:*' syntax is deprecated, use '<react.*'");
+      content.overwrite(node.start + 6, node.start + 7, ".");
+      const tagEnd = node.end - node.name.length - 3;
+      if (content.slice(tagEnd, tagEnd + 8) === `</react:`) {
+        content.overwrite(tagEnd + 7, tagEnd + 8, ".");
       }
     }
-    tag.attributes.forEach((/** @type {any} */ attr) => {
+    const identifier = node.name.slice(6).replace("[.].*", "");
+    if (!components[identifier]) {
+      components[identifier] = { dispatcher: false };
+    }
+
+    node.attributes.forEach((/** @type {any} */ attr) => {
       if (attr.type === "EventHandler") {
         const event = attr;
         const eventStart = event.start;
         if (event.modifiers.length > 0) {
-          throw new Error(
-            `event modifiers are not (yet) supported for React components`,
-          );
+          throw new Error(`event modifiers are not supported`);
         }
         if (event.expression !== null) {
           content.overwrite(
@@ -229,7 +240,7 @@ function replaceReactTags(node, content, components = {}) {
               event.name[0].toUpperCase() + event.name.substring(1)
             }={(e) => React$$dispatch(${JSON.stringify(event.name)}, e)}`,
           );
-          components[alias].dispatcher = true;
+          components[identifier].dispatcher = true;
         }
       }
     });

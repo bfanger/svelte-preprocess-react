@@ -14,7 +14,7 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "dev": "vite dev",
+    "dev": "svelte-package && vite dev",
     "build": "vite build",
     "preview": "vite preview",
     "package": "svelte-package",

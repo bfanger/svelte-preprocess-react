@@ -1,8 +1,7 @@
 <script lang="ts">
-  import { used } from "svelte-preprocess-react";
   import Alert from "../../demo/react-components/Alert";
 
-  used(Alert);
+  const react = sveltify(Alert);
 </script>
 
-<react:Alert>A simple primary alert. Check it out!</react:Alert>
+<react.Alert>A simple primary alert. Check it out!</react.Alert>

@@ -1,219 +1,210 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`svelte-preprocess-react > should convert text content to react children prop 1`] = `
-"<script lang="ts">import React$$ReactDOM from "react-dom/client"; import { createPortal as React$$createPortal} from "react-dom"; import { renderToString as React$$renderToString } from "react-dom/server"; import { sveltify as React$$sveltify } from "svelte-preprocess-react";
-  import { used } from "svelte-preprocess-react";
+"<script lang="ts">import inject$$ReactDOM from "react-dom/client"; import { createPortal as inject$$createPortal} from "react-dom"; import { renderToString as inject$$renderToString } from "react-dom/server"; import { sveltify } from "svelte-preprocess-react";
   import Alert from "../../demo/react-components/Alert";
 
-  used(Alert);
+  const react = sveltify({ Alert }, { inject$$createPortal, inject$$ReactDOM, inject$$renderToString });
 
   const count = 0;
-;const React$Alert = React$$sveltify(Alert, { createPortal: React$$createPortal, ReactDOM: React$$ReactDOM, renderToString: React$$renderToString });</script>
+;</script>
 
-<React$Alert react$children="Static Text" />
+<react.Alert react$children="Static Text" />
 
-<React$Alert react$children="{'\\n'}  {'"'}Multiline content{'"'}. Lorem ipsum dolor sit amet consectetur adipisicing elit.{'\\n'}  Suscipit nisi atque asperiores.{'\\n'}" />
+<react.Alert react$children="{'\\n'}  {'"'}Multiline content{'"'}. Lorem ipsum dolor sit amet consectetur adipisicing elit.{'\\n'}  Suscipit nisi atque asperiores.{'\\n'}" />
 
-<React$Alert react$children="Value: {count + 1}" />
+<react.Alert react$children="Value: {count + 1}" />
 "
 `;
 
 exports[`svelte-preprocess-react > should import 'react-dom/server' when ssr is enabled 1`] = `
-"<script lang="ts">import React$$ReactDOM from "react-dom/client"; import { createPortal as React$$createPortal} from "react-dom"; import { renderToString as React$$renderToString } from "react-dom/server"; import { sveltify as React$$sveltify } from "svelte-preprocess-react";
-  import { used } from "svelte-preprocess-react";
+"<script lang="ts">import inject$$ReactDOM from "react-dom/client"; import { createPortal as inject$$createPortal} from "react-dom"; import { renderToString as inject$$renderToString } from "react-dom/server"; import { sveltify } from "svelte-preprocess-react";
   import Clicker from "./Clicker";
 
-  used(Clicker);
+  const react = sveltify({ Clicker }, { inject$$createPortal, inject$$ReactDOM, inject$$renderToString });
 
   let count = 1;
-;const React$Clicker = React$$sveltify(Clicker, { createPortal: React$$createPortal, ReactDOM: React$$ReactDOM, renderToString: React$$renderToString });</script>
+;</script>
 
-<React$Clicker
+<react.Clicker
   {count}
   onCount={(next) => {
     count = next;
   }}
-></React$Clicker>
+></react.Clicker>
 "
 `;
 
 exports[`svelte-preprocess-react > should inject a script tag 1`] = `
 "<script>
-import React$$ReactDOM from "react-dom/client"; import { createPortal as React$$createPortal} from "react-dom"; import { renderToString as React$$renderToString } from "react-dom/server"; import { sveltify as React$$sveltify } from "svelte-preprocess-react";
+import inject$$ReactDOM from "react-dom/client"; import { createPortal as inject$$createPortal} from "react-dom"; import { renderToString as inject$$renderToString } from "react-dom/server"; import { sveltify } from "svelte-preprocess-react";
 
-const React$Counter = React$$sveltify(Counter, { createPortal: React$$createPortal, ReactDOM: React$$ReactDOM, renderToString: React$$renderToString });
+const react = sveltify({ Counter }, { inject$$createPortal, inject$$ReactDOM, inject$$renderToString });
 </script>
 
 <!-- Counter could be a global variable -->
-<React$Counter></React$Counter>
+<react.Counter></react.Counter>
 "
 `;
 
 exports[`svelte-preprocess-react > should not import 'react-dom/server' when ssr is disabled 1`] = `
-"<script lang="ts">import React$$ReactDOM from "react-dom/client"; import { createPortal as React$$createPortal} from "react-dom"; import { sveltify as React$$sveltify } from "svelte-preprocess-react";
-  import { used } from "svelte-preprocess-react";
+"<script lang="ts">import inject$$ReactDOM from "react-dom/client"; import { createPortal as inject$$createPortal} from "react-dom"; import { sveltify } from "svelte-preprocess-react";
   import Clicker from "./Clicker";
 
-  used(Clicker);
+  const react = sveltify({ Clicker }, { inject$$createPortal, inject$$ReactDOM });
 
   let count = 1;
-;const React$Clicker = React$$sveltify(Clicker, { createPortal: React$$createPortal, ReactDOM: React$$ReactDOM });</script>
+;</script>
 
-<React$Clicker
+<react.Clicker
   {count}
   onCount={(next) => {
     count = next;
   }}
-></React$Clicker>
+></react.Clicker>
 "
 `;
 
 exports[`svelte-preprocess-react > should portal slotted content as children 1`] = `
-"<script lang="ts">import React$$ReactDOM from "react-dom/client"; import { createPortal as React$$createPortal} from "react-dom"; import { renderToString as React$$renderToString } from "react-dom/server"; import { sveltify as React$$sveltify } from "svelte-preprocess-react";
-  import { used } from "svelte-preprocess-react";
+"<script lang="ts">import inject$$ReactDOM from "react-dom/client"; import { createPortal as inject$$createPortal} from "react-dom"; import { renderToString as inject$$renderToString } from "react-dom/server"; import { sveltify } from "svelte-preprocess-react";
   import Alert from "../../demo/react-components/Alert";
 
-  used(Alert);
-;const React$Alert = React$$sveltify(Alert, { createPortal: React$$createPortal, ReactDOM: React$$ReactDOM, renderToString: React$$renderToString });</script>
+  const react = sveltify(Alert, { inject$$createPortal, inject$$ReactDOM, inject$$renderToString });
+;</script>
 
-<React$Alert react$children="A simple primary alert. Check it out!" />
+<react.Alert react$children="A simple primary alert. Check it out!" />
 "
 `;
 
 exports[`svelte-preprocess-react > should process <react:Context.Provider> tags 1`] = `
-"<script lang="ts">import React$$ReactDOM from "react-dom/client"; import { createPortal as React$$createPortal} from "react-dom"; import { renderToString as React$$renderToString } from "react-dom/server"; import { sveltify as React$$sveltify } from "svelte-preprocess-react";
+"<script lang="ts">import inject$$ReactDOM from "react-dom/client"; import { createPortal as inject$$createPortal} from "react-dom"; import { renderToString as inject$$renderToString } from "react-dom/server"; import { sveltify } from "svelte-preprocess-react";
   import type { Context as ContentType } from "react";
-  import { used } from "svelte-preprocess-react";
 
   export let Context: ContentType<any>;
   $: Provider = Context.Provider;
 
-  used(Provider);
-;const React$Provider = React$$sveltify(Provider, { createPortal: React$$createPortal, ReactDOM: React$$ReactDOM, renderToString: React$$renderToString });</script>
+  const react = sveltify({ Provider }, { inject$$createPortal, inject$$ReactDOM, inject$$renderToString });
+;</script>
 
-<React$Provider react$children="content" />
+<react.Provider react$children="content" />
 
-<React$Provider>
+<react.Provider>
   <button>ok</button>
-</React$Provider>
+</react.Provider>
 "
 `;
 
 exports[`svelte-preprocess-react > should process <react:component> tags 1`] = `
-"<script lang="ts">import React$$ReactDOM from "react-dom/client"; import { createPortal as React$$createPortal} from "react-dom"; import { renderToString as React$$renderToString } from "react-dom/server"; import { sveltify as React$$sveltify } from "svelte-preprocess-react";
-  import { used } from "svelte-preprocess-react";
+"<script lang="ts">import inject$$ReactDOM from "react-dom/client"; import { createPortal as inject$$createPortal} from "react-dom"; import { renderToString as inject$$renderToString } from "react-dom/server"; import { sveltify } from "svelte-preprocess-react";
   import Clicker from "./Clicker";
 
-  used(Clicker);
+  const react = sveltify({ Clicker }, { inject$$createPortal, inject$$ReactDOM, inject$$renderToString });
 
   let count = 1;
-;const React$Clicker = React$$sveltify(Clicker, { createPortal: React$$createPortal, ReactDOM: React$$ReactDOM, renderToString: React$$renderToString });</script>
+;</script>
 
-<React$Clicker
+<react.Clicker
   {count}
   onCount={(next) => {
     count = next;
   }}
-></React$Clicker>
+></react.Clicker>
 "
 `;
 
 exports[`svelte-preprocess-react > should process <react:component> tags 2`] = `
-"<script lang="ts">import React$$ReactDOM from "react-dom/client"; import { createPortal as React$$createPortal} from "react-dom"; import { renderToString as React$$renderToString } from "react-dom/server"; import { sveltify as React$$sveltify } from "svelte-preprocess-react";
-  import { used } from "svelte-preprocess-react";
+"<script lang="ts">import inject$$ReactDOM from "react-dom/client"; import { createPortal as inject$$createPortal} from "react-dom"; import { renderToString as inject$$renderToString } from "react-dom/server"; import { sveltify } from "svelte-preprocess-react";
   import Clicker from "./Clicker";
 
-  used(Clicker);
+  const react = sveltify({ Clicker }, { inject$$createPortal, inject$$ReactDOM, inject$$renderToString });
 
   let count = 1;
-;const React$Clicker = React$$sveltify(Clicker, { createPortal: React$$createPortal, ReactDOM: React$$ReactDOM, renderToString: React$$renderToString });</script>
+;</script>
 
 <h2>prop and event</h2>
-<React$Clicker
+<react.Clicker
   {count}
   onCount={(next) => {
     count = next;
   }}
-></React$Clicker>
+></react.Clicker>
 <h2>prop and Prop event</h2>
-<React$Clicker
+<react.Clicker
   count={10}
   onCount={() => {
     console.info("count");
   }}
-></React$Clicker>
+></react.Clicker>
 <h2>prop</h2>
-<React$Clicker {count}></React$Clicker>
+<react.Clicker {count}></react.Clicker>
 <h2>.</h2>
-<React$Clicker></React$Clicker>
+<react.Clicker></react.Clicker>
 "
 `;
 
 exports[`svelte-preprocess-react > should process <react:element> (lowercase) tags 1`] = `
 "<script>
-import React$$ReactDOM from "react-dom/client"; import { createPortal as React$$createPortal} from "react-dom"; import { renderToString as React$$renderToString } from "react-dom/server"; import { sveltify as React$$sveltify } from "svelte-preprocess-react";
+import inject$$ReactDOM from "react-dom/client"; import { createPortal as inject$$createPortal} from "react-dom"; import { renderToString as inject$$renderToString } from "react-dom/server"; import { sveltify } from "svelte-preprocess-react";
 
-const React$button = React$$sveltify("button", { createPortal: React$$createPortal, ReactDOM: React$$ReactDOM, renderToString: React$$renderToString });
+const react = sveltify({ button: "button" }, { inject$$createPortal, inject$$ReactDOM, inject$$renderToString });
 </script>
 
 <!-- eslint-disable-next-line svelte/valid-compile -->
-<React$button onclick={() => console.info("clicked")}>
+<react.button onclick={() => console.info("clicked")}>
   <slot />
-</React$button>
+</react.button>
 "
 `;
 
 exports[`svelte-preprocess-react > should process {:else} {:then} and {:catch} sections 1`] = `
-"<script lang="ts">import React$$ReactDOM from "react-dom/client"; import { createPortal as React$$createPortal} from "react-dom"; import { renderToString as React$$renderToString } from "react-dom/server"; import { sveltify as React$$sveltify } from "svelte-preprocess-react";
-  import { used } from "svelte-preprocess-react";
+"<script lang="ts">import inject$$ReactDOM from "react-dom/client"; import { createPortal as inject$$createPortal} from "react-dom"; import { renderToString as inject$$renderToString } from "react-dom/server"; import { sveltify } from "svelte-preprocess-react";
   import type React from "react";
 
   const number = 1;
 
   const Component: React.FC = () => null;
-  used(Component);
-;const React$Component = React$$sveltify(Component, { createPortal: React$$createPortal, ReactDOM: React$$ReactDOM, renderToString: React$$renderToString });</script>
+  const react = sveltify({ Component }, { inject$$createPortal, inject$$ReactDOM, inject$$renderToString });
+;</script>
 
 <!-- eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -->
 {#if number === 1}
-  <React$Component></React$Component>
+  <react.Component />
   <!-- eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -->
 {:else if number === 2}
-  <React$Component></React$Component>
+  <react.Component />
 {:else}
-  <React$Component></React$Component>
+  <react.Component />
 {/if}
 
 {#each [] as _}
-  <React$Component></React$Component>
+  <react.Component />
 {:else}
-  <React$Component></React$Component>
+  <react.Component />
 {/each}
 
 {#await Promise.resolve()}
-  <React$Component></React$Component>
+  <react.Component />
 {:then}
-  <React$Component></React$Component>
+  <react.Component />
 {:catch}
-  <React$Component></React$Component>
+  <react.Component />
 {/await}
 "
 `;
 
 exports[`svelte-preprocess-react > should process on:event forwarding 1`] = `
-"<script lang="ts">import React$$ReactDOM from "react-dom/client"; import { createPortal as React$$createPortal} from "react-dom"; import { renderToString as React$$renderToString } from "react-dom/server"; import { sveltify as React$$sveltify } from "svelte-preprocess-react";
-  import { used } from "svelte-preprocess-react";
+"<script lang="ts">import inject$$ReactDOM from "react-dom/client"; import { createPortal as inject$$createPortal} from "react-dom"; import { renderToString as inject$$renderToString } from "react-dom/server"; import { sveltify } from "svelte-preprocess-react";
   import Clicker from "./Clicker";
 
-  used(Clicker);
+  const react = sveltify({ Clicker }, { inject$$createPortal, inject$$ReactDOM, inject$$renderToString });
 
   let { value = 0, onCount } = $props<{
     value: number;
     onCount: (count: number) => void;
   }>();
-;const React$Clicker = React$$sveltify(Clicker, { createPortal: React$$createPortal, ReactDOM: React$$ReactDOM, renderToString: React$$renderToString });</script>
+;</script>
 
-<React$Clicker count={value} {onCount}></React$Clicker>
+<react.Clicker count={value} {onCount}></react.Clicker>
 "
 `;
 

@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { sveltify } from "svelte-preprocess-react";
   import Counter from "../../demo/react-components/Counter";
   import Alert from "../../demo/react-components/Alert";
 

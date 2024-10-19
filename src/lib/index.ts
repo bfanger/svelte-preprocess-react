@@ -1,3 +1,5 @@
+/// <reference path="global.d.ts" />
+
 import type { Sveltified } from "./internal/types.js";
 export { default as hooks } from "./hooks.js";
 export { default as reactify } from "./reactify.js";
@@ -8,7 +10,9 @@ export { default as useStore } from "./useStore.js";
 declare global {
   function sveltify<
     T extends {
-      [key: string]: React.FC | React.ComponentClass;
+      [key: string]:
+        | keyof JSX.IntrinsicElements
+        | React.JSXElementConstructor<any>;
     },
   >(
     reactComponents: T,
