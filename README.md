@@ -58,7 +58,7 @@ The snippet above would be generate:
 ## Setup / Installation
 
 ```sh
-npm install svelte-preprocess-react
+npm install --save-dev svelte-preprocess-react react react-dom
 ```
 
 Add `preprocessReact` to your svelte.config.js:
