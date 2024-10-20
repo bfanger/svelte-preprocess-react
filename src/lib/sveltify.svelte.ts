@@ -187,14 +187,23 @@ function single<T extends React.FC | React.ComponentClass>(
     (ReactWrapper as any)(anchorOrPayload, $$props);
 
     if (standalone && !client) {
+      let renderError: Error | undefined;
       if (renderToString && sharedRoot) {
         setPayload(anchorOrPayload);
-        const html = renderToString(
-          React.createElement(Bridge, { node: sharedRoot }),
-        );
-        const source = { html };
-        applyPortals(anchorOrPayload, sharedRoot, source);
+        try {
+          const html = renderToString(
+            React.createElement(Bridge, { node: sharedRoot }),
+          );
+          const source = { html };
+          applyPortals(anchorOrPayload, sharedRoot, source);
+        } catch (err) {
+          renderError = (err as Error) ?? new Error("Unknown error");
+          sharedRoot = undefined;
+        }
         setPayload(undefined);
+        if (renderError) {
+          throw renderError;
+        }
       }
     }
   }
@@ -236,25 +245,28 @@ function applyPortal(
         source.html,
       );
     } catch {
-      // The React component, didn't render the childrenThe rendering of children can be conditional.
+      // The React component didn't render the children, the rendering of children can be conditional.
     }
   }
-  const portal = extract(
-    `<react-portal-source node="${node.key}" style="display:none">`,
-    `</react-portal-source>`,
-    source.html,
-  );
-
-  source.html = portal.outerRemoved;
   try {
+    const portal = extract(
+      `<react-portal-source node="${node.key}" style="display:none">`,
+      `</react-portal-source>`,
+      source.html,
+    );
+
+    source.html = portal.outerRemoved;
     $$payload.out = inject(
       `<svelte-portal-target node="${node.key}" style="display:contents">`,
       "</svelte-portal-target>",
       portal.innerHtml,
       $$payload.out,
     );
-  } catch (err: any) {
-    console.warn(err.message);
+  } catch (err) {
+    if (!node.parent) {
+      throw err;
+    }
+    // Nested component didn't render, could be suspense or conditional rendering.
   }
 }
 
