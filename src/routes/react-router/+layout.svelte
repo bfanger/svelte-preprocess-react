@@ -4,7 +4,10 @@
   import { page } from "$app/stores";
   import Menu from "./Menu";
 
-  const react = sveltify({ RouterProvider, Menu });
+  const react = sveltify({
+    RouterProvider,
+    Menu,
+  });
 </script>
 
 <react.RouterProvider value={{ url: $page.url, params: $page.params, goto }}>

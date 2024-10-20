@@ -4,7 +4,7 @@ import type { Params } from "../types";
 export type RouterContextType = {
   url: URL;
   params: Params;
-  goto(url: string, opts?: { replaceState?: boolean }): void;
+  goto(url: string, opts?: { replaceState?: boolean }): void | Promise<void>;
 };
 const RouterContext = React.createContext<RouterContextType | undefined>(
   undefined,

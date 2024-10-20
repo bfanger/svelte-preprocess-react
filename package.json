@@ -14,7 +14,8 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "dev": "svelte-package && vite dev",
+    "dev": "vite dev",
+    "dev:preprocess": "echo 'src/lib/preprocessReact.js' | entr -rn npm run dev",
     "build": "vite build",
     "preview": "vite preview",
     "package": "svelte-package",

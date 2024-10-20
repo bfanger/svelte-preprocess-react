@@ -6,10 +6,10 @@ export default function useHistory() {
   return React.useMemo(
     () => ({
       push(url: string) {
-        router.goto(url);
+        void router.goto(url);
       },
       replace(url: string) {
-        router.goto(url, { replaceState: true });
+        void router.goto(url, { replaceState: true });
       },
     }),
     // eslint-disable-next-line @typescript-eslint/unbound-method

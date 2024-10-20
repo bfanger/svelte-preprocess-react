@@ -28,7 +28,7 @@ const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
         onClick?.(event);
         if (!event.defaultPrevented) {
           event.preventDefault();
-          context?.goto(href, { replaceState: true });
+          void context?.goto(href, { replaceState: true });
         }
       };
     }
