@@ -13,26 +13,23 @@ Supports:
 
 This project was featured at the [Svelte London - November 2022 Meetup](https://www.youtube.com/live/DXQl1G54DJY?feature=share&t=2569)
 
-# "Embrace, extend and extinguish"
+> "Embrace, extend and extinguish"
 
-This preprocessor is intended as temporary solution when migrating an existing large React codebase or when a third-party hasn't yet provided a Svelte adapter.  
-After you've gradually converted all components to Svelte you can remove this preprocessor from your setup.
+This preprocessor is intended as solution using third-party React components or for migrating an existing React codebase.
 
 ## Using React inside Svelte components
-
-> Embrace
 
 Inside the Svelte template prepend the name of the component with `react.` prefix.
 
 Instead of `<Button>`, you'd write `<react.Button>`
 
-You're also able to use libraries from the react ecosystem, react-youtube for example:
+Use libraries from the React's ecosystem, react-youtube for example:
 
 ```svelte
 <script>
   import YouTube from "react-youtube";
 
-  const react = sveltify({ YouTube }); // Optional, but improves tooling
+  const react = sveltify({ YouTube }); // Optional step, but adds type-safety
 </script>
 
 <react.YouTube videoId="AdNJ3fydeao" />
@@ -58,7 +55,7 @@ The snippet above would be generate:
 <react.YouTube videoId="AdNJ3fydeao" />
 ```
 
-## Setup
+## Setup / Installation
 
 ```sh
 npm install svelte-preprocess-react
@@ -79,7 +76,7 @@ When using other processors like [@sveltejs/vite-plugin-svelte](https://github.c
 
 ```js
 // svelte.config.js
-import { vitePreprocess } from "@sveltejs/kit/vite";
+import { vitePreprocess } from "@sveltejs/vite-plugin-svelte";
 import preprocessReact from "svelte-preprocess-react/preprocessReact";
 
 export default {
@@ -88,8 +85,6 @@ export default {
 ```
 
 ## Using Svelte inside React components
-
-> Extend
 
 Once you've converted a React component to Svelte, you'd want delete that React component, but some if other React components depended on that component you can use `reactify` to use the new Svelte component as a React component.
 
@@ -106,15 +101,17 @@ function MyComponent() {
 
 ## Using multiple frameworks is a bad idea
 
-> Extinguish
-
 Using multiple frontend frameworks adds overhead, both in User and Developer experience.
 
 - Increased download size
 - Slower (each framework boundary adds overhead)
 - Context switching, keeping the intricacies of both Svelte and React in your head slows down development
 
-svelte-preprocess-react is a migration tool, it can be used to migrate _from_ or _to_ React, it's not a long term solution.
+When using third-party React components, keep an eye out for Svelte alternatives, or publish your own.
+
+When used as migration tool (can be used to migrate _from_ or _to_ React),
+the goal should be to stop writing new React components, and to convert existing React components to Svelte components.
+Once all components are converted this preprocessor should be uninstalled.
 
 # More info
 

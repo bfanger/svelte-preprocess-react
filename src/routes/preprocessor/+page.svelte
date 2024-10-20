@@ -9,7 +9,7 @@
 
 <react.Counter initial={25} onCount={console.info} />
 
-<react.Alert>A simple alert</react.Alert>
+<react:Alert>A simple alert</react:Alert>
 
 <react.Alert>
   "Multiline content". {10 ** 4} Lorem ipsum dolor sit amet consectetur adipisicing

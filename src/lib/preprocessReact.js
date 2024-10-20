@@ -104,7 +104,7 @@ function transform(content, options) {
     modern: false,
   });
   const s = new MagicString(content, { filename: options.filename });
-  const components = replaceReactTags(ast.html, s);
+  const components = replaceReactTags(ast.html, s, options.filename);
   const aliases = Object.entries(components);
 
   let depsInjected = false;
@@ -197,16 +197,26 @@ function transform(content, options) {
  *
  * @param {any} node
  * @param {MagicString} content
+ * @param {string | undefined} filename
  * @param {Record<string, { dispatcher: boolean }>} components
  */
-function replaceReactTags(node, content, components = {}) {
+function replaceReactTags(node, content, filename, components = {}) {
   if (
     (node.type === "Element" && node.name.startsWith("react:")) ||
     (node.type === "InlineComponent" && node.name.startsWith("react."))
   ) {
     let legacy = node.name.startsWith("react:");
     if (legacy) {
-      console.warn("'<react:*' syntax is deprecated, use '<react.*'");
+      let location = "";
+      if (filename) {
+        location += ` in ${filename}`;
+      }
+      if (node.start) {
+        location += ` on line ${content.original.substring(0, node.start).split("\n").length}`;
+      }
+      console.warn(
+        `'<${node.name}' syntax is deprecated, use '<react.${node.name.substring(6)}'${location}.\nhttps://github.com/bfanger/svelte-preprocess-react/blob/main/docs/migration-to-2.0.md\n`,
+      );
       content.overwrite(node.start + 6, node.start + 7, ".");
       const tagEnd = node.end - node.name.length - 3;
       if (content.slice(tagEnd, tagEnd + 8) === `</react:`) {
@@ -281,7 +291,7 @@ function replaceReactTags(node, content, components = {}) {
    * @param {any} child
    */
   function processChild(child) {
-    replaceReactTags(child, content, components);
+    replaceReactTags(child, content, filename, components);
   }
   // traverse children & branching blocks
   node.children?.forEach(processChild);

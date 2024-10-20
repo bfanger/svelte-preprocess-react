@@ -1,20 +1,29 @@
 # Migration to 2.0
 
-Change `<react:MyComponent>` into `<react.MyComponent>` (`:` to `.`).
+In the tag change the `:` double colon into a `.` dot, instead of:
 
-When using Typescript, add:
+`<react:MyComponent>` ❌ old
+
+write:
+
+`<react.MyComponent>` ✅ new
+
+## Type safety
+
+When using Typescript, in the `<script lang="ts">` section add:
 
 ```ts
 const react = sveltify({ MyComponent });
 ```
 
-in the `<script lang="ts">` section for type safety.
+## ESLint
 
-When getting ESLint no-undef errors:
+The preprocessor will autoimport sveltify and can also generate the react object based on usage of `<react.* />` tags.
 
-in `eslint.config.js` add `sveltify: true` to your globals or add a `import { sveltify } from 'svelte-preprocess-react'`.
+So both `const react = sveltify({ MyComponent })` and the `import { sveltify } from "svelte-preprocess-react"` are optional, but that confuses ESLint.
 
-Also add `react: true` if you don't want  
+To avoid the `no-undef` errors in your `eslint.config.js` add `sveltify: true, react: true` to your `globals`.
+When using Typescript it's recommended to only add `sveltify: true`, then the eslint warnign acts as a reminder to add a `const react = sveltify({..})` for type-safety.
 
 ## Why the change?
 
@@ -22,7 +31,6 @@ In Svelte 5 the compiler gives a warning when using `<react:MyComponent />` synt
 
 > Self-closing HTML tags for non-void elements are ambiguous — use `<react:MyComponent ...></react:MyComponent>` rather than `<react:MyComponent ... />`(element_invalid_self_closing_tag)
 
-Easily solved, but it a less elegant syntax.
+Easily solved by adding a closing tag, but it's a less elegant syntax.
 
-Secondly, the new syntax allows for IDE support.
-
+Secondly, a huge benefit of the new rune-inspired syntax is that it's compatible with existing tooling.

@@ -2,7 +2,7 @@
 
 /**
  * @deprecated
- * Stop using used() to silence linting & typescript errors, and add:
+ * Stop using used() to silence linting & typescript errors, instead:
  * ```ts
  *   const react = sveltity({ MyComponent });
  * ```
