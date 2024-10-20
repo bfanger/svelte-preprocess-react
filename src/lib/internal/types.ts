@@ -60,6 +60,7 @@ export type TreeNode = SvelteInit & {
   autoKey: number;
   nodes: TreeNode[];
   rerender?: () => void;
+  unroot?: () => void;
 };
 
 export type SvelteInit = {

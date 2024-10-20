@@ -59,6 +59,7 @@
       node.parent.nodes = node.parent.nodes.filter((n: any) => n !== node);
       node.rerender?.();
     }
+    node.unroot?.();
   });
 </script>
 

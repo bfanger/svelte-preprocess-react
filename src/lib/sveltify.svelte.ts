@@ -90,12 +90,15 @@ function single<T extends React.FC | React.ComponentClass>(
   const client = typeof document !== "undefined";
 
   function Sveltified(anchorOrPayload: any, $$props: any) {
-    const standalone = !sharedRoot;
+    let standalone = !sharedRoot;
     if (!createPortal || !ReactDOM) {
-      throw new Error("createPortal & ReactDOM dependencies are required");
+      throw new Error(
+        "{ createPortal, ReactDOM } are not injected, check svelte.config.js for: `preprocess: [preprocessReact()],`",
+      );
     }
 
     $$props.svelteInit = (init: SvelteInit) => {
+      let unroot: undefined | (() => void);
       if (!init.parent && !sharedRoot) {
         let portalTarget = $state<HTMLElement | undefined>();
         const hooks = $state<{ Hook: React.FunctionComponent; key: number }[]>(
@@ -121,6 +124,17 @@ function single<T extends React.FC | React.ComponentClass>(
           },
         };
         sharedRoot = rootNode;
+        if (!client) {
+          unroot = () => {
+            sharedRoot = undefined;
+          };
+          void Promise.resolve().then(() => {
+            if (sharedRoot === rootNode) {
+              console.warn("unroot() was not called, did rendering fail?");
+              sharedRoot = undefined;
+            }
+          });
+        }
         if (client) {
           const rootEl = document.createElement("react-root");
           const root =
@@ -148,7 +162,11 @@ function single<T extends React.FC | React.ComponentClass>(
           }
         }
       }
-      const parent = init.parent ?? (sharedRoot as TreeNode);
+      let parent = init.parent;
+      if (!parent) {
+        parent = sharedRoot as TreeNode;
+        standalone = true;
+      }
       parent.autoKey += 1;
       const key = `${parent.key}${parent.autoKey}/`;
       const node: TreeNode = Object.assign(init, {
@@ -157,6 +175,7 @@ function single<T extends React.FC | React.ComponentClass>(
         reactComponent,
         nodes: [],
         rerender: parent.rerender,
+        unroot,
       });
       parent.nodes.push(node);
       if (client) {
@@ -177,7 +196,6 @@ function single<T extends React.FC | React.ComponentClass>(
         applyPortals(anchorOrPayload, sharedRoot, source);
         setPayload(undefined);
       }
-      sharedRoot = undefined;
     }
   }
   return Sveltified as any;

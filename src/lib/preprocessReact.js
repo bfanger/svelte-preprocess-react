@@ -152,7 +152,6 @@ function transform(content, options) {
   if (!depsInjected && aliases.length === 0) {
     return { code: content };
   }
-  // console.log(aliases);
   if ((depsInjected && !imported) || (!imported && !defined)) {
     imports.push(`import { sveltify } from "${packageName}";`);
   }

@@ -6,7 +6,16 @@ import { fileURLToPath } from "url";
 test.describe.configure({ mode: "serial" });
 test.use({ viewport: { width: 480, height: 360 } });
 test.describe("ssr", () => {
-  const urls = ["/context-svelte", "/context-react", "/preprocessor"];
+  const urls = [
+    "/context-svelte",
+    "/context-react",
+    "/preprocessor",
+    "/hooks",
+    "/dynamic",
+    "/input",
+    "/react-router/home",
+    "/react-router/about",
+  ];
 
   test("client-rendered", async ({ page }) => {
     // Create Screenshots using Client Side Rendering.
