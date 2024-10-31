@@ -253,37 +253,49 @@ function replaceReactTags(node, content, filename, components = {}) {
         }
       }
     });
-    if (node.children && node.children.length > 0) {
-      const isTextContent =
-        node.children.filter(
-          (/** @type {any} */ child) =>
-            ["Text", "MustacheTag"].includes(child.type) === false,
-        ).length === 0;
-      /** @type {string[]} */
-      const escaped = [];
-      if (isTextContent) {
-        // Convert text & expressions into a children prop.
-        escaped.push('"');
-        node.children.forEach((/** @type {any} */ child) => {
-          if (child.type === "Text") {
-            escaped.push(
-              child.data.replace(/"/g, `{'"'}`).replace(/\n/g, `{'\\n'}`),
-            );
-          } else if (child.type === "MustacheTag") {
-            const expression = content.original.slice(child.start, child.end);
-            escaped.push(expression);
-          } else {
-            throw new Error(`Unexpected node type:${child.type}`);
-          }
-        });
-        escaped.push('"');
-        // slot was converted to children prop
-        content.appendRight(
-          node.children[0].start - 1,
-          ` react$children=${escaped.join("")} /`,
-        );
-        content.remove(node.children[0].start, node.end);
-        return components;
+    if (node.children) {
+      if (node.children.length === 0) {
+        const childrenProp =
+          Array.isArray(node.attributes) &&
+          node.attributes.find(
+            (/** @type {any} */ attr) => attr.name === "children",
+          );
+        if (childrenProp) {
+          // If children are passed as attribute, pass the value as-is to the react component.
+          content.appendLeft(childrenProp.start, "react$"); // renames "children" to "react$children"
+        }
+      } else {
+        const isTextContent =
+          node.children.filter(
+            (/** @type {any} */ child) =>
+              ["Text", "MustacheTag"].includes(child.type) === false,
+          ).length === 0;
+        /** @type {string[]} */
+        const escaped = [];
+        if (isTextContent) {
+          // Convert text & expressions into a children prop.
+          escaped.push('"');
+          node.children.forEach((/** @type {any} */ child) => {
+            if (child.type === "Text") {
+              escaped.push(
+                child.data.replace(/"/g, `{'"'}`).replace(/\n/g, `{'\\n'}`),
+              );
+            } else if (child.type === "MustacheTag") {
+              const expression = content.original.slice(child.start, child.end);
+              escaped.push(expression);
+            } else {
+              throw new Error(`Unexpected node type:${child.type}`);
+            }
+          });
+          escaped.push('"');
+          // slot was converted to children prop
+          content.appendRight(
+            node.children[0].start - 1,
+            ` react$children=${escaped.join("")} /`,
+          );
+          content.remove(node.children[0].start, node.end);
+          return components;
+        }
       }
     }
   }
