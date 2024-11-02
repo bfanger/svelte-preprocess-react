@@ -3,10 +3,10 @@
    * Helper for reactify()
    */
   import type React from "react";
-  import type { SvelteComponent as SvelteComponentType } from "svelte";
+  import type { Component } from "svelte";
 
   type Props = {
-    SvelteComponent: typeof SvelteComponentType;
+    SvelteComponent: Component;
     nodeKey: string;
     props: Record<string, any>;
     react$children?: React.ReactNode;

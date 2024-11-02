@@ -16,6 +16,12 @@ When using Typescript, in the `<script lang="ts">` section add:
 const react = sveltify({ MyComponent });
 ```
 
+If you want to use sveltify without importing it, in `src/app.d.ts` add:
+
+```ts
+/// <reference types="svelte-preprocess-react" />`
+```
+
 ## ESLint
 
 The preprocessor will autoimport sveltify and can also generate the react object based on usage of `<react.* />` tags.

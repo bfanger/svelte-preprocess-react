@@ -32,6 +32,10 @@ type Uppercase =
   | "L"
   | "M"
   | "N"
+  | "O"
+  | "P"
+  | "Q"
+  | "R"
   | "S"
   | "T"
   | "U"
@@ -73,12 +77,10 @@ export type SvelteInit = {
   parent?: TreeNode;
 };
 
-export type ChildrenPropsAsSnippet<T> = T extends {
-  children: React.ReactNode;
-}
-  ? Omit<T, "children"> & { children: Snippet }
-  : T extends { children?: React.ReactNode }
-    ? Omit<T, "children"> & { children?: Snippet }
+export type ChildrenPropsAsSnippet<T> = T extends { children: unknown }
+  ? Omit<T, "children"> & { children: Snippet | T["children"] }
+  : T extends { children?: unknown }
+    ? Omit<T, "children"> & { children?: Snippet | T["children"] }
     : T;
 
 export type Sveltified<
