@@ -1,14 +1,11 @@
 <script lang="ts">
   import { useState } from "react";
-  import ReactDOMClient from "react-dom/client"; // React 18+,(use "react-dom" for older versions)
-  import { renderToString } from "react-dom/server";
-  import { hooks } from "svelte-preprocess-react";
   import Nested from "./HookWithContext.svelte";
   import { type Auth, AuthProvider } from "./react-auth";
 
   const react = sveltify({ AuthProvider });
 
-  const countHook = hooks(() => useState(0), ReactDOMClient, renderToString);
+  const countHook = hooks(() => useState(0));
 
   const auth: Auth = $state({ authenticated: false });
 

@@ -28,8 +28,8 @@ The preprocessor will autoimport sveltify and can also generate the react object
 
 So both `const react = sveltify({ MyComponent })` and the `import { sveltify } from "svelte-preprocess-react"` are optional, but that confuses ESLint.
 
-To avoid the `no-undef` errors in your `eslint.config.js` add `sveltify: true, react: true` to your `globals`.
-When using Typescript it's recommended to only add `sveltify: true`, then the eslint warnign acts as a reminder to add a `const react = sveltify({..})` for type-safety.
+To avoid the `no-undef` errors in your `eslint.config.js` add `sveltify: true, hooks: true, react: true` to your `globals`.
+When using Typescript don't add the `react: true` the eslint warning acts as a reminder to add a `const react = sveltify({..})` for type-safety.
 
 ## Why the change?
 

@@ -33,6 +33,7 @@ export default ts.config(
         ...globals.node,
         ...globals.browser,
         sveltify: true,
+        hooks: true,
         react: true,
       },
       parser: svelteParser,

@@ -16,6 +16,8 @@ declare global {
       : Sveltified<T[K]>;
   };
 
+  function hooks<T>(callback: () => T): Readable<T | undefined>;
+
   const react: {
     [component: string]: Component;
   };

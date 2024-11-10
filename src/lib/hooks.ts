@@ -2,12 +2,11 @@ import type ReactDOMServer from "react-dom/server";
 import * as React from "react";
 import { getContext, onDestroy } from "svelte";
 import { type Readable, writable } from "svelte/store";
-import type { TreeNode } from "./internal/types";
+import type { ReactDependencies, TreeNode } from "./internal/types";
 
 export default function hooks<T>(
   callback: () => T,
-  ReactDOMClient?: any,
-  renderToString?: typeof ReactDOMServer.renderToString,
+  dependencies?: Omit<ReactDependencies, "createPortal">,
 ): Readable<T | undefined> {
   const store = writable<T | undefined>();
 
@@ -26,12 +25,25 @@ export default function hooks<T>(
         parent.hooks.splice(index, 1);
       }
     });
-  } else if (ReactDOMClient) {
-    onDestroy(standalone(Hook, ReactDOMClient, renderToString));
-  } else if (typeof window !== "undefined") {
+  } else if (!dependencies) {
     throw new Error(
-      "The ReactDOMClient parameter is required for hooks(), because no parent component was a sveltified React component",
+      "{ ReactDOM } is not injected, check svelte.config.js for: `preprocess: [preprocessReact()],`",
     );
+  } else {
+    let { ReactDOM, renderToString } = dependencies;
+    if ("inject$$ReactDOM" in dependencies) {
+      ReactDOM = dependencies.inject$$ReactDOM as ReactDependencies["ReactDOM"];
+    }
+    if ("inject$$renderToString" in dependencies) {
+      renderToString =
+        dependencies.inject$$renderToString as ReactDependencies["renderToString"];
+    }
+    if (!ReactDOM) {
+      throw new Error(
+        "{ ReactDOM } was not injected. Inside *.svelte files hooks() should be called with only 1 argument",
+      );
+    }
+    onDestroy(standalone(Hook, ReactDOM, renderToString));
   }
   return store;
 }

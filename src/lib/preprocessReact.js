@@ -107,9 +107,14 @@ function transform(content, options) {
   const components = replaceReactTags(ast.html, s, options.filename);
   const aliases = Object.entries(components);
 
-  let depsInjected = false;
-  let imported = false;
+  /** @type {Set<'sveltify' | 'hooks'>} */
+  let imported = new Set();
+  /** @type {Set<'sveltify' | 'hooks'>} */
+  let used = new Set();
   let defined = false;
+  // import ReactDOMClient from "react-dom/client"; // React 18+,(use "react-dom" for older versions)
+  // import { renderToString } from "react-dom/server";
+  // ReactDOMClient, renderToString
 
   /**
    * Detect sveltify import and usage
@@ -119,20 +124,38 @@ function transform(content, options) {
    */
   function enter(node, parent) {
     if (node.type === "Identifier" && node.name === "sveltify" && parent) {
-      if (parent.type === "ImportSpecifier") {
-        imported = true;
-      }
       if (
-        parent.type === "CallExpression" &&
-        parent?.arguments.length === 1 &&
-        "end" in parent.arguments[0] &&
-        typeof parent.arguments[0].end === "number"
+        parent.type === "ImportSpecifier" ||
+        parent.type === "ImportDeclaration"
       ) {
-        s.appendRight(parent.arguments[0].end, `, { ${deps.join(", ")} }`);
-        depsInjected = true;
+        imported.add("sveltify");
+      } else if (parent.type === "CallExpression") {
+        if (
+          parent?.arguments.length === 1 &&
+          "end" in parent.arguments[0] &&
+          typeof parent.arguments[0].end === "number"
+        ) {
+          s.appendRight(parent.arguments[0].end, `, { ${deps.join(", ")} }`);
+        }
+        used.add("sveltify");
       }
-      if (parent.type === "ImportDeclaration") {
-        imported = true;
+    }
+
+    if (node.type === "Identifier" && node.name === "hooks" && parent) {
+      if (
+        parent.type === "ImportSpecifier" ||
+        parent.type === "ImportDeclaration"
+      ) {
+        imported.add("hooks");
+      } else if (parent.type === "CallExpression") {
+        if (
+          parent?.arguments.length === 1 &&
+          "end" in parent.arguments[0] &&
+          typeof parent.arguments[0].end === "number"
+        ) {
+          s.appendRight(parent.arguments[0].end, `, { ${deps.join(", ")} }`);
+        }
+        used.add("hooks");
       }
     }
     if (
@@ -149,15 +172,25 @@ function transform(content, options) {
   if (ast.instance) {
     walk(ast.instance, { enter });
   }
-  if (!depsInjected && aliases.length === 0) {
+  if (used.size === 0 && aliases.length === 0) {
     return { code: content };
   }
-  if ((depsInjected && !imported) || (!imported && !defined)) {
-    imports.push(`import { sveltify } from "${packageName}";`);
+  let declarators = [];
+  if (
+    !imported.has("sveltify") &&
+    (used.has("sveltify") || aliases.length > 0)
+  ) {
+    declarators.push("sveltify");
+  }
+  if (!imported.has("hooks") && used.has("hooks")) {
+    declarators.push("hooks");
+  }
+  if (declarators.length > 0) {
+    imports.push(`import { ${declarators.join(", ")} } from "${packageName}";`);
   }
   const script = ast.instance || ast.module;
   let wrappers = [];
-  if (!defined) {
+  if (!defined && aliases.length > 0) {
     wrappers.push(
       `const react = sveltify({ ${Object.keys(components)
         .map((component) => {
