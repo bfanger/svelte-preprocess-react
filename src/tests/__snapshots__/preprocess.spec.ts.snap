@@ -80,13 +80,16 @@ exports[`svelte-preprocess-react > should process <react.Component.Item> tags 1`
 "<script lang="ts">import inject$$ReactDOM from "react-dom/client"; import { createPortal as inject$$createPortal} from "react-dom"; import { renderToString as inject$$renderToString } from "react-dom/server"; import { sveltify } from "svelte-preprocess-react";
   import List from "./List";
 
-  const react = sveltify({ List , inject$$List$Item: List.Item }, { inject$$createPortal, inject$$ReactDOM, inject$$renderToString });
+  const react = sveltify({ List , inject$$List$Item: List.Item , inject$$List$Item$Icon: List.Item.Icon }, { inject$$createPortal, inject$$ReactDOM, inject$$renderToString });
 ;</script>
 
 <react.List>
   <react.inject$$List$Item label="1" />
   <react.inject$$List$Item react$children="Item 2" />
   <react.inject$$List$Item>Item <span>3</span></react.inject$$List$Item>
+  <react.inject$$List$Item
+    ><react.inject$$List$Item$Icon icon="chevron-right" /></react.inject$$List$Item
+  >
 </react.List>
 "
 `;

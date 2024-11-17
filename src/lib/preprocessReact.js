@@ -285,21 +285,29 @@ function replaceReactTags(node, content, filename, components = {}) {
         : `${prefix}${expression.replace(/\./g, "$")}`;
     if (legacy || expression !== alias) {
       let tagPrefix = legacy ? "react:" : "react.";
-      const tagEnd = node.end - node.name.length - 3;
-      const hasClosingTag =
-        content.slice(tagEnd, tagEnd + 8) === `</${tagPrefix}`;
-
+      // Replace open tag with alias
       content.overwrite(
         node.start + 1,
         node.start + 7 + expression.length,
         `react.${alias}`,
       );
-      if (hasClosingTag) {
-        content.overwrite(
-          tagEnd + 2,
-          tagEnd + 8 + expression.length,
-          `react.${alias}`,
-        );
+
+      if (content.slice(node.end - 2, node.end) !== `/>`) {
+        // Replace closing tag with alias
+        const fullTag = content.slice(node.start, node.end - 1);
+        const whitespaceLength = fullTag.length - fullTag.trimEnd().length;
+        const tagEnd = node.end - whitespaceLength - node.name.length - 1;
+        if (content.slice(tagEnd - 2, tagEnd + 6) !== `</${tagPrefix}`) {
+          console.warn(
+            `Unexpected formatting of the closing tag of <${node.name}>`,
+          );
+        } else {
+          content.overwrite(
+            tagEnd,
+            tagEnd + node.name.length,
+            `react.${alias}`,
+          );
+        }
       }
     }
 

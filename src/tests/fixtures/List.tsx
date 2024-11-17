@@ -12,11 +12,19 @@ type ItemProps = {
   children: React.ReactNode;
 };
 
-List.Item = ({ label, children }: ItemProps) => {
+function ListItem({ label, children }: ItemProps) {
   return (
     <li className="list__item">
       {label}
       {children}
     </li>
   );
+}
+type IconProps = {
+  icon: string;
 };
+ListItem.Icon = ({ icon }: IconProps) => {
+  return <i className="list__icon">{icon}</i>;
+};
+
+List.Item = ListItem;
