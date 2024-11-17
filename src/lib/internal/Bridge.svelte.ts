@@ -2,6 +2,7 @@ import { useRef, useState, useEffect, createElement } from "react";
 import type { ReactDependencies, TreeNode } from "./types.js";
 import Child from "./Child.js";
 import SvelteToReactContext from "./SvelteToReactContext.js";
+import portalTag from "svelte-preprocess-react/internal/portalTag.js";
 
 type BridgeProps = {
   node: TreeNode;
@@ -42,7 +43,7 @@ function renderBridge(
   if (svelteChildren) {
     if (!children) {
       children = createElement(Child, {
-        node: node.key,
+        nodeKey: node.key,
         key: "svelte$Children",
         el: childrenSource,
       });
@@ -81,8 +82,8 @@ function renderBridge(
   }
 
   return createElement(
-    "react-portal-source",
-    { node: node.key, style: { display: "none" } },
+    portalTag("react", "portal", "source", node.key),
+    { style: { display: "none" } },
     vdom,
   );
 }

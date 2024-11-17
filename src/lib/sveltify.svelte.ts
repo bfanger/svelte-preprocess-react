@@ -12,6 +12,7 @@ import Bridge from "./internal/Bridge.svelte.js";
 import ReactWrapper from "./internal/ReactWrapper.svelte";
 import { setPayload } from "./reactify.js";
 import type { Component } from "svelte";
+import portalTag from "svelte-preprocess-react/internal/portalTag.js";
 
 let sharedRoot: TreeNode | undefined;
 
@@ -234,15 +235,17 @@ function applyPortal(
   source: { html: string },
 ) {
   if (node.svelteChildren !== undefined) {
+    const tag = portalTag("svelte", "children", "source", node.key);
     const child = extract(
-      `<svelte-children-source node="${node.key}" style="display:none">`,
-      `</svelte-children-source>`,
+      `<${tag}  style="display:none">`,
+      `</${tag}>`,
       $$payload.out,
     );
     try {
+      const reactTargetTag = portalTag("react", "children", "target", node.key);
       source.html = inject(
-        `<react-children-target node="${node.key}" style="display:contents">`,
-        "</react-children-target>",
+        `<${reactTargetTag} style="display:contents">`,
+        `</${reactTargetTag}>`,
         child.innerHtml,
         source.html,
       );
@@ -251,16 +254,18 @@ function applyPortal(
     }
   }
   try {
+    const reactSourceTag = portalTag("react", "portal", "source", node.key);
     const portal = extract(
-      `<react-portal-source node="${node.key}" style="display:none">`,
-      `</react-portal-source>`,
+      `<${reactSourceTag} style="display:none">`,
+      `</${reactSourceTag}>`,
       source.html,
     );
 
     source.html = portal.outerRemoved;
+    const svelteTargetTag = portalTag("svelte", "portal", "target", node.key);
     $$payload.out = inject(
-      `<svelte-portal-target node="${node.key}" style="display:contents">`,
-      "</svelte-portal-target>",
+      `<${svelteTargetTag}  style="display:contents">`,
+      `</${svelteTargetTag}>`,
       portal.innerHtml,
       $$payload.out,
     );

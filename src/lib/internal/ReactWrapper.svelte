@@ -13,6 +13,7 @@
   } from "svelte";
   import type { FunctionComponent, ReactNode } from "react";
   import type { SvelteInit, TreeNode, ReactDependencies } from "./types";
+  import portalTag from "svelte-preprocess-react/internal/portalTag";
 
   type Props = {
     svelteInit: (options: SvelteInit) => TreeNode;
@@ -63,16 +64,16 @@
   });
 </script>
 
-<svelte-portal-target
-  node={node.key}
+<svelte:element
+  this={portalTag("svelte", "portal", "target", node.key)}
   style="display:contents"
   bind:this={portalTarget}
-></svelte-portal-target>
+></svelte:element>
 
 {#if children}
-  <svelte-children-source
-    node={node.key}
+  <svelte:element
+    this={portalTag("svelte", "children", "source", node.key)}
     style="display:none"
-    bind:this={childrenSource}>{@render children()}</svelte-children-source
+    bind:this={childrenSource}>{@render children()}</svelte:element
   >
 {/if}

@@ -4,6 +4,7 @@
    */
   import type React from "react";
   import type { Component } from "svelte";
+  import portalTag from "svelte-preprocess-react/internal/portalTag";
 
   type Props = {
     SvelteComponent: Component;
@@ -29,7 +30,9 @@
   }
 </script>
 
-<svelte-portal-source node={nodeKey} style="display:contents"
+<svelte:element
+  this={portalTag("svelte", "portal", "source", nodeKey)}
+  style="display:contents"
   >{#if typeof react$children === "undefined"}
     <SvelteComponent {...props} />
   {:else}
@@ -40,5 +43,5 @@
           use:slot
         ></svelte-children>{/if}</SvelteComponent
     >
-  {/if}</svelte-portal-source
+  {/if}</svelte:element
 >

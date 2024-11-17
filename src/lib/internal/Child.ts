@@ -1,10 +1,11 @@
 import * as React from "react";
+import portalTag from "svelte-preprocess-react/internal/portalTag";
 
 type Props = {
-  node: string;
+  nodeKey: string;
   el: HTMLElement | undefined;
 };
-const Child: React.FC<Props> = ({ node, el }) => {
+const Child: React.FC<Props> = ({ nodeKey, el }) => {
   const ref = React.useRef<HTMLElement>();
   React.useEffect(() => {
     if (!ref.current) {
@@ -15,10 +16,12 @@ const Child: React.FC<Props> = ({ node, el }) => {
       ref.current.appendChild(el);
     }
   }, [ref, el]);
-  return React.createElement("react-children-target", {
-    ref,
-    node,
-    style: { display: "contents" },
-  });
+  return React.createElement(
+    portalTag("react", "children", "target", nodeKey),
+    {
+      ref,
+      style: { display: "contents" },
+    },
+  );
 };
 export default Child;

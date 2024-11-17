@@ -60,8 +60,8 @@ For smaller bundle size you can disable this feature by passing `ssr: false` to 
 
 Svelte is rendered first, while building the vdom for React.
 Using string based methods:
-`<svelte-children-source>` from the Svelte is injected into the React's `<react-children-target>`
-`<react-portal-source>` from the React is then injected into the Svelte's `<svelte-portal-target>`
+`<svelte-children-1-source>` from the Svelte is injected into the React's `<react-children-1-target>`
+`<react-portal-1-source>` from the React is then injected into the Svelte's `<svelte-portal-1-target>`
 
 This allows React to maintain it's component trees (needed for context)
 Note: Components created with `reactify` have trouble preserving the Svelte context
