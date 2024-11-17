@@ -14,5 +14,8 @@ const config: UserConfig = {
       "svelte-preprocess-react": path.resolve("./src/lib"),
     },
   },
+  define: {
+    "process.env.IS_PREACT": '"false"',
+  },
 };
 export default config;
