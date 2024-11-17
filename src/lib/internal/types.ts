@@ -87,6 +87,17 @@ export type Sveltified<
   T extends keyof JSX.IntrinsicElements | React.JSXElementConstructor<any>,
 > = Component<ChildrenPropsAsSnippet<React.ComponentProps<T>>>;
 
+export type IntrinsicElementComponents = {
+  [K in keyof JSX.IntrinsicElements]: Component<
+    ChildrenPropsAsSnippet<React.ComponentProps<K>>
+  >;
+};
+
+/* Primitive typing of `Component.Item` components */
+export type StaticPropComponents = {
+  [key: string]: Component<any> & StaticPropComponents;
+};
+
 export type ReactDependencies = {
   ReactDOM?:
     | {

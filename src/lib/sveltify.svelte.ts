@@ -1,7 +1,9 @@
 import * as React from "react";
 import type {
   ChildrenPropsAsSnippet,
+  IntrinsicElementComponents,
   ReactDependencies,
+  StaticPropComponents,
   SvelteInit,
   Sveltified,
   TreeNode,
@@ -25,8 +27,8 @@ function sveltify<
   components: T,
   dependencies?: ReactDependencies,
 ): {
-  [K in keyof T]: Sveltified<T[K]>;
-};
+  [K in keyof T]: Sveltified<T[K]> & StaticPropComponents;
+} & IntrinsicElementComponents;
 /**
  * Convert a React component into a Svelte component.
  */

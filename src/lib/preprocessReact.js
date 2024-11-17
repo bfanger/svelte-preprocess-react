@@ -63,6 +63,7 @@ export default function preprocessReact(options = {}) {
     },
   };
 }
+const prefix = "inject$$";
 
 /**
  * @param {string} content
@@ -74,7 +75,6 @@ export default function preprocessReact(options = {}) {
  * @returns
  */
 function transform(content, options) {
-  const prefix = "inject$$";
   /** @type {string} */
   let portal;
   const packageName = "svelte-preprocess-react";
@@ -112,9 +112,8 @@ function transform(content, options) {
   /** @type {Set<'sveltify' | 'hooks'>} */
   let used = new Set();
   let defined = false;
-  // import ReactDOMClient from "react-dom/client"; // React 18+,(use "react-dom" for older versions)
-  // import { renderToString } from "react-dom/server";
-  // ReactDOMClient, renderToString
+  /** @type {false|Set<string>} */
+  let aliased = false;
 
   /**
    * Detect sveltify import and usage
@@ -136,6 +135,30 @@ function transform(content, options) {
           typeof parent.arguments[0].end === "number"
         ) {
           s.appendRight(parent.arguments[0].end, `, { ${deps.join(", ")} }`);
+        }
+
+        const componentsArg = parent.arguments[0];
+        if (!aliased && componentsArg.type === "ObjectExpression") {
+          aliased = new Set();
+          for (const property of componentsArg.properties) {
+            if (property.type === "Property") {
+              if (property.key.type === "Identifier") {
+                aliased.add(property.key.name);
+              }
+            }
+          }
+          if ("end" in componentsArg && typeof componentsArg.end === "number") {
+            for (const [alias, { expression }] of aliases) {
+              if (!aliased.has(alias)) {
+                s.appendRight(
+                  componentsArg.end - 1,
+                  `, ${alias}: ${expression === expression.toLowerCase() ? JSON.stringify(expression) : expression} `,
+                );
+              }
+            }
+          } else {
+            console.warn("missing end in Node<ObjectExpression>");
+          }
         }
         used.add("sveltify");
       }
@@ -192,12 +215,15 @@ function transform(content, options) {
   let wrappers = [];
   if (!defined && aliases.length > 0) {
     wrappers.push(
-      `const react = sveltify({ ${Object.keys(components)
-        .map((component) => {
-          if (component.toLowerCase() === component) {
-            return `${component.match(/^[a-z]+$/) ? component : JSON.stringify(component)}: ${JSON.stringify(component)}`;
+      `const react = sveltify({ ${Object.entries(components)
+        .map(([alias, { expression }]) => {
+          if (expression !== alias) {
+            return `${alias}: ${expression}`;
           }
-          return component;
+          if (expression.toLowerCase() === expression) {
+            return `${expression.match(/^[a-z]+$/) ? expression : JSON.stringify(expression)}: ${JSON.stringify(expression)}`;
+          }
+          return expression;
         })
         .join(", ")} }, { ${deps.join(", ")} });`,
     );
@@ -231,7 +257,7 @@ function transform(content, options) {
  * @param {any} node
  * @param {MagicString} content
  * @param {string | undefined} filename
- * @param {Record<string, { dispatcher: boolean }>} components
+ * @param {Record<string, { dispatcher: boolean, expression: string }>} components
  */
 function replaceReactTags(node, content, filename, components = {}) {
   if (
@@ -239,6 +265,7 @@ function replaceReactTags(node, content, filename, components = {}) {
     (node.type === "InlineComponent" && node.name.startsWith("react."))
   ) {
     let legacy = node.name.startsWith("react:");
+
     if (legacy) {
       let location = "";
       if (filename) {
@@ -250,15 +277,34 @@ function replaceReactTags(node, content, filename, components = {}) {
       console.warn(
         `'<${node.name}' syntax is deprecated, use '<react.${node.name.substring(6)}'${location}.\nhttps://github.com/bfanger/svelte-preprocess-react/blob/main/docs/migration-to-2.0.md\n`,
       );
-      content.overwrite(node.start + 6, node.start + 7, ".");
+    }
+    const expression = node.name.slice(6).replace("[.].*", "");
+    const alias =
+      expression.indexOf(".") === -1
+        ? expression
+        : `${prefix}${expression.replace(/\./g, "$")}`;
+    if (legacy || expression !== alias) {
+      let tagPrefix = legacy ? "react:" : "react.";
       const tagEnd = node.end - node.name.length - 3;
-      if (content.slice(tagEnd, tagEnd + 8) === `</react:`) {
-        content.overwrite(tagEnd + 7, tagEnd + 8, ".");
+      const hasClosingTag =
+        content.slice(tagEnd, tagEnd + 8) === `</${tagPrefix}`;
+
+      content.overwrite(
+        node.start + 1,
+        node.start + 7 + expression.length,
+        `react.${alias}`,
+      );
+      if (hasClosingTag) {
+        content.overwrite(
+          tagEnd + 2,
+          tagEnd + 8 + expression.length,
+          `react.${alias}`,
+        );
       }
     }
-    const identifier = node.name.slice(6).replace("[.].*", "");
-    if (!components[identifier]) {
-      components[identifier] = { dispatcher: false };
+
+    if (!components[alias]) {
+      components[alias] = { dispatcher: false, expression };
     }
 
     node.attributes.forEach((/** @type {any} */ attr) => {
@@ -282,11 +328,11 @@ function replaceReactTags(node, content, filename, components = {}) {
               event.name[0].toUpperCase() + event.name.substring(1)
             }={(e) => React$$dispatch(${JSON.stringify(event.name)}, e)}`,
           );
-          components[identifier].dispatcher = true;
+          components[alias].dispatcher = true;
         }
       }
     });
-    if (node.children) {
+    if (node.children && !legacy) {
       if (node.children.length === 0) {
         const childrenProp =
           Array.isArray(node.attributes) &&

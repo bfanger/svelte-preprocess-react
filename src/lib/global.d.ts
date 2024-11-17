@@ -1,5 +1,10 @@
 import type { Component } from "svelte";
-import type { Sveltified } from "./internal/types";
+import type { Readable } from "svelte/store";
+import type {
+  IntrinsicElementComponents,
+  StaticPropComponents,
+  Sveltified,
+} from "./internal/types.js";
 
 declare global {
   function sveltify<
@@ -9,16 +14,14 @@ declare global {
         | React.JSXElementConstructor<any>;
     },
   >(
-    components: T,
+    reactComponents: T,
   ): {
-    [K in keyof T]: K extends keyof JSX.IntrinsicElements
-      ? Sveltified[K]
-      : Sveltified<T[K]>;
-  };
+    [K in keyof T]: Sveltified<T[K]> & StaticPropComponents;
+  } & IntrinsicElementComponents;
 
   function hooks<T>(callback: () => T): Readable<T | undefined>;
 
-  const react: {
-    [component: string]: Component;
+  const react: IntrinsicElementComponents & {
+    [component: string]: Component & StaticPropComponents;
   };
 }
