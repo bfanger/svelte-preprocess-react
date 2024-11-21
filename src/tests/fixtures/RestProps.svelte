@@ -2,9 +2,9 @@
   import type React from "react";
 
   const props: React.JSX.IntrinsicElements["div"] = {
-    style: { backgroundColor: "#4c80db" },
+    style: { backgroundColor: "#fcdef6" },
     onClick: () => console.info("clicked"),
   };
 </script>
 
-<react.div {...props}><span>Hi</span></react.div>
+<react.div before={1} {...props} after="2"><span>Hi</span></react.div>

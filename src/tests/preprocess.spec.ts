@@ -134,6 +134,13 @@ describe("svelte-preprocess-react", () => {
     const output = await preprocess(src, preprocessReact(), { filename });
     expect(output.code).toMatchSnapshot();
   });
+
+  it("should process {...rest} props", async () => {
+    const filename = resolveFilename("./fixtures/RestProps.svelte");
+    const src = await readFile(filename, "utf8");
+    const output = await preprocess(src, preprocessReact(), { filename });
+    expect(output.code).toMatchSnapshot();
+  });
 });
 
 const base = dirname(fileURLToPath(import.meta.url));

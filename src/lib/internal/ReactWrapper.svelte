@@ -18,10 +18,17 @@
   type Props = {
     svelteInit: (options: SvelteInit) => TreeNode;
     children?: Snippet;
+    react$props?: any;
     react$children?: ReactNode;
     react$dependencies?: ReactDependencies;
   };
-  let { svelteInit, children, react$children, ...reactProps }: Props = $props();
+  let {
+    svelteInit,
+    children,
+    react$children,
+    react$props,
+    ...reactProps
+  }: Props = $props();
 
   let portalTarget = $state<HTMLElement | undefined>();
 
@@ -35,7 +42,7 @@
       parent,
       get props() {
         return {
-          reactProps,
+          reactProps: react$props ? react$props : reactProps,
           children: react$children,
         };
       },

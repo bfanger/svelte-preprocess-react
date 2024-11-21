@@ -15,6 +15,9 @@ test.describe("ssr", () => {
     "/input",
     "/react-router/home",
     "/react-router/about",
+    "/fixtures/RestProps",
+    "/fixtures/List",
+    "/intrinsic-elements",
   ];
 
   test("client-rendered", async ({ page }) => {

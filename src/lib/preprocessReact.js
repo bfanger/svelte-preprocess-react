@@ -314,6 +314,13 @@ function replaceReactTags(node, content, filename, components = {}) {
     if (!components[alias]) {
       components[alias] = { dispatcher: false, expression };
     }
+    /** @type {string[]|false}*/
+    let spread =
+      node.attributes.find(
+        (/** @type {any}*/ node) => node.type === "Spread",
+      ) === undefined
+        ? false
+        : [];
 
     node.attributes.forEach((/** @type {any} */ attr) => {
       if (attr.type === "EventHandler") {
@@ -338,8 +345,52 @@ function replaceReactTags(node, content, filename, components = {}) {
           );
           components[alias].dispatcher = true;
         }
+      } else if (spread) {
+        if (attr.type === "Spread") {
+          spread.push(
+            `...${content.slice(attr.expression.start, attr.expression.end)}`,
+          );
+        } else if (attr.name !== "children") {
+          let prop =
+            attr.name.indexOf("-") === -1
+              ? attr.name
+              : JSON.stringify(attr.name);
+          let value = "";
+          if (typeof attr.value === "boolean") {
+            value = JSON.stringify(attr.value);
+          } else if (Array.isArray(attr.value) && attr.value.length === 1) {
+            if (attr.value[0].type === "Text") {
+              value = JSON.stringify(
+                content.slice(attr.value[0].start, attr.value[0].end),
+              );
+            } else if (attr.value[0].type === "MustacheTag") {
+              value = content.slice(
+                attr.value[0].start + 1,
+                attr.value[0].end - 1,
+              );
+            } else {
+              console.warn(
+                `Unexpected attribute type: ${attr.value[0].type}`,
+                content.slice(attr.start, attr.end),
+              );
+            }
+          } else {
+            console.warn(
+              "Unexpected attribute syntax:",
+              content.slice(attr.start, attr.end),
+            );
+          }
+          spread.push(`${prop}: ${value}`);
+        }
       }
     });
+    if (spread) {
+      content.overwrite(
+        node.attributes[0].start,
+        node.attributes[node.attributes.length - 1].end,
+        `react$props={{ ${spread.join(", ")} }}`,
+      );
+    }
     if (node.children && !legacy) {
       if (node.children.length === 0) {
         const childrenProp =
