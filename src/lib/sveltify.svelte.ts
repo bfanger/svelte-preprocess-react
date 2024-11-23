@@ -37,6 +37,11 @@ function sveltify<
   T extends React.FC | React.ComponentClass | React.JSXElementConstructor<any>,
 >(components: T, dependencies?: ReactDependencies): Sveltified<T>;
 function sveltify(components: any, dependencies?: ReactDependencies): any {
+  if (!dependencies) {
+    throw new Error(
+      "{ createPortal, ReactDOM } are not injected, check svelte.config.js for: `preprocess: [preprocessReact()],`",
+    );
+  }
   if (
     typeof components !== "object" || // React.FC or JSXIntrinsicElements
     ("render" in components && typeof components.render === "function") || // React.ComponentClass
@@ -47,27 +52,54 @@ function sveltify(components: any, dependencies?: ReactDependencies): any {
   return multiple(components, dependencies);
 }
 
+type CacheEntry = ReactDependencies & { Sveltified: unknown };
+const cache = new WeakMap<any, CacheEntry>();
+const intrinsicElementCache: Record<string, CacheEntry> = {};
+
 function multiple<
   T extends {
     [key: string]: React.FC | React.ComponentClass;
   },
 >(
   reactComponents: T,
-  dependencies?: ReactDependencies,
+  dependencies: ReactDependencies,
 ): {
   [K in keyof T]: Component<ChildrenPropsAsSnippet<React.ComponentProps<T[K]>>>;
 } {
   return Object.fromEntries(
     Object.entries(reactComponents).map(([key, reactComponent]) => {
-      return [key, single(reactComponent, dependencies)];
+      const hit =
+        typeof reactComponent === "string"
+          ? intrinsicElementCache[reactComponent]
+          : cache.get(reactComponent);
+      if (
+        hit &&
+        hit.createPortal === dependencies.createPortal &&
+        hit.ReactDOM === dependencies.ReactDOM &&
+        hit.renderToString === dependencies.renderToString
+      ) {
+        return [key, hit.Sveltified];
+      }
+      const entry = {
+        ...dependencies,
+        Sveltified: single(reactComponent, dependencies),
+      };
+      if (typeof reactComponent === "string") {
+        intrinsicElementCache[reactComponent] = entry;
+      } else {
+        cache.set(reactComponent, entry);
+      }
+      return [key, entry.Sveltified];
     }),
   ) as any;
 }
 
 function single<T extends React.FC | React.ComponentClass>(
   reactComponent: T,
-  dependencies: ReactDependencies = {},
+  dependencies: ReactDependencies,
 ): Component<ChildrenPropsAsSnippet<React.ComponentProps<T>>> {
+  const client = typeof document !== "undefined";
+  const { createPortal, ReactDOM, renderToString } = dependencies;
   if (
     typeof reactComponent !== "function" &&
     typeof reactComponent === "object" &&
@@ -77,28 +109,9 @@ function single<T extends React.FC | React.ComponentClass>(
     // Fix SSR import issue where node doesn't import the esm version. 'react-youtube'
     reactComponent = (reactComponent as any).default;
   }
-  let { createPortal, ReactDOM, renderToString } = dependencies;
-  if ("inject$$createPortal" in dependencies) {
-    createPortal =
-      dependencies.inject$$createPortal as ReactDependencies["createPortal"];
-  }
-  if ("inject$$ReactDOM" in dependencies) {
-    ReactDOM = dependencies.inject$$ReactDOM as ReactDependencies["ReactDOM"];
-  }
-  if ("inject$$renderToString" in dependencies) {
-    renderToString =
-      dependencies.inject$$renderToString as ReactDependencies["renderToString"];
-  }
-
-  const client = typeof document !== "undefined";
 
   function Sveltified(anchorOrPayload: any, $$props: any) {
     let standalone = !sharedRoot;
-    if (!createPortal || !ReactDOM) {
-      throw new Error(
-        "{ createPortal, ReactDOM } are not injected, check svelte.config.js for: `preprocess: [preprocessReact()],`",
-      );
-    }
 
     $$props.svelteInit = (init: SvelteInit) => {
       let unroot: undefined | (() => void);
@@ -210,6 +223,7 @@ function single<T extends React.FC | React.ComponentClass>(
       }
     }
   }
+
   return Sveltified as any;
 }
 

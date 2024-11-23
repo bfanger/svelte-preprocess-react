@@ -103,14 +103,14 @@ export type StaticPropComponents = {
 };
 
 export type ReactDependencies = {
-  ReactDOM?:
+  ReactDOM:
     | {
         createRoot: (container: Element) => Root; // React 18 and above
       }
     | {
         render(component: React.ReactNode, container: Element): void; // React 17 and below
       };
-  createPortal?: (
+  createPortal: (
     children: React.ReactNode,
     container: Element | DocumentFragment,
     key?: null | string,

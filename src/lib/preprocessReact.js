@@ -85,18 +85,18 @@ function transform(content, options) {
       `import ${prefix}ReactDOM from "react-dom/client";`,
       `import { createPortal as ${prefix}createPortal} from "react-dom";`,
     );
-    portal = `${prefix}createPortal`;
+    portal = `createPortal: ${prefix}createPortal`;
   } else {
     imports.push(`import ${prefix}ReactDOM from "react-dom";`);
-    portal = `${prefix}createPortal: ${prefix}ReactDOM.createPortal`;
+    portal = `createPortal: ${prefix}ReactDOM.createPortal`;
   }
 
-  const deps = [portal, `${prefix}ReactDOM`];
+  const deps = [portal, `ReactDOM: ${prefix}ReactDOM`];
   if (options.ssr) {
     imports.push(
       `import { renderToString as ${prefix}renderToString } from "react-dom/server";`,
     );
-    deps.push(`${prefix}renderToString`);
+    deps.push(`renderToString: ${prefix}renderToString`);
   }
 
   const ast = parse(content, {
