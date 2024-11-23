@@ -323,6 +323,22 @@ function replaceReactTags(node, content, filename, components = {}) {
         : [];
 
     node.attributes.forEach((/** @type {any} */ attr) => {
+      if (attr.type === "Binding") {
+        let location = "";
+        if (filename) {
+          location += ` in ${filename}`;
+        }
+        if (node.start) {
+          location += ` on line ${content.original.substring(0, node.start).split("\n").length}`;
+        }
+        console.warn(
+          `Two-way binding is not compatible with React components:
+  ${content.slice(
+    node.start,
+    node.attributes[0].start,
+  )}${content.slice(attr.start, attr.end)}>${location}`,
+        );
+      }
       if (attr.type === "EventHandler") {
         const event = attr;
         const eventStart = event.start;

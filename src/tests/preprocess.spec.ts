@@ -3,7 +3,7 @@ import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { vitePreprocess } from "@sveltejs/vite-plugin-svelte";
 import { preprocess } from "svelte/compiler";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import preprocessReact from "../lib/preprocessReact";
 
 describe("svelte-preprocess-react", () => {
@@ -41,20 +41,18 @@ describe("svelte-preprocess-react", () => {
     expect(output.code).toMatchSnapshot();
   });
 
-  it.skip("should fail on bindings", async () => {
+  it("should fail on bindings", async () => {
     const filename = resolveFilename("./fixtures/Binding.svelte");
     const src = await readFile(filename, "utf8");
-    let failed: boolean;
-    try {
-      await preprocess(src, preprocessReact(), { filename });
-      failed = false;
-    } catch (err: any) {
-      expect(err.message).toMatchInlineSnapshot(
-        "\"'count' is not a valid binding\"",
-      );
-      failed = true;
-    }
-    expect(failed).toBe(true);
+    const consoleMock = vi
+      .spyOn(console, "warn")
+      .mockImplementation(() => undefined);
+    await preprocess(src, preprocessReact(), { filename });
+    expect(consoleMock).toBeCalledWith(
+      `Two-way binding is not compatible with React components:
+  <react.Clicker bind:count> in ${filename} on line 9`,
+    );
+    consoleMock.mockReset();
   });
 
   it("should portal slotted content as children", async () => {

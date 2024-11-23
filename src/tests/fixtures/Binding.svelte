@@ -1,5 +1,4 @@
 <script lang="ts">
-  //@ts-nocheck
   import Clicker from "./Clicker";
 
   const react = sveltify({ Clicker });
@@ -7,4 +6,4 @@
   let count = 1;
 </script>
 
-<react.Clicker bind:count />
+<react.Clicker bind:count onCount={(update) => console.info(update)} />
