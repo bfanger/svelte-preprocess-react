@@ -16,5 +16,5 @@
     "noEmit": true,
     "jsx": "preserve"
   },
-  "exclude": ["build", "dist", "src/tests"]
+  "exclude": ["build", "dist"]
 }

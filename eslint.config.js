@@ -93,9 +93,6 @@ export default ts.config(
       "vite.config.ts.timestamp-*.mjs",
       "src/global.d.ts",
       "src/tests/reactify.spec.tsx",
-      "src/tests/fixtures/Binding.svelte",
-      "src/lib/internal/ReactWrapper.svelte",
-      "src/demo/components/Button.svelte",
     ],
   },
 );

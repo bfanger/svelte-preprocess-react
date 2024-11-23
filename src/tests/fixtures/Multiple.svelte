@@ -1,4 +1,5 @@
 <script lang="ts">
+  //@ts-nocheck
   import Clicker from "./Clicker";
 
   const react = sveltify({ Clicker });

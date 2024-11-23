@@ -1,14 +1,12 @@
 <script lang="ts">
-  import type { Context as ContentType } from "react";
+  import { createContext, type Context } from "react";
 
-  export let Context: ContentType<any>;
-  $: Provider = Context.Provider;
+  type Props = {
+    context: Context<any>;
+  };
+  let { context = createContext(false) }: Props = $props();
 
-  const react = sveltify({ Provider });
+  let react = $derived(sveltify({ Provider: context.Provider }));
 </script>
 
-<react.Provider>content</react.Provider>
-
-<react.Provider>
-  <button>ok</button>
-</react.Provider>
+<react.Provider value={true}>content</react.Provider>

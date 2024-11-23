@@ -69,7 +69,7 @@ exports[`svelte-preprocess-react > should portal slotted content as children 1`]
 "<script lang="ts">import inject$$ReactDOM from "react-dom/client"; import { createPortal as inject$$createPortal} from "react-dom"; import { renderToString as inject$$renderToString } from "react-dom/server"; import { sveltify } from "svelte-preprocess-react";
   import Alert from "../../demo/react-components/Alert";
 
-  const react = sveltify(Alert, { inject$$createPortal, inject$$ReactDOM, inject$$renderToString });
+  const react = sveltify({ Alert }, { inject$$createPortal, inject$$ReactDOM, inject$$renderToString });
 ;</script>
 
 <react.Alert react$children="A simple primary alert. Check it out!" />
@@ -96,19 +96,17 @@ exports[`svelte-preprocess-react > should process <react.Component.Item> tags 1`
 
 exports[`svelte-preprocess-react > should process <react:Context.Provider> tags 1`] = `
 "<script lang="ts">import inject$$ReactDOM from "react-dom/client"; import { createPortal as inject$$createPortal} from "react-dom"; import { renderToString as inject$$renderToString } from "react-dom/server"; import { sveltify } from "svelte-preprocess-react";
-  import type { Context as ContentType } from "react";
+  import { createContext, type Context } from "react";
 
-  export let Context: ContentType<any>;
-  $: Provider = Context.Provider;
+  type Props = {
+    context: Context<any>;
+  };
+  let { context = createContext(false) }: Props = $props();
 
-  const react = sveltify({ Provider }, { inject$$createPortal, inject$$ReactDOM, inject$$renderToString });
+  let react = $derived(sveltify({ Provider: context.Provider }, { inject$$createPortal, inject$$ReactDOM, inject$$renderToString }));
 ;</script>
 
-<react.Provider react$children="content" />
-
-<react.Provider>
-  <button>ok</button>
-</react.Provider>
+<react.Provider value={true} react$children="content" />
 "
 `;
 
@@ -132,6 +130,7 @@ exports[`svelte-preprocess-react > should process <react:component> tags 1`] = `
 
 exports[`svelte-preprocess-react > should process <react:component> tags 2`] = `
 "<script lang="ts">import inject$$ReactDOM from "react-dom/client"; import { createPortal as inject$$createPortal} from "react-dom"; import { renderToString as inject$$renderToString } from "react-dom/server"; import { sveltify } from "svelte-preprocess-react";
+  //@ts-nocheck
   import Clicker from "./Clicker";
 
   const react = sveltify({ Clicker }, { inject$$createPortal, inject$$ReactDOM, inject$$renderToString });
@@ -167,8 +166,7 @@ import inject$$ReactDOM from "react-dom/client"; import { createPortal as inject
 const react = sveltify({ button: "button" }, { inject$$createPortal, inject$$ReactDOM, inject$$renderToString });
 </script>
 
-<!-- eslint-disable-next-line svelte/valid-compile -->
-<react.button onclick={() => console.info("clicked")}>
+<react.button onClick={() => console.info("clicked")}>
   <slot />
 </react.button>
 "
@@ -184,7 +182,9 @@ exports[`svelte-preprocess-react > should process {...rest} props 1`] = `
   };
 ;const react = sveltify({ div: "div" }, { inject$$createPortal, inject$$ReactDOM, inject$$renderToString });</script>
 
-<react.div react$props={{ before: 1, ...props, after: "2" }}><span>Hi</span></react.div>
+<react.div react$props={{ "aria-atomic": true, ...props, "aria-label": "after" }}>
+  <span>Hi</span>
+</react.div>
 "
 `;
 

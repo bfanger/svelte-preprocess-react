@@ -7,4 +7,6 @@
   };
 </script>
 
-<react.div before={1} {...props} after="2"><span>Hi</span></react.div>
+<react.div aria-atomic={true} {...props} aria-label="after">
+  <span>Hi</span>
+</react.div>

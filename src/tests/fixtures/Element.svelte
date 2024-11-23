@@ -1,4 +1,3 @@
-<!-- eslint-disable-next-line svelte/valid-compile -->
-<react.button onclick={() => console.info("clicked")}>
+<react.button onClick={() => console.info("clicked")}>
   <slot />
 </react.button>
