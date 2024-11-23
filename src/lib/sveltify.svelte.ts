@@ -68,6 +68,9 @@ function multiple<
 } {
   return Object.fromEntries(
     Object.entries(reactComponents).map(([key, reactComponent]) => {
+      if (reactComponent === undefined) {
+        return [key, undefined];
+      }
       const hit =
         typeof reactComponent === "string"
           ? intrinsicElementCache[reactComponent]
