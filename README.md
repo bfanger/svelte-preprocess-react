@@ -118,5 +118,6 @@ Once all components are converted this preprocessor should be uninstalled.
 - [reactify()](./docs/reactify.md) Convert a Svelte component into an React component
 - [hooks()](./docs/hooks.md) Using React hooks inside Svelte components
 - [useStore](./docs/useStore.md) Using a Svelte Store in a React components
+- [Caveats](./docs/caveats.md) Limitations and workarounds
 - [react-router](./docs/react-router.md) Migrate from react-router to SvelteKit
 - [Architecture](./docs/architecture.md) svelte-preprocess-react's API Design-principles and System architecture

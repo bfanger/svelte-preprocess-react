@@ -135,6 +135,7 @@ function single<T extends React.FC | React.ComponentClass>(
           },
           props: { reactProps: {}, children: null },
           childrenSource: undefined,
+          slotSources: [],
           svelteChildren: undefined,
           nodes: [],
           context: new Map(),

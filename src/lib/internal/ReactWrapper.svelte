@@ -12,7 +12,7 @@
     type Snippet,
   } from "svelte";
   import type { FunctionComponent, ReactNode } from "react";
-  import type { SvelteInit, TreeNode, ReactDependencies } from "./types";
+  import type { SvelteInit, TreeNode } from "./types";
   import portalTag from "svelte-preprocess-react/internal/portalTag";
 
   type Props = {
@@ -20,20 +20,32 @@
     children?: Snippet;
     react$props?: any;
     react$children?: ReactNode;
-    react$dependencies?: ReactDependencies;
+    react$slotGroup?: any;
   };
   let {
     svelteInit,
     children,
     react$children,
     react$props,
-    ...reactProps
+    react$slotGroup,
+    ...restProps
   }: Props = $props();
 
   let portalTarget = $state<HTMLElement | undefined>();
 
   let childrenSource = $state<HTMLElement | undefined>();
+  let slotSources = $state<HTMLElement[]>([]);
   let hooks = $state<Array<{ Hook: FunctionComponent; key: number }>>([]);
+
+  const slots: Snippet[] = [];
+
+  for (const [name, snippet] of Object.entries(restProps)) {
+    const match = name.match(/^react\$slot(\d+)$/);
+    if (match) {
+      const i = Number(match[1]);
+      slots[i] = snippet as Snippet;
+    }
+  }
 
   const parent = getContext<TreeNode | undefined>("ReactWrapper");
   const node = setContext(
@@ -41,16 +53,24 @@
     svelteInit({
       parent,
       get props() {
-        return {
-          reactProps: react$props ? react$props : reactProps,
-          children: react$children,
-        };
+        let reactProps = react$props ? react$props : restProps;
+        if (slots.length) {
+          reactProps = Object.fromEntries(
+            Object.entries(restProps).filter(
+              ([name]) => !name.startsWith("react$slot"),
+            ),
+          );
+        }
+        return { reactProps, children: react$children };
       },
       get portalTarget() {
         return portalTarget;
       },
       get childrenSource() {
         return childrenSource;
+      },
+      get slotSources() {
+        return slotSources;
       },
       get svelteChildren() {
         return children;
@@ -84,3 +104,11 @@
     bind:this={childrenSource}>{@render children()}</svelte:element
   >
 {/if}
+
+{#each slots as slot, i}
+  <svelte:element
+    this={portalTag("svelte", `slot${i}`, "source", node.key)}
+    style="display:none;"
+    bind:this={slotSources[i]}>{@render slot()}</svelte:element
+  >
+{/each}

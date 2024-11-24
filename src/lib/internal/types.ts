@@ -71,6 +71,7 @@ export type SvelteInit = {
   props: { reactProps: Record<string, any>; children: ReactNode }; // The react props
   portalTarget: HTMLElement | undefined; // An element to portal the React component into
   childrenSource: HTMLElement | undefined; // An element containing the children from Svelte, inject as children into the React component
+  slotSources: HTMLElement[]; // An array of elements containing the slots from Svelte, inject as partials into the React component
   svelteChildren: Snippet | undefined; // The svelte children prop (snippet/slot)
   context: Map<any, any>; // The full Svelte context
   hooks: { Hook: FunctionComponent; key: number }[];

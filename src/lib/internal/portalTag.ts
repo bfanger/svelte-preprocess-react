@@ -1,6 +1,6 @@
 export default function portalTag(
   framework: "svelte" | "react",
-  section: "portal" | "children",
+  section: "portal" | "children" | `slot${number}`,
   direction: "target" | "source",
   nodeKey: string,
 ): string {

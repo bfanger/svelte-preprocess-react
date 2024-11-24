@@ -39,7 +39,7 @@ export default function reactify<P = any, E = any>(
       // Mount the Svelte component
       React.useEffect(() => {
         const target = wrapperRef.current;
-        if (!target) {
+        if (!target || !key) {
           return undefined;
         }
         const component = mount(SvelteWrapper, {
