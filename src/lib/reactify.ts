@@ -61,7 +61,7 @@ export default function reactify<P = any, E = any>(
         sveltePropsRef.current = (globalThis as any).$$reactifySetProps;
 
         return () => {
-          unmount(component);
+          void unmount(component);
         };
       }, [wrapperRef]);
 

@@ -253,17 +253,13 @@ function applyPortal(
   source: { html: string },
 ) {
   if (node.svelteChildren !== undefined) {
-    const tag = portalTag("svelte", "children", "source", node.key);
     const child = extract(
-      `<${tag}  style="display:none">`,
-      `</${tag}>`,
+      portalTag("svelte", "children", "source", node.key),
       $$payload.out,
     );
     try {
-      const reactTargetTag = portalTag("react", "children", "target", node.key);
       source.html = inject(
-        `<${reactTargetTag} style="display:contents">`,
-        `</${reactTargetTag}>`,
+        portalTag("react", "children", "target", node.key),
         child.innerHtml,
         source.html,
       );
@@ -272,18 +268,14 @@ function applyPortal(
     }
   }
   try {
-    const reactSourceTag = portalTag("react", "portal", "source", node.key);
     const portal = extract(
-      `<${reactSourceTag} style="display:none">`,
-      `</${reactSourceTag}>`,
+      portalTag("react", "portal", "source", node.key),
       source.html,
     );
 
     source.html = portal.outerRemoved;
-    const svelteTargetTag = portalTag("svelte", "portal", "target", node.key);
     $$payload.out = inject(
-      `<${svelteTargetTag}  style="display:contents">`,
-      `</${svelteTargetTag}>`,
+      portalTag("svelte", "portal", "target", node.key),
       portal.innerHtml,
       $$payload.out,
     );
@@ -295,16 +287,19 @@ function applyPortal(
   }
 }
 
-function extract(open: string, close: string, html: string) {
-  const start = html.indexOf(open);
-  if (start === -1) {
-    throw new Error(`Couldn't find ${open}`);
+function extract(tag: string, html: string) {
+  const open = `<${tag}`;
+  const close = `</${tag}>`;
+  const position = html.indexOf(open);
+  if (position === -1) {
+    throw new Error(`Couldn't find '${open}'`);
   }
+  const start = html.indexOf(">", position + open.length) + 1;
   const end = html.indexOf(close, start);
-  if (start === -1) {
-    throw new Error(`Couldn't find ${close}`);
+  if (end === -1) {
+    throw new Error(`Couldn't find '${close}'`);
   }
-  const innerHtml = html.substring(start + open.length, end);
+  const innerHtml = html.substring(start, end);
   const outerRemoved =
     html.substring(0, start) + html.substring(end + close.length);
 
@@ -314,16 +309,19 @@ function extract(open: string, close: string, html: string) {
   };
 }
 
-function inject(open: string, close: string, content: string, target: string) {
-  const start = target.indexOf(open);
-  if (start === -1) {
+function inject(tag: string, content: string, target: string) {
+  const open = `<${tag}`;
+  const close = `</${tag}>`;
+  const position = target.indexOf(open);
+  if (position === -1) {
     throw new Error(`Couldn't find ${open}`);
   }
+  const start = target.indexOf(">", position + open.length) + 1;
+
   const end = target.indexOf(close, start);
-  if (start === -1) {
+  if (position === -1) {
     throw new Error(`Couldn't find ${close}`);
   }
-  return (
-    target.substring(0, start + open.length) + content + target.substring(end)
-  );
+
+  return target.substring(0, start) + content + target.substring(end);
 }
