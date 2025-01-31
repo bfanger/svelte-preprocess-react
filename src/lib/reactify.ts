@@ -39,14 +39,14 @@ export default function reactify<P = any, E = any>(
       // Mount the Svelte component
       React.useEffect(() => {
         const target = wrapperRef.current;
-        if (!target || !key) {
+        if (!target) {
           return undefined;
         }
         const component = mount(SvelteWrapper, {
           target,
           props: {
             SvelteComponent: SvelteComponent as any,
-            nodeKey: key,
+            nodeKey: key ?? "/",
             react$children: children,
             props,
             setSlot: (el: HTMLElement | undefined) => {
