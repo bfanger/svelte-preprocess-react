@@ -18,6 +18,7 @@ test.describe("ssr", () => {
     "/fixtures/RestProps",
     "/fixtures/List",
     "/intrinsic-elements",
+    "/fixtures/Dog",
   ];
 
   test("client-rendered", async ({ page }) => {

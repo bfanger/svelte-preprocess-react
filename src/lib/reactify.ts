@@ -80,6 +80,8 @@ export default function reactify<P = any, E = any>(
             reactChildrenRef.current.parentElement !== svelteChildrenRef.current
           ) {
             svelteChildrenRef.current.appendChild(reactChildrenRef.current);
+          } else if (key === undefined) {
+            reactChildrenRef.current.style.display = "contents";
           }
         } else if (svelteChildrenRef.current) {
           svelteChildrenRef.current.innerHTML = "";
