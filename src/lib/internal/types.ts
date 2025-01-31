@@ -1,9 +1,5 @@
 import type ReactDOMServer from "react-dom/server";
-import {
-  type ComponentClass,
-  type FunctionComponent,
-  type ReactNode,
-} from "react";
+import type React from "react";
 import type { Root } from "react-dom/client";
 import type { Component, Snippet } from "svelte";
 
@@ -59,7 +55,7 @@ export type OmitEventProps<ReactProps> = Omit<
 >;
 
 export type TreeNode = SvelteInit & {
-  reactComponent: FunctionComponent<any> | ComponentClass<any>;
+  reactComponent: React.FunctionComponent<any> | React.ComponentClass<any>;
   key: string;
   autoKey: number;
   nodes: TreeNode[];
@@ -68,13 +64,13 @@ export type TreeNode = SvelteInit & {
 };
 
 export type SvelteInit = {
-  props: { reactProps: Record<string, any>; children: ReactNode }; // The react props
+  props: { reactProps: Record<string, any>; children: React.ReactNode }; // The react props
   portalTarget: HTMLElement | undefined; // An element to portal the React component into
   childrenSource: HTMLElement | undefined; // An element containing the children from Svelte, inject as children into the React component
   slotSources: HTMLElement[]; // An array of elements containing the slots from Svelte, inject as partials into the React component
   svelteChildren: Snippet | undefined; // The svelte children prop (snippet/slot)
   context: Map<any, any>; // The full Svelte context
-  hooks: { Hook: FunctionComponent; key: number }[];
+  hooks: { Hook: React.FunctionComponent; key: number }[];
   parent?: TreeNode;
 };
 
@@ -85,11 +81,13 @@ export type ChildrenPropsAsSnippet<T> = T extends { children: unknown }
     : T;
 
 export type Sveltified<
-  T extends keyof JSX.IntrinsicElements | React.JSXElementConstructor<any>,
+  T extends
+    | keyof React.JSX.IntrinsicElements
+    | React.JSXElementConstructor<any>,
 > = Component<ChildrenPropsAsSnippet<React.ComponentProps<T>>>;
 
 export type IntrinsicElementComponents = {
-  [K in keyof JSX.IntrinsicElements]: Component<
+  [K in keyof React.JSX.IntrinsicElements]: Component<
     ChildrenPropsAsSnippet<React.ComponentProps<K>>
   >;
 };

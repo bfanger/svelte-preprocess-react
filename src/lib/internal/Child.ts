@@ -6,7 +6,7 @@ type Props = {
   el: HTMLElement | undefined;
 };
 const Child: React.FC<Props> = ({ nodeKey, el }) => {
-  const ref = React.useRef<HTMLElement>();
+  const ref = React.useRef<HTMLElement>(undefined);
   React.useEffect(() => {
     if (!ref.current) {
       return;

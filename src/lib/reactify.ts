@@ -29,10 +29,10 @@ export default function reactify<P = any, E = any>(
   const named = {
     [name](options: any) {
       const { children, ...props } = options;
-      const wrapperRef = React.useRef<HTMLElement>();
-      const sveltePropsRef = React.useRef<(props: P) => void>();
-      const svelteChildrenRef = React.useRef<HTMLElement>();
-      const reactChildrenRef = React.useRef<HTMLElement>();
+      const wrapperRef = React.useRef<HTMLElement>(undefined);
+      const sveltePropsRef = React.useRef<(props: P) => void>(undefined);
+      const svelteChildrenRef = React.useRef<HTMLElement>(undefined);
+      const reactChildrenRef = React.useRef<HTMLElement>(undefined);
       const node = React.useContext(SvelteToReactContext);
       const { key, context } = node ?? {};
 
@@ -107,6 +107,7 @@ export default function reactify<P = any, E = any>(
         }
         return [
           React.createElement("react-portal-target", {
+            key: "react-portal-target",
             node: key,
             style: { display: "contents" },
             dangerouslySetInnerHTML: { __html: html },
@@ -116,6 +117,7 @@ export default function reactify<P = any, E = any>(
                 React.createElement(
                   "react-children",
                   {
+                    key: "react-children",
                     node: key,
                     style: { display: "none" },
                   },
@@ -129,6 +131,7 @@ export default function reactify<P = any, E = any>(
       return React.createElement(
         "react-portal-target",
         {
+          key: "react-portal-target",
           ref: wrapperRef,
           node: key,
           style: { display: "contents" },
@@ -137,6 +140,7 @@ export default function reactify<P = any, E = any>(
           ? React.createElement(
               "react-children",
               {
+                key: "react-children",
                 ref: reactChildrenRef,
                 node: key,
                 style: { display: "none" },

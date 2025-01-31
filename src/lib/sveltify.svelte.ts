@@ -21,7 +21,7 @@ export default sveltify;
 function sveltify<
   T extends {
     [key: string]:
-      | keyof JSX.IntrinsicElements
+      | keyof React.JSX.IntrinsicElements
       | React.JSXElementConstructor<any>;
   },
 >(
@@ -45,7 +45,8 @@ function sveltify(components: any, dependencies?: ReactDependencies): any {
   if (
     typeof components !== "object" || // React.FC or JSXIntrinsicElements
     ("render" in components && typeof components.render === "function") || // React.ComponentClass
-    "_context" in components // a Context.Provider
+    "_context" in components || // a Context.Provider
+    ("Provider" in components && components.Provider === components) // a React 19 Context.Provider
   ) {
     return single(components as React.FC, dependencies);
   }
@@ -89,7 +90,7 @@ function multiple<
       };
       if (typeof reactComponent === "string") {
         intrinsicElementCache[reactComponent] = entry;
-      } else {
+      } else if (typeof reactComponent === "function") {
         cache.set(reactComponent, entry);
       }
       return [key, entry.Sveltified];
@@ -106,6 +107,7 @@ function single<T extends React.FC | React.ComponentClass>(
   if (
     typeof reactComponent !== "function" &&
     typeof reactComponent === "object" &&
+    reactComponent !== null &&
     "default" in reactComponent &&
     typeof (reactComponent as any).default === "function"
   ) {

@@ -7,7 +7,7 @@ type Props = {
 };
 const Slot: React.FC<Props> = ({ slot }) => {
   const node = React.useContext(SvelteToReactContext);
-  const ref = React.useRef<HTMLElement>();
+  const ref = React.useRef<HTMLElement>(undefined);
   const el = node?.slotSources[slot];
   React.useEffect(() => {
     if (!ref.current || ref.current.children.length > 0) {
