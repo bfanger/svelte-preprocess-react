@@ -6,9 +6,9 @@ Convert a Svelte component into an React component.
 
 ```ts
 import { reactify } from "svelte-preprocess-react";
-import ButtonSvelte from "$lib/components/Button.svelte";
+import Button from "$lib/components/Button.svelte";
 
-const Button = reactify(ButtonSvelte);
+const svelte = reactify({ Button });
 
 type Props = {
   onClose: () => void;
@@ -16,9 +16,9 @@ type Props = {
 const Dialog: React.FC<Props> = ({ onClose }) => (
   <div className="dialog">
     <h2>Thanks for subscribing!</h2>
-    <Button type="primary" onClick={() => onClose()}>
+    <svelte.Button type="primary" onClick={() => onClose()}>
       Close
-    </Button>
+    </svelte.Button>
   </div>
 );
 ```

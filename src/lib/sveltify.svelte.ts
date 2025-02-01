@@ -31,7 +31,7 @@ function sveltify<
   [K in keyof T]: Sveltified<T[K]> & StaticPropComponents;
 } & IntrinsicElementComponents;
 /**
- * Convert a React component into a Svelte component.
+ * Convert a React components into Svelte components.
  */
 function sveltify<
   T extends React.FC | React.ComponentClass | React.JSXElementConstructor<any>,

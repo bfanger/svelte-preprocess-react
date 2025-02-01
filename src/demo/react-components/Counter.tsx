@@ -2,10 +2,10 @@
  * A react component using a Svelte Button component
  */
 import * as React from "react";
-import ButtonSvelte from "../components/Button.svelte";
+import Button from "../components/Button.svelte";
 import { reactify } from "svelte-preprocess-react";
 
-const Button = reactify(ButtonSvelte);
+const svelte = reactify({ Button });
 
 type CounterProps = {
   initial?: number;
@@ -24,9 +24,9 @@ const Counter: React.FC<CounterProps> = ({ initial = 0, onCount }) => {
   }
   return (
     <>
-      <Button onClick={decrease}>-</Button>
+      <svelte.Button onClick={decrease}>-</svelte.Button>
       {count}
-      <Button onClick={increase}>+</Button>
+      <svelte.Button onClick={increase}>+</svelte.Button>
     </>
   );
 };

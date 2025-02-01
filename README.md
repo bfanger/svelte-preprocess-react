@@ -90,12 +90,16 @@ Once you've converted a React component to Svelte, you'd want delete that React 
 
 ```jsx
 import { reactify } from "svelte-preprocess-react";
-import ButtonSvelte from "../components/Button.svelte";
+import Button from "../components/Button.svelte";
 
-const Button = reactify(ButtonSvelte);
+const svelte = reactify({ Button });
 
 function MyComponent() {
-  return <Button onClick={() => console.log("clicked")}>Click me</Button>;
+  return (
+    <svelte.Button onClick={() => console.log("clicked")}>
+      Click me
+    </svelte.Button>
+  );
 }
 ```
 

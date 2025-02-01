@@ -1,12 +1,14 @@
 <script lang="ts">
-  import { createEventDispatcher, onMount } from "svelte";
+  import { onMount } from "svelte";
 
-  const dispatch = createEventDispatcher();
-
-  export let name: string;
+  type DogProps = {
+    name: string;
+    onbark?: (sound: string) => void;
+  };
+  let { name, onbark }: DogProps = $props();
 
   onMount(() => {
-    dispatch("bark", "woof");
+    onbark?.("woof");
   });
 </script>
 

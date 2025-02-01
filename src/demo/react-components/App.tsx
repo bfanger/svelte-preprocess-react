@@ -1,29 +1,26 @@
 import * as React from "react";
 import { createRoot, hydrateRoot } from "react-dom/client";
 import { reactify } from "svelte-preprocess-react";
-import DogSvelte from "../../tests/fixtures/Dog.svelte";
-import ChildrenSvelte from "../../tests/fixtures/Children.svelte";
-import DebugContextProviderSvelte from "../../demo/components/DebugContextProvider.svelte";
-import DebugContextSvelte from "../../demo/components/DebugContext.svelte";
+import Dog from "../../tests/fixtures/Dog.svelte";
+import Children from "../../tests/fixtures/Children.svelte";
+import DebugContextProvider from "../../demo/components/DebugContextProvider.svelte";
+import DebugContext from "../../demo/components/DebugContext.svelte";
 
-const Dog = reactify(DogSvelte);
-const Children = reactify(ChildrenSvelte);
-const DebugContextProvider = reactify(DebugContextProviderSvelte);
-const DebugContext = reactify(DebugContextSvelte);
+const svelte = reactify({ Dog, Children, DebugContextProvider, DebugContext });
 
 export default function App() {
   return (
     <div>
       <h1>React app</h1>
-      <Dog name="Scooby doo" />
-      <Children>
+      <svelte.Dog name="Scooby doo" onbark={() => console.info("Zoinks!")} />
+      <svelte.Children>
         <div style={{ color: "#0b6a84" }}>
           React element inside a reactified Svelte component
         </div>
-      </Children>
-      <DebugContextProvider id="message">
-        <DebugContext />
-      </DebugContextProvider>
+      </svelte.Children>
+      <svelte.DebugContextProvider id="message" value="Svelte context value">
+        <svelte.DebugContext id="message" />
+      </svelte.DebugContextProvider>
     </div>
   );
 }

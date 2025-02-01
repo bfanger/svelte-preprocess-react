@@ -116,3 +116,11 @@ export type ReactDependencies = {
   ) => React.ReactPortal;
   renderToString?: typeof ReactDOMServer.renderToString;
 };
+
+export type ChildrenPropsAsReactNode<T extends Record<string, any>> = {
+  [K in keyof T]: K extends "children" ? React.ReactNode : T[K];
+};
+
+export type Prettify<T> = {
+  [K in keyof T]: T[K];
+} & {};

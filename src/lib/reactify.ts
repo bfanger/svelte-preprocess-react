@@ -1,31 +1,50 @@
 import * as React from "react";
-import { createRawSnippet, mount, unmount } from "svelte";
+import { createRawSnippet, mount, unmount, type Component } from "svelte";
 import { render } from "svelte/server";
-import type { SvelteEventHandlers } from "./internal/types";
 import SvelteToReactContext from "./internal/SvelteToReactContext.js";
 import SvelteWrapper from "./internal/SvelteWrapper.svelte";
+import type { ChildrenPropsAsReactNode } from "svelte-preprocess-react/internal/types.js";
 
 const server = typeof document === "undefined";
+const cache = new WeakMap<Component<any>, React.FunctionComponent<any>>();
 
 let $$payload: any;
-export type SvelteConstructor<Props = any, Events = any, Slot = any> = {
-  name: string;
-  prototype: {
-    $$prop_def: Props;
-    $$events_def: Events;
-    $$slot_def: Slot;
-  };
-};
+
 /**
- * Convert a Svelte component into a React component.
+ * Convert a Svelte components into React components.
  */
-export default function reactify<P = any, E = any>(
-  SvelteComponent: SvelteConstructor<P, E>,
-): React.FunctionComponent<
-  | (P & SvelteEventHandlers<E> & { children?: React.ReactNode })
-  | { children?: React.ReactNode }
-> {
-  const { name } = SvelteComponent as any;
+export default function reactify<
+  T extends Component<any> | Record<string, Component<any>>,
+>(
+  svelteComponents: T,
+): T extends Component<infer TProps>
+  ? React.FunctionComponent<ChildrenPropsAsReactNode<TProps>>
+  : {
+      [K in keyof T]: T[K] extends Component<infer TProps>
+        ? React.FunctionComponent<ChildrenPropsAsReactNode<TProps>>
+        : React.FunctionComponent<any>;
+    } {
+  if (typeof svelteComponents === "function") {
+    return single(svelteComponents) as any;
+  }
+  const reactComponents: Record<string, React.FunctionComponent<any>> = {};
+  for (const key in svelteComponents) {
+    reactComponents[key] = single((svelteComponents as any)[key], key);
+  }
+  return reactComponents as any;
+}
+
+function single<P extends Record<string, any>>(
+  SvelteComponent: Component<P>,
+  name?: string,
+): React.FunctionComponent<any> {
+  const hit = cache.get(SvelteComponent);
+  if (hit) {
+    return hit;
+  }
+  if (!name) {
+    name = SvelteComponent.name;
+  }
   const named = {
     [name](options: any) {
       const { children, ...props } = options;
@@ -178,6 +197,7 @@ export default function reactify<P = any, E = any>(
       );
     },
   };
+  cache.set(SvelteComponent, named[name]);
   return named[name];
 }
 
