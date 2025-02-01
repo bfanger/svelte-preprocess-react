@@ -76,27 +76,27 @@ const prefix = "inject$$";
  */
 function transform(content, options) {
   /** @type {string} */
-  let portal;
+
   const packageName = "svelte-preprocess-react";
   const imports = [];
-
+  const sveltifyDeps = [`ReactDOM: ${prefix}ReactDOM`];
+  const hooksDeps = [`ReactDOM: ${prefix}ReactDOM`];
   if (options.react >= 18) {
-    imports.push(
-      `import ${prefix}ReactDOM from "react-dom/client";`,
-      `import { createPortal as ${prefix}createPortal} from "react-dom";`,
-    );
-    portal = `createPortal: ${prefix}createPortal`;
+    imports.push(`import ${prefix}ReactDOM from "react-dom/client";`);
+    sveltifyDeps.push(`createPortal: ${prefix}createPortal`);
+    hooksDeps.push(`flushSync: ${prefix}flushSync`);
   } else {
     imports.push(`import ${prefix}ReactDOM from "react-dom";`);
-    portal = `createPortal: ${prefix}ReactDOM.createPortal`;
+    sveltifyDeps.push(`createPortal: ${prefix}ReactDOM.createPortal`);
+    hooksDeps.push(`flushSync: ${prefix}ReactDOM.flushSync`);
   }
 
-  const deps = [portal, `ReactDOM: ${prefix}ReactDOM`];
   if (options.ssr) {
     imports.push(
       `import { renderToString as ${prefix}renderToString } from "react-dom/server";`,
     );
-    deps.push(`renderToString: ${prefix}renderToString`);
+    sveltifyDeps.push(`renderToString: ${prefix}renderToString`);
+    hooksDeps.push(`renderToString: ${prefix}renderToString`);
   }
 
   const ast = parse(content, {
@@ -134,7 +134,10 @@ function transform(content, options) {
           "end" in parent.arguments[0] &&
           typeof parent.arguments[0].end === "number"
         ) {
-          s.appendRight(parent.arguments[0].end, `, { ${deps.join(", ")} }`);
+          s.appendRight(
+            parent.arguments[0].end,
+            `, { ${sveltifyDeps.join(", ")} }`,
+          );
         }
 
         const componentsArg = parent.arguments[0];
@@ -176,7 +179,10 @@ function transform(content, options) {
           "end" in parent.arguments[0] &&
           typeof parent.arguments[0].end === "number"
         ) {
-          s.appendRight(parent.arguments[0].end, `, { ${deps.join(", ")} }`);
+          s.appendRight(
+            parent.arguments[0].end,
+            `, { ${hooksDeps.join(", ")} }`,
+          );
         }
         used.add("hooks");
       }
@@ -211,6 +217,7 @@ function transform(content, options) {
   if (declarators.length > 0) {
     imports.push(`import { ${declarators.join(", ")} } from "${packageName}";`);
   }
+
   const script = ast.instance || ast.module;
   let wrappers = [];
   if (!defined && aliases.length > 0) {
@@ -225,7 +232,21 @@ function transform(content, options) {
           }
           return expression;
         })
-        .join(", ")} }, { ${deps.join(", ")} });`,
+        .join(", ")} }, { ${sveltifyDeps.join(", ")} });`,
+    );
+    used.add("sveltify");
+  }
+  if (used.has("sveltify") && used.has("hooks")) {
+    imports.push(
+      `import { createPortal as ${prefix}createPortal, flushSync as ${prefix}flushSync } from "react-dom";`,
+    );
+  } else if (used.has("sveltify")) {
+    imports.push(
+      `import { createPortal as ${prefix}createPortal } from "react-dom";`,
+    );
+  } else if (used.has("hooks")) {
+    imports.push(
+      `import { flushSync as ${prefix}flushSync } from "react-dom";`,
     );
   }
 

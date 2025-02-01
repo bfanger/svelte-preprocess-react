@@ -18,6 +18,8 @@ let sharedRoot: TreeNode | undefined;
 
 export default sveltify;
 
+type Dependencies = Omit<ReactDependencies, "flushSync">;
+
 function sveltify<
   T extends {
     [key: string]:
@@ -26,7 +28,7 @@ function sveltify<
   },
 >(
   components: T,
-  dependencies?: ReactDependencies,
+  dependencies?: Dependencies,
 ): {
   [K in keyof T]: Sveltified<T[K]> & StaticPropComponents;
 } & IntrinsicElementComponents;
@@ -35,8 +37,8 @@ function sveltify<
  */
 function sveltify<
   T extends React.FC | React.ComponentClass | React.JSXElementConstructor<any>,
->(components: T, dependencies?: ReactDependencies): Sveltified<T>;
-function sveltify(components: any, dependencies?: ReactDependencies): any {
+>(components: T, dependencies?: Dependencies): Sveltified<T>;
+function sveltify(components: any, dependencies?: Dependencies): any {
   if (!dependencies) {
     throw new Error(
       "{ createPortal, ReactDOM } are not injected, check svelte.config.js for: `preprocess: [preprocessReact()],`",
@@ -53,7 +55,7 @@ function sveltify(components: any, dependencies?: ReactDependencies): any {
   return multiple(components, dependencies);
 }
 
-type CacheEntry = ReactDependencies & { Sveltified: unknown };
+type CacheEntry = Dependencies & { Sveltified: unknown };
 const cache = new WeakMap<any, CacheEntry>();
 const intrinsicElementCache: Record<string, CacheEntry> = {};
 
@@ -63,7 +65,7 @@ function multiple<
   },
 >(
   reactComponents: T,
-  dependencies: ReactDependencies,
+  dependencies: Dependencies,
 ): {
   [K in keyof T]: Component<ChildrenPropsAsSnippet<React.ComponentProps<T[K]>>>;
 } {
@@ -100,7 +102,7 @@ function multiple<
 
 function single<T extends React.FC | React.ComponentClass>(
   reactComponent: T,
-  dependencies: ReactDependencies,
+  dependencies: Dependencies,
 ): Component<ChildrenPropsAsSnippet<React.ComponentProps<T>>> {
   const client = typeof document !== "undefined";
   const { createPortal, ReactDOM, renderToString } = dependencies;
@@ -166,18 +168,26 @@ function single<T extends React.FC | React.ComponentClass>(
           document.head.appendChild(portalTarget);
 
           if (root) {
-            rootNode.rerender = () => {
+            rootNode.rerender = (source) => {
               root.render(
-                React.createElement(Bridge, { node: rootNode, createPortal }),
+                React.createElement(Bridge, {
+                  node: rootNode,
+                  createPortal,
+                  source,
+                }),
               );
             };
           } else {
             if (!("render" in ReactDOM)) {
               throw new Error("ReactDOM.render is required to use sveltify");
             }
-            rootNode.rerender = () => {
+            rootNode.rerender = (source) => {
               ReactDOM.render(
-                React.createElement(Bridge, { node: rootNode, createPortal }),
+                React.createElement(Bridge, {
+                  node: rootNode,
+                  createPortal,
+                  source,
+                }),
                 rootEl,
               );
             };
@@ -214,7 +224,7 @@ function single<T extends React.FC | React.ComponentClass>(
         setPayload(anchorOrPayload);
         try {
           const html = renderToString(
-            React.createElement(Bridge, { node: sharedRoot }),
+            React.createElement(Bridge, { node: sharedRoot, createPortal }),
           );
           const source = { html };
           applyPortals(anchorOrPayload, sharedRoot, source);

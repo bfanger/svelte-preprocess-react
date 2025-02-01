@@ -19,7 +19,7 @@ declare global {
     [K in keyof T]: Sveltified<T[K]> & StaticPropComponents;
   } & IntrinsicElementComponents;
 
-  function hooks<T>(callback: () => T): Readable<T | undefined>;
+  function hooks<T>(callback: () => T): (() => T) & Readable<T>;
 
   const react: IntrinsicElementComponents & {
     [component: string]: Component & StaticPropComponents;

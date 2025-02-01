@@ -11,11 +11,7 @@
   const svelte = reactify({ DebugContext });
   const react = sveltify(
     { DebugContext: svelte.DebugContext },
-    {
-      createPortal,
-      ReactDOM,
-      renderToString,
-    },
+    { createPortal, ReactDOM, renderToString },
   );
 </script>
 

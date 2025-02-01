@@ -59,7 +59,7 @@ export type TreeNode = SvelteInit & {
   key: string;
   autoKey: number;
   nodes: TreeNode[];
-  rerender?: () => void;
+  rerender?: (source?: "hooks") => void;
   unroot?: () => void;
 };
 
@@ -108,12 +108,14 @@ export type ReactDependencies = {
       }
     | {
         render(component: React.ReactNode, container: Element): void; // React 17 and below
+        unmountComponentAtNode(container: Element): void;
       };
   createPortal: (
     children: React.ReactNode,
     container: Element | DocumentFragment,
     key?: null | string,
   ) => React.ReactPortal;
+  flushSync: (cb: () => void) => void;
   renderToString?: typeof ReactDOMServer.renderToString;
 };
 

@@ -6,19 +6,21 @@ import portalTag from "svelte-preprocess-react/internal/portalTag.js";
 
 type BridgeProps = {
   node: TreeNode;
-  createPortal?: ReactDependencies["createPortal"];
+  createPortal: ReactDependencies["createPortal"];
+  source?: "hooks";
 };
-const Bridge: React.FC<BridgeProps> = ({ node, createPortal }) => {
+const Bridge: React.FC<BridgeProps> = ({ node, createPortal, source }) => {
   const fresh = useRef(false);
-  const [result, setResult] = useState<React.ReactNode>(() =>
-    renderBridge(node, createPortal, true),
-  );
+  const mounted = useRef(false);
+  const [result, setResult] = useState<React.ReactNode>(() => {
+    return renderBridge(node, createPortal, mounted, source);
+  });
   useEffect(
     () =>
       $effect.root(() => {
         $effect(() => {
           fresh.current = true;
-          setResult(renderBridge(node, createPortal, false));
+          setResult(renderBridge(node, createPortal, mounted, source));
         });
       }),
     [],
@@ -27,13 +29,14 @@ const Bridge: React.FC<BridgeProps> = ({ node, createPortal }) => {
     fresh.current = false;
     return result;
   }
-  return renderBridge(node, createPortal, false);
+  return renderBridge(node, createPortal, mounted, source);
 };
 
 function renderBridge(
   node: TreeNode,
   createPortal: BridgeProps["createPortal"],
-  initialRender: boolean,
+  mounted: { current: boolean },
+  source?: "hooks",
 ) {
   let { children } = node.props;
   const props = { ...node.props.reactProps };
@@ -74,13 +77,13 @@ function renderBridge(
       ? createElement(node.reactComponent, props)
       : createElement(node.reactComponent, props, children),
   );
-  if (portalTarget && createPortal) {
-    if (initialRender) {
+  if (portalTarget) {
+    if (source !== "hooks" && mounted.current === false) {
       portalTarget.innerHTML = ""; // Remove injected SSR content
+      mounted.current = true;
     }
     return createPortal(vdom, portalTarget);
   }
-
   return createElement(
     portalTag("react", "portal", "source", node.key),
     { style: { display: "none" } },

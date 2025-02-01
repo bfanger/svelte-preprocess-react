@@ -1,11 +1,11 @@
 <script lang="ts">
   import { useState } from "react";
-  import Nested from "./HookWithContext.svelte";
+  import HookWithContext from "./HookWithContext.svelte";
   import { type Auth, AuthProvider } from "./react-auth";
 
   const react = sveltify({ AuthProvider });
 
-  const countHook = hooks(() => useState(0));
+  let [count, setCount] = $derived.by(hooks(() => useState(0)));
 
   const auth: Auth = $state({ authenticated: false });
 
@@ -17,20 +17,17 @@
   }
 </script>
 
-{#if $countHook}
-  {@const [count, setCount] = $countHook}
+<div>Count: <span data-testid="count">{count}</span></div>
+<button
+  data-testid="add"
+  onclick={() => {
+    setCount(count + 1);
+  }}>+</button
+>
+<hr />
 
-  <div>Count: <span data-testid="count">{count}</span></div>
-  <button
-    data-testid="add"
-    onclick={() => {
-      setCount(count + 1);
-    }}>+</button
-  >
-  <hr />
-{/if}
 <react.AuthProvider value={auth}>
-  <Nested />
+  <HookWithContext />
 </react.AuthProvider>
 
 {#if auth.authenticated}
