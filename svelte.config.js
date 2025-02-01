@@ -5,6 +5,7 @@ import preprocessReact from "./src/lib/preprocessReact.js";
 /** @type {import('@sveltejs/kit').Config} */
 export default {
   preprocess: [vitePreprocess(), preprocessReact()],
+  // compilerOptions: { css: "injected" },
   kit: {
     alias: {
       "svelte-preprocess-react": "src/lib",

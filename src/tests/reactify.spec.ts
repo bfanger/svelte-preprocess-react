@@ -1,3 +1,5 @@
+// @vitest-environment node
+
 import * as React from "react";
 import { renderToString } from "react-dom/server";
 import { describe, expect, it } from "vitest";
@@ -11,7 +13,7 @@ describe("reactify", () => {
     const props: ReactProps = { name: "Fido", onBark() {} };
     const html = renderToString(React.createElement(Dog, props));
     expect(html).toMatchInlineSnapshot(
-      `"<react-portal-target style="display:contents"></react-portal-target>"`,
+      `"<reactify-svelte style="display:contents"><!--[--><svelte-dog class="svelte-1n9pbz6">Fido</svelte-dog><!--]--></reactify-svelte>"`,
     );
   });
 });

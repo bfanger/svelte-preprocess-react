@@ -3,13 +3,22 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>React</title>
+    <title>React SPA</title>
     <script type="module" src="@vite/client"></script>
   </head>
   <body>
     <react-app>
       <h1>Loading...</h1>
     </react-app>
-    <script type="module" src="src/tests/fixtures/App.tsx"></script>
+
+    <script type="module">
+      import App, {
+        createElement,
+        createRoot,
+      } from "./src/demo/react-components/App.tsx";
+      createRoot(document.querySelector("react-app")).render(
+        createElement(App),
+      );
+    </script>
   </body>
 </html>

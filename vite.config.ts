@@ -1,8 +1,8 @@
 import path from "path";
 import { sveltekit } from "@sveltejs/kit/vite";
-import { configDefaults, type UserConfig } from "vitest/config";
+import { configDefaults, defineConfig } from "vitest/config";
 
-const config: UserConfig = {
+export default defineConfig({
   plugins: [sveltekit()],
   css: { devSourcemap: true },
   test: {
@@ -14,5 +14,4 @@ const config: UserConfig = {
       "svelte-preprocess-react": path.resolve("./src/lib"),
     },
   },
-};
-export default config;
+});

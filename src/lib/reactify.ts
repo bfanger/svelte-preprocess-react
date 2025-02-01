@@ -1,5 +1,5 @@
 import * as React from "react";
-import { mount, unmount } from "svelte";
+import { createRawSnippet, mount, unmount } from "svelte";
 import { render } from "svelte/server";
 import type { SvelteEventHandlers } from "./internal/types";
 import SvelteToReactContext from "./internal/SvelteToReactContext.js";
@@ -34,7 +34,7 @@ export default function reactify<P = any, E = any>(
       const svelteChildrenRef = React.useRef<HTMLElement>(undefined);
       const reactChildrenRef = React.useRef<HTMLElement>(undefined);
       const node = React.useContext(SvelteToReactContext);
-      const { key, context } = node ?? {};
+      const { key, context } = node ?? { key: "/island/" };
 
       // Mount the Svelte component
       React.useEffect(() => {
@@ -46,7 +46,7 @@ export default function reactify<P = any, E = any>(
           target,
           props: {
             SvelteComponent: SvelteComponent as any,
-            nodeKey: key ?? "/",
+            nodeKey: key,
             react$children: children,
             props,
             setSlot: (el: HTMLElement | undefined) => {
@@ -80,7 +80,7 @@ export default function reactify<P = any, E = any>(
             reactChildrenRef.current.parentElement !== svelteChildrenRef.current
           ) {
             svelteChildrenRef.current.appendChild(reactChildrenRef.current);
-          } else if (key === undefined) {
+          } else if (node === undefined) {
             reactChildrenRef.current.style.display = "contents";
           }
         } else if (svelteChildrenRef.current) {
@@ -101,17 +101,41 @@ export default function reactify<P = any, E = any>(
           html = $$payload.out.slice(len);
           $$payload.out = $$payload.out.slice(0, len);
         } else {
+          if (children && !props.children) {
+            props.children = createRawSnippet(() => ({
+              render() {
+                return "<!-- React children not supported during SSR -->";
+              },
+            }));
+          }
           const result = render(SvelteComponent as any, {
             props,
             context,
           });
-          html = result.html;
+          if (typeof result.head === "string") {
+            html += result.head;
+          }
+          if (typeof result.body === "string") {
+            html += result.body;
+          }
+        }
+        if (!node) {
+          return React.createElement("reactify-svelte", {
+            key: "reactify",
+            ref: wrapperRef,
+            node: undefined,
+            style: { display: "contents" },
+            suppressHydrationWarning: true,
+            dangerouslySetInnerHTML: { __html: html },
+          });
         }
         return [
-          React.createElement("react-portal-target", {
-            key: "react-portal-target",
+          React.createElement("reactify-svelte", {
+            key: "reactify",
+            ref: wrapperRef,
             node: key,
             style: { display: "contents" },
+            suppressHydrationWarning: true,
             dangerouslySetInnerHTML: { __html: html },
           }),
           ...(children
@@ -131,12 +155,13 @@ export default function reactify<P = any, E = any>(
       }
 
       return React.createElement(
-        "react-portal-target",
+        "reactify-svelte",
         {
-          key: "react-portal-target",
+          key: "reactify",
           ref: wrapperRef,
-          node: key,
+          node: node?.key,
           style: { display: "contents" },
+          suppressHydrationWarning: true,
         },
         children
           ? React.createElement(

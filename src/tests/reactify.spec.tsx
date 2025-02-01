@@ -1,3 +1,5 @@
+// @vitest-environment node
+
 import { describe, expect, it } from "vitest";
 import * as React from "react";
 import { renderToString } from "react-dom/server";
@@ -5,13 +7,13 @@ import reactify from "../../src/lib/reactify";
 import DogSvelte from "./fixtures/Dog.svelte";
 
 describe("reactify", () => {
-  const Dog = reactify(DogSvelte);
-  type ReactProps = React.ComponentProps<typeof Dog>; // in a tsx file, the resulting type is "any"  :-(
+  const Dog = reactify(DogSvelte); // in a tsx file, DogSvelte is of type "any"  :-(
+  type ReactProps = React.ComponentProps<typeof Dog>;
   it("renders a svelte-wrapper", () => {
     const props: ReactProps = { name: "Fido", onBark() {} };
-    const html = renderToString(<Dog />);
+    const html = renderToString(<Dog {...props} />);
     expect(html).toMatchInlineSnapshot(
-      `"<react-portal-target style="display:contents"></react-portal-target>"`,
+      `"<reactify-svelte style="display:contents"><!--[--><svelte-dog class="svelte-1n9pbz6">Fido</svelte-dog><!--]--></reactify-svelte>"`,
     );
   });
 });

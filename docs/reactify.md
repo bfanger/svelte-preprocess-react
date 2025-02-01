@@ -24,3 +24,20 @@ const Dialog: React.FC<Props> = ({ onClose }) => (
 ```
 
 React only has props, we we assume that the props starting with "on" followed by a capital letter are event handlers.
+
+## Svelte components missing CSS?
+
+This happens when a Svelte component is only used in the React server render and the "external" CSS from the compile step is not injected into the page.
+
+When you're also loading the Svelte components on the page, the bundler will also include the CSS into the page.
+Another option is to set the **compilerOptions.css** to "injected".
+
+```js
+// svelte.config.js
+export default {
+  preprocess: [preprocessReact()],
+  compilerOptions: {
+    css: "injected",
+  },
+};
+```
