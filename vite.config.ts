@@ -6,7 +6,6 @@ export default defineConfig({
   plugins: [sveltekit()],
   css: { devSourcemap: true },
   test: {
-    environment: "happy-dom",
     exclude: [...configDefaults.exclude, "dist", "playwright"],
   },
   resolve: {
