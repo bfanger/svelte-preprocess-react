@@ -9,6 +9,7 @@ test.describe("react-first", () => {
     await page.goto("/react-spa.html");
     await testDog(page);
     await testChildren(page);
+    await testContext(page);
   });
 
   test("Hydrate reactified Svelte component inside React server rendered page", async ({
@@ -17,6 +18,7 @@ test.describe("react-first", () => {
     await page.goto("/react-ssr?hydrate=1");
     await testDog(page);
     await testChildren(page);
+    await testContext(page);
   });
 });
 
@@ -44,5 +46,10 @@ async function testChildren(page: Page) {
     page.locator(".wrapper", {
       hasText: "React element inside a reactified Svelte component",
     }),
+  ).toHaveScreenshot();
+}
+async function testContext(page: Page) {
+  await expect(
+    page.locator("pre", { hasText: '"Svelte context value"' }),
   ).toHaveScreenshot();
 }

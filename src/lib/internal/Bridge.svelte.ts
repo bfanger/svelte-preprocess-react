@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect, createElement } from "react";
 import type { ReactDependencies, TreeNode } from "./types.js";
 import Child from "./Child.js";
-import SvelteToReactContext from "./SvelteToReactContext.js";
+import SvelteFirstContext from "./SvelteFirstContext.js";
 import portalTag from "svelte-preprocess-react/internal/portalTag.js";
 
 type BridgeProps = {
@@ -71,7 +71,7 @@ function renderBridge(
   }
 
   const vdom = createElement(
-    SvelteToReactContext.Provider,
+    SvelteFirstContext.Provider,
     { value: node },
     children === undefined
       ? createElement(node.reactComponent, props)

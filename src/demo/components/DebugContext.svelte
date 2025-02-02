@@ -1,7 +1,10 @@
 <script lang="ts">
   import { getContext } from "svelte";
 
-  export let id: any;
+  type Props = {
+    id: any;
+  };
+  let { id }: Props = $props();
 
   const context = getContext(id);
   const text = JSON.stringify(context);

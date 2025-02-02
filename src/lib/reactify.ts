@@ -1,7 +1,8 @@
 import * as React from "react";
 import { createRawSnippet, mount, unmount, type Component } from "svelte";
 import { render } from "svelte/server";
-import SvelteToReactContext from "./internal/SvelteToReactContext.js";
+import SvelteFirstContext from "./internal/SvelteFirstContext.js";
+import ReactFirstContext from "./internal/ReactFirstContext.js";
 import SvelteWrapper from "./internal/SvelteWrapper.svelte";
 import type { ChildrenPropsAsReactNode } from "svelte-preprocess-react/internal/types.js";
 
@@ -52,21 +53,35 @@ function single<P extends Record<string, any>>(
       const sveltePropsRef = React.useRef<(props: P) => void>(undefined);
       const svelteChildrenRef = React.useRef<HTMLElement>(undefined);
       const reactChildrenRef = React.useRef<HTMLElement>(undefined);
-      const node = React.useContext(SvelteToReactContext);
-      const { key, context } = node ?? { key: "/island/" };
+      const node = React.useContext(SvelteFirstContext);
 
-      // Mount the Svelte component
-      React.useEffect(() => {
-        const target = wrapperRef.current;
-        if (!target) {
-          return undefined;
-        }
-        const component = mount(SvelteWrapper, {
+      const nestedContext = React.useContext(ReactFirstContext);
+      const nestedRef = React.useRef(
+        {} as {
+          promise: Promise<void>;
+          contexts?: Map<any, any>;
+          resolve: () => void;
+        },
+      );
+      if (typeof nestedRef.current.promise === "undefined") {
+        nestedRef.current.promise = new Promise((resolve) => {
+          nestedRef.current.resolve = resolve;
+        });
+      }
+      const nodeKey = node?.key ?? "/island/";
+
+      const mountComponent = React.useCallback((target: HTMLElement) => {
+        return mount(SvelteWrapper, {
           target,
           props: {
             SvelteComponent: SvelteComponent as any,
-            nodeKey: key,
-            react$children: children,
+            nodeKey: node?.key ?? "/island/",
+            react$children: node ? children : children ? [] : undefined,
+            setContexts: node
+              ? undefined
+              : (value: Map<any, any>) => {
+                  nestedRef.current.contexts = value;
+                },
             props,
             setSlot: (el: HTMLElement | undefined) => {
               if (el && reactChildrenRef.current) {
@@ -75,12 +90,33 @@ function single<P extends Record<string, any>>(
               svelteChildrenRef.current = el;
             },
           },
-          context,
+          context: node?.context ?? nestedContext?.contexts,
         });
-        sveltePropsRef.current = (globalThis as any).$$reactifySetProps;
+      }, []);
 
+      // Mount the Svelte component
+      React.useEffect(() => {
+        const target = wrapperRef.current;
+        if (!target) {
+          return undefined;
+        }
+        let component: ReturnType<typeof mount>;
+        if (nestedContext) {
+          void nestedContext.promise.then(() => {
+            component = mountComponent(target);
+            nestedRef.current.resolve();
+          });
+        } else {
+          component = mountComponent(target);
+          nestedRef.current.resolve();
+        }
+
+        sveltePropsRef.current = (globalThis as any).$$reactifySetProps;
         return () => {
-          void unmount(component);
+          void (async () => {
+            await nestedContext?.promise;
+            await unmount(component);
+          })();
         };
       }, [wrapperRef]);
 
@@ -113,7 +149,7 @@ function single<P extends Record<string, any>>(
           const len = $$payload.out.length;
           (SvelteWrapper as any)($$payload, {
             SvelteComponent,
-            nodeKey: key,
+            nodeKey,
             props,
             react$children: children,
           });
@@ -129,7 +165,7 @@ function single<P extends Record<string, any>>(
           }
           const result = render(SvelteComponent as any, {
             props,
-            context,
+            context: node?.context,
           });
           if (typeof result.head === "string") {
             html += result.head;
@@ -152,7 +188,7 @@ function single<P extends Record<string, any>>(
           React.createElement("reactify-svelte", {
             key: "reactify",
             ref: wrapperRef,
-            node: key,
+            node: nodeKey,
             style: { display: "contents" },
             suppressHydrationWarning: true,
             dangerouslySetInnerHTML: { __html: html },
@@ -163,7 +199,7 @@ function single<P extends Record<string, any>>(
                   "react-children",
                   {
                     key: "react-children",
-                    node: key,
+                    node: nodeKey,
                     style: { display: "none" },
                   },
                   children,
@@ -188,15 +224,24 @@ function single<P extends Record<string, any>>(
               {
                 key: "react-children",
                 ref: reactChildrenRef,
-                node: key,
+                node: node?.key,
                 style: { display: "none" },
               },
-              children,
+              node
+                ? children
+                : React.createElement(
+                    ReactFirstContext.Provider,
+                    { value: nestedRef.current },
+                    children,
+                  ),
             )
           : undefined,
       );
     },
   };
+  if (name) {
+    (named[name] as React.FC).displayName = name;
+  }
   cache.set(SvelteComponent, named[name]);
   return named[name];
 }

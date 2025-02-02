@@ -35,7 +35,7 @@ export default function hooks<T>(
     });
 
     onDestroy(() => {
-      const index = parent.hooks.findIndex((h) => h === hook);
+      const index = parent.hooks.findIndex((h) => h.key === hook.key);
       if (index !== -1) {
         parent.hooks.splice(index, 1);
       }

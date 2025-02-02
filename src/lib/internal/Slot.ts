@@ -1,12 +1,12 @@
 import * as React from "react";
 import portalTag from "./portalTag";
-import SvelteToReactContext from "./SvelteToReactContext";
+import SvelteFirstContext from "./SvelteFirstContext";
 
 type Props = {
   slot: number;
 };
 const Slot: React.FC<Props> = ({ slot }) => {
-  const node = React.useContext(SvelteToReactContext);
+  const node = React.useContext(SvelteFirstContext);
   const ref = React.useRef<HTMLElement>(undefined);
   const el = node?.slotSources[slot];
   React.useEffect(() => {

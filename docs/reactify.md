@@ -16,14 +16,16 @@ type Props = {
 const Dialog: React.FC<Props> = ({ onClose }) => (
   <div className="dialog">
     <h2>Thanks for subscribing!</h2>
-    <svelte.Button type="primary" onClick={() => onClose()}>
+    <svelte.Button type="primary" onclick={() => onClose()}>
       Close
     </svelte.Button>
   </div>
 );
 ```
 
-React only has props, we we assume that the props starting with "on" followed by a capital letter are event handlers.
+## When React starts the rendering, rendering the children is delayed
+
+This is because we want to extract the context from the Svelte component and provide that to the Svelte child components
 
 ## Svelte components missing CSS?
 

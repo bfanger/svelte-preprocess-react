@@ -4,6 +4,7 @@
    */
   import type React from "react";
   import type { Component } from "svelte";
+  import ExtractContexts from "svelte-preprocess-react/internal/ExtractContexts.svelte";
   import portalTag from "svelte-preprocess-react/internal/portalTag";
 
   type Props = {
@@ -12,9 +13,16 @@
     props: Record<string, any>;
     react$children?: React.ReactNode;
     setSlot?: (slot: HTMLElement | undefined) => void;
+    setContexts?: (value: Map<any, any>) => void;
   };
-  let { SvelteComponent, nodeKey, props, react$children, setSlot }: Props =
-    $props();
+  let {
+    SvelteComponent,
+    nodeKey,
+    props,
+    react$children,
+    setSlot,
+    setContexts,
+  }: Props = $props();
 
   (globalThis as any).$$reactifySetProps = (update: Record<string, any>) => {
     props = update;
@@ -41,7 +49,9 @@
           node={nodeKey}
           style="display:contents"
           use:slot
-        ></svelte-children>{/if}</SvelteComponent
+        ></svelte-children>{/if}{#if setContexts}<ExtractContexts
+          {setContexts}
+        />{/if}</SvelteComponent
     >
   {/if}</svelte:element
 >

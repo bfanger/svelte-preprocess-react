@@ -68,15 +68,15 @@ React vDOM output:
 
 ```jsx
 <Bridge>
-  <SvelteToReactContext.Provider>
+  <SvelteFirstContext.Provider>
     <p>
       <Bridge>
-        <SvelteToReactContext.Provider>
+        <SvelteFirstContext.Provider>
           <Child /> <- When merging the render trees the <h1>Content</h1> is injected here
-        </SvelteToReactContext.Provider>
+        </SvelteFirstContext.Provider>
       </Bridge>
     </p>
-  </SvelteToReactContext.Provider>
+  </SvelteFirstContext.Provider>
 </Bridge>
 ```
 
