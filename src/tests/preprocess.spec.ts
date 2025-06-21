@@ -139,6 +139,13 @@ describe("svelte-preprocess-react", () => {
     const output = await preprocess(src, preprocessReact(), { filename });
     expect(output.code).toMatchSnapshot();
   });
+
+  it("should detect tailing comma when adding aliases", async () => {
+    const filename = resolveFilename("./fixtures/TrailingComma.svelte");
+    const src = await readFile(filename, "utf8");
+    const output = await preprocess(src, preprocessReact(), { filename });
+    expect(output.code).toMatchSnapshot();
+  });
 });
 
 const base = dirname(fileURLToPath(import.meta.url));

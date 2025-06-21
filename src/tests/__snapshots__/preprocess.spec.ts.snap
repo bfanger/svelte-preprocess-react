@@ -17,6 +17,20 @@ exports[`svelte-preprocess-react > should convert text content to react children
 "
 `;
 
+exports[`svelte-preprocess-react > should detect tailing comma when adding aliases 1`] = `
+"<script lang="ts">import inject$$ReactDOM from "react-dom/client"; import { renderToString as inject$$renderToString } from "react-dom/server"; import { sveltify } from "svelte-preprocess-react"; import { createPortal as inject$$createPortal } from "react-dom";
+  const react = sveltify({
+    section: "section",
+  h1: "h1", p: "p", }, { ReactDOM: inject$$ReactDOM, createPortal: inject$$createPortal, renderToString: inject$$renderToString });
+;</script>
+
+<react.section>
+  <react.h1 react$children="Title" />
+  <react.p react$children="Description" />
+</react.section>
+"
+`;
+
 exports[`svelte-preprocess-react > should import 'react-dom/server' when ssr is enabled 1`] = `
 "<script lang="ts">import inject$$ReactDOM from "react-dom/client"; import { renderToString as inject$$renderToString } from "react-dom/server"; import { sveltify } from "svelte-preprocess-react"; import { createPortal as inject$$createPortal } from "react-dom";
   import Clicker from "./Clicker";
@@ -80,7 +94,7 @@ exports[`svelte-preprocess-react > should process <react.Component.Item> tags 1`
 "<script lang="ts">import inject$$ReactDOM from "react-dom/client"; import { renderToString as inject$$renderToString } from "react-dom/server"; import { sveltify } from "svelte-preprocess-react"; import { createPortal as inject$$createPortal } from "react-dom";
   import List from "./List";
 
-  const react = sveltify({ List , inject$$List$Item: List.Item , inject$$List$Item$Icon: List.Item.Icon }, { ReactDOM: inject$$ReactDOM, createPortal: inject$$createPortal, renderToString: inject$$renderToString });
+  const react = sveltify({ List , inject$$List$Item: List.Item, inject$$List$Item$Icon: List.Item.Icon, }, { ReactDOM: inject$$ReactDOM, createPortal: inject$$createPortal, renderToString: inject$$renderToString });
 ;</script>
 
 <react.List>

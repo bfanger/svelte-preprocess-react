@@ -150,12 +150,28 @@ function transform(content, options) {
               }
             }
           }
+
           if ("end" in componentsArg && typeof componentsArg.end === "number") {
+            let tailingComma = false;
+            const lastProp = componentsArg.properties.at(-1);
+            if (
+              lastProp &&
+              "end" in lastProp &&
+              typeof lastProp.end === "number"
+            ) {
+              tailingComma = s
+                .slice(lastProp.end, componentsArg.end - 1)
+                .includes(",");
+            }
             for (const [alias, { expression }] of aliases) {
               if (!aliased.has(alias)) {
+                if (!tailingComma) {
+                  s.appendRight(componentsArg.end - 1, ", ");
+                  tailingComma = true;
+                }
                 s.appendRight(
                   componentsArg.end - 1,
-                  `, ${alias}: ${expression === expression.toLowerCase() ? JSON.stringify(expression) : expression} `,
+                  `${alias}: ${expression.substring(0, 1) === expression.substring(0, 1).toLowerCase() ? JSON.stringify(expression) : expression}, `,
                 );
               }
             }
