@@ -34,13 +34,13 @@
   let portalTarget = $state<HTMLElement | undefined>();
 
   let childrenSource = $state<HTMLElement | undefined>();
-  let slotSources = $state<HTMLElement[]>([]);
-  let hooks = $state<Array<{ Hook: FunctionComponent; key: number }>>([]);
+  const slotSources = $state<HTMLElement[]>([]);
+  const hooks = $state<{ Hook: FunctionComponent; key: number }[]>([]);
 
   const slots: Snippet[] = [];
 
   for (const [name, snippet] of Object.entries(restProps)) {
-    const match = name.match(/^react\$slot(\d+)$/);
+    const match = /^react\$slot(\d+)$/.exec(name);
     if (match) {
       const i = Number(match[1]);
       slots[i] = snippet as Snippet;
@@ -53,7 +53,7 @@
     svelteInit({
       parent,
       get props() {
-        let reactProps = react$props ? react$props : restProps;
+        let reactProps = react$props ?? restProps;
         if (slots.length) {
           reactProps = Object.fromEntries(
             Object.entries(restProps).filter(

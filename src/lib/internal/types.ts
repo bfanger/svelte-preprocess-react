@@ -93,13 +93,10 @@ export type IntrinsicElementComponents = {
 };
 
 /* Primitive typing of `Component.Item` components */
-export type StaticPropComponents = {
-  [key: string]: Component & {
-    [key: string]: Component & {
-      [key: string]: Component;
-    };
-  };
-};
+export type StaticPropComponents = Record<
+  string,
+  Component & Record<string, Component & Record<string, Component>>
+>;
 
 export type ReactDependencies = {
   ReactDOM:

@@ -108,9 +108,9 @@ function transform(content, options) {
   const aliases = Object.entries(components);
 
   /** @type {Set<'sveltify' | 'hooks'>} */
-  let imported = new Set();
+  const imported = new Set();
   /** @type {Set<'sveltify' | 'hooks'>} */
-  let used = new Set();
+  const used = new Set();
   let defined = false;
   /** @type {false|Set<string>} */
   let aliased = false;
@@ -204,7 +204,7 @@ function transform(content, options) {
   if (used.size === 0 && aliases.length === 0) {
     return { code: content };
   }
-  let declarators = [];
+  const declarators = [];
   if (
     !imported.has("sveltify") &&
     (used.has("sveltify") || aliases.length > 0)
@@ -218,8 +218,8 @@ function transform(content, options) {
     imports.push(`import { ${declarators.join(", ")} } from "${packageName}";`);
   }
 
-  const script = ast.instance || ast.module;
-  let wrappers = [];
+  const script = ast.instance ?? ast.module;
+  const wrappers = [];
   if (!defined && aliases.length > 0) {
     wrappers.push(
       `const react = sveltify({ ${Object.entries(components)
@@ -228,7 +228,7 @@ function transform(content, options) {
             return `${alias}: ${expression}`;
           }
           if (expression.toLowerCase() === expression) {
-            return `${expression.match(/^[a-z]+$/) ? expression : JSON.stringify(expression)}: ${JSON.stringify(expression)}`;
+            return `${/^[a-z]+$/.exec(expression) ? expression : JSON.stringify(expression)}: ${JSON.stringify(expression)}`;
           }
           return expression;
         })
@@ -285,7 +285,7 @@ function replaceReactTags(node, content, filename, components = {}) {
     (node.type === "Element" && node.name.startsWith("react:")) ||
     (node.type === "InlineComponent" && node.name.startsWith("react."))
   ) {
-    let legacy = node.name.startsWith("react:");
+    const legacy = node.name.startsWith("react:");
 
     if (legacy) {
       let location = "";
@@ -305,7 +305,7 @@ function replaceReactTags(node, content, filename, components = {}) {
         ? expression
         : `${prefix}${expression.replace(/\./g, "$")}`;
     if (legacy || expression !== alias) {
-      let tagPrefix = legacy ? "react:" : "react.";
+      const tagPrefix = legacy ? "react:" : "react.";
       // Replace open tag with alias
       content.overwrite(
         node.start + 1,
@@ -336,9 +336,9 @@ function replaceReactTags(node, content, filename, components = {}) {
       components[alias] = { dispatcher: false, expression };
     }
     /** @type {string[]|false}*/
-    let spread =
+    const spread =
       node.attributes.find(
-        (/** @type {any}*/ node) => node.type === "Spread",
+        (/** @type {any}*/ attribute) => attribute.type === "Spread",
       ) === undefined
         ? false
         : [];
@@ -388,7 +388,7 @@ function replaceReactTags(node, content, filename, components = {}) {
             `...${content.slice(attr.expression.start, attr.expression.end)}`,
           );
         } else if (attr.name !== "children") {
-          let prop =
+          const prop =
             attr.name.indexOf("-") === -1
               ? attr.name
               : JSON.stringify(attr.name);
@@ -456,8 +456,8 @@ function replaceReactTags(node, content, filename, components = {}) {
                 child.data.replace(/"/g, `{'"'}`).replace(/\n/g, `{'\\n'}`),
               );
             } else if (child.type === "MustacheTag") {
-              const expression = content.original.slice(child.start, child.end);
-              escaped.push(expression);
+              const text = content.original.slice(child.start, child.end);
+              escaped.push(text);
             } else {
               throw new Error(`Unexpected node type:${child.type}`);
             }

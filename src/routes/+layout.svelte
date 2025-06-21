@@ -3,7 +3,7 @@
 
   const { children } = $props();
   onMount(() => {
-    document.body.dataset["ssr"] = "spa";
+    document.body.dataset.ssr = "spa";
   });
 </script>
 

@@ -43,9 +43,8 @@ function single<P extends Record<string, any>>(
   if (hit) {
     return hit;
   }
-  if (!name) {
-    name = SvelteComponent.name;
-  }
+  name ??= SvelteComponent.name;
+
   const named = {
     [name](options: any) {
       const { children, ...props } = options;

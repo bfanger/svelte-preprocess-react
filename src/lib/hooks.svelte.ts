@@ -21,7 +21,7 @@ export default function hooks<T>(
     return null;
   }
 
-  if (!dependencies || !dependencies.ReactDOM || !dependencies.flushSync) {
+  if (!dependencies?.ReactDOM || !dependencies.flushSync) {
     throw new Error(
       "{ ReactDOM, flushSync } are not injected, check svelte.config.js for: `preprocess: [preprocessReact()],`",
     );
@@ -66,7 +66,7 @@ function standalone(Hook: React.FC, dependencies: Dependencies) {
       throw new Error("renderToString parameter is required for SSR");
     }
     renderToString(React.createElement(Hook));
-    return () => {};
+    return () => undefined;
   }
   const el = document.createElement("react-hooks");
   let root: Root | undefined;

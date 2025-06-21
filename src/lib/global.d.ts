@@ -8,11 +8,10 @@ import type {
 
 declare global {
   function sveltify<
-    T extends {
-      [key: string]:
-        | keyof JSX.IntrinsicElements
-        | React.JSXElementConstructor<any>;
-    },
+    T extends Record<
+      string,
+      keyof JSX.IntrinsicElements | React.JSXElementConstructor<any>
+    >,
   >(
     reactComponents: T,
   ): {
@@ -21,7 +20,6 @@ declare global {
 
   function hooks<T>(callback: () => T): (() => T) & Readable<T>;
 
-  const react: IntrinsicElementComponents & {
-    [component: string]: Component & StaticPropComponents;
-  };
+  const react: IntrinsicElementComponents &
+    Record<string, Component & StaticPropComponents>;
 }

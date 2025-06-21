@@ -10,7 +10,7 @@ export async function load({ params }) {
 async function getModule(name: string) {
   const modules = import.meta.glob("../../../tests/fixtures/*.svelte");
   const loader = Object.entries(modules).find(
-    ([path]) => path.match(/([^/]+)\.svelte$/)?.[1] === name,
+    ([path]) => /([^/]+)\.svelte$/.exec(path)?.[1] === name,
   );
   if (!loader) {
     throw new Error(`Fixture not found: ${name}`);

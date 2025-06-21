@@ -7,7 +7,7 @@ import type {
   SvelteEventHandlers,
 } from "../lib/internal/types";
 
-const fn: any = () => {};
+const fn: any = () => undefined;
 
 describe("types", () => {
   it("bogus test", () => {
@@ -17,7 +17,7 @@ describe("types", () => {
     type ReactProps = { label: string; onClick(): void };
 
     const testEventProps = fn as (_: EventProps<ReactProps>) => void;
-    testEventProps({ onClick() {} });
+    testEventProps({ onClick: () => undefined });
 
     const testPropsOmitEventProps = fn as (
       _: OmitEventProps<ReactProps>,

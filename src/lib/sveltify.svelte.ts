@@ -21,11 +21,10 @@ export default sveltify;
 type Dependencies = Omit<ReactDependencies, "flushSync">;
 
 function sveltify<
-  T extends {
-    [key: string]:
-      | keyof React.JSX.IntrinsicElements
-      | React.JSXElementConstructor<any>;
-  },
+  T extends Record<
+    string,
+    keyof React.JSX.IntrinsicElements | React.JSXElementConstructor<any>
+  >,
 >(
   components: T,
   dependencies?: Dependencies,
@@ -59,11 +58,7 @@ type CacheEntry = Dependencies & { Sveltified: unknown };
 const cache = new WeakMap<any, CacheEntry>();
 const intrinsicElementCache: Record<string, CacheEntry> = {};
 
-function multiple<
-  T extends {
-    [key: string]: React.FC | React.ComponentClass;
-  },
->(
+function multiple<T extends Record<string, React.FC | React.ComponentClass>>(
   reactComponents: T,
   dependencies: Dependencies,
 ): {
@@ -196,7 +191,7 @@ function single<T extends React.FC | React.ComponentClass>(
       }
       let parent = init.parent;
       if (!parent) {
-        parent = sharedRoot as TreeNode;
+        parent = sharedRoot!;
         standalone = true;
       }
       parent.autoKey += 1;

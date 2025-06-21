@@ -2,7 +2,7 @@
   function getFiles() {
     const modules = import.meta.glob("../../tests/fixtures/*.svelte");
     return Object.keys(modules).map(
-      (path) => path.match(/([^/]+)\.svelte$/)?.[1],
+      (path) => /([^/]+)\.svelte$/.exec(path)?.[1],
     );
   }
 </script>
