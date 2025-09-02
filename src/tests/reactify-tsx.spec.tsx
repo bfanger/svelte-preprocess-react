@@ -9,7 +9,7 @@ describe("reactify-tsx", () => {
 
   it("renders the Svelte component output into React", () => {
     expect(renderToString(<svelte.Dog name="Fido" />)).toMatchInlineSnapshot(
-      `"<reactify-svelte style="display:contents"><!--[--><svelte-dog class="svelte-1n9pbz6">Fido</svelte-dog><!--]--></reactify-svelte>"`,
+      `"<reactify-svelte style="display:contents"><!--[--><svelte-dog class="svelte-1oslsbm">Fido</svelte-dog><!--]--></reactify-svelte>"`,
     );
   });
 });

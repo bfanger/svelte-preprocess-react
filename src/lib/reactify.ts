@@ -145,6 +145,11 @@ function single<P extends Record<string, any>>(
       if (server) {
         let html = "";
         if ($$payload) {
+          if (typeof $$payload.out === "string") {
+            throw new Error(
+              "Invalid $$payload, check if the svelte version is 5.36.8 or higher",
+            );
+          }
           const len = $$payload.out.length;
           (SvelteWrapper as any)($$payload, {
             SvelteComponent,
@@ -152,7 +157,7 @@ function single<P extends Record<string, any>>(
             props,
             react$children: children,
           });
-          html = $$payload.out.slice(len);
+          html = $$payload.out.slice(len).join("");
           $$payload.out = $$payload.out.slice(0, len);
         } else {
           if (children && !props.children) {

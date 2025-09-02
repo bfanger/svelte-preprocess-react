@@ -22,7 +22,7 @@ describe("reactify-ts", () => {
       React.createElement(svelte.Dog, { name: "Fido" }),
     );
     expect(html).toMatchInlineSnapshot(
-      `"<reactify-svelte style="display:contents"><!--[--><svelte-dog class="svelte-1n9pbz6">Fido</svelte-dog><!--]--></reactify-svelte>"`,
+      `"<reactify-svelte style="display:contents"><!--[--><svelte-dog class="svelte-1oslsbm">Fido</svelte-dog><!--]--></reactify-svelte>"`,
     );
   });
 

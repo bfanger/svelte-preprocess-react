@@ -243,10 +243,15 @@ function single<T extends React.FC | React.ComponentClass>(
  * (Mutates target and source objects)
  */
 function applyPortals(
-  $$payload: { out: string },
+  $$payload: { out: string[] },
   node: TreeNode,
   source: { html: string },
 ) {
+  if (typeof $$payload.out === "string") {
+    throw new Error(
+      "Invalid $$payload, check if the svelte version is 5.36.8 or higher",
+    );
+  }
   node.nodes.forEach((subnode) => applyPortals($$payload, subnode, source));
   if (node === sharedRoot) {
     return;
@@ -255,14 +260,14 @@ function applyPortals(
 }
 
 function applyPortal(
-  $$payload: { out: string },
+  $$payload: { out: string[] },
   node: TreeNode,
   source: { html: string },
 ) {
   if (node.svelteChildren !== undefined) {
     const child = extract(
       portalTag("svelte", "children", "source", node.key),
-      $$payload.out,
+      $$payload.out.join(""),
     );
     try {
       source.html = inject(
@@ -281,11 +286,12 @@ function applyPortal(
     );
 
     source.html = portal.outerRemoved;
-    $$payload.out = inject(
+    const out = inject(
       portalTag("svelte", "portal", "target", node.key),
       portal.innerHtml,
-      $$payload.out,
+      $$payload.out.join(""),
     );
+    $$payload.out = [out];
   } catch (err) {
     if (!node.parent) {
       throw err;

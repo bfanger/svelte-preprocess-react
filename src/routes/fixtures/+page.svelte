@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { resolve } from "$app/paths";
   function getFiles() {
     const modules = import.meta.glob("../../tests/fixtures/*.svelte");
     return Object.keys(modules).map(
@@ -9,6 +10,9 @@
 
 <ul>
   {#each getFiles() as file}
-    <li><a href="/fixtures/{file}">{file}</a></li>
+    {#if file}<li>
+        <a href={resolve("/fixtures/[fixture]", { fixture: file })}>{file}</a>
+      </li>
+    {/if}
   {/each}
 </ul>

@@ -10,7 +10,7 @@
     "type": "git",
     "url": "https://github.com/bfanger/svelte-preprocess-react.git"
   },
-  "version": "2.1.2",
+  "version": "2.1.4",
   "license": "MIT",
   "type": "module",
   "scripts": {
@@ -69,8 +69,7 @@
     "postcss": "^8.5.6",
     "prettier": "^3.6.2",
     "prettier-plugin-svelte": "^3.4.0",
-    "react": "19.1.1",
-    "react-dom": "19.1.1",
+    "react": "^19.1.1",
     "react-youtube": "^10.1.0",
     "svelte-check": "^4.3.1",
     "svelte-youtube-lite": "~1.2.1",
@@ -89,7 +88,7 @@
   "peerDependencies": {
     "react": ">=16.8.0",
     "react-dom": ">=16.8.0",
-    "svelte": ">=5.0.0 <=5.36.7"
+    "svelte": ">=5.36.8"
   },
   "svelte": "./dist/index.js",
   "files": [
