@@ -243,7 +243,7 @@ function single<T extends React.FC | React.ComponentClass>(
  * (Mutates target and source objects)
  */
 function applyPortals(
-  $$payload: { out: string },
+  $$payload: { out: string[] },
   node: TreeNode,
   source: { html: string },
 ) {
@@ -255,7 +255,7 @@ function applyPortals(
 }
 
 function applyPortal(
-  $$payload: { out: string },
+  $$payload: { out: string[] },
   node: TreeNode,
   source: { html: string },
 ) {
@@ -281,11 +281,13 @@ function applyPortal(
     );
 
     source.html = portal.outerRemoved;
-    $$payload.out = inject(
-      portalTag("svelte", "portal", "target", node.key),
-      portal.innerHtml,
-      $$payload.out,
-    );
+    $$payload.out = [
+      inject(
+        portalTag("svelte", "portal", "target", node.key),
+        portal.innerHtml,
+        $$payload.out,
+      )
+    ];
   } catch (err) {
     if (!node.parent) {
       throw err;
@@ -294,21 +296,22 @@ function applyPortal(
   }
 }
 
-function extract(tag: string, html: string) {
+function extract(tag: string, html: string | string[]) {
+  const _html = Array.isArray(html) ? html.join("") : html;
   const open = `<${tag}`;
   const close = `</${tag}>`;
-  const position = html.indexOf(open);
+  const position = _html.indexOf(open);
   if (position === -1) {
     throw new Error(`Couldn't find '${open}'`);
   }
-  const start = html.indexOf(">", position + open.length) + 1;
-  const end = html.indexOf(close, start);
+  const start = _html.indexOf(">", position + open.length) + 1;
+  const end = _html.indexOf(close, start);
   if (end === -1) {
     throw new Error(`Couldn't find '${close}'`);
   }
-  const innerHtml = html.substring(start, end);
+  const innerHtml = _html.substring(start, end);
   const outerRemoved =
-    html.substring(0, start) + html.substring(end + close.length);
+    _html.substring(0, start) + _html.substring(end + close.length);
 
   return {
     innerHtml,
@@ -316,19 +319,20 @@ function extract(tag: string, html: string) {
   };
 }
 
-function inject(tag: string, content: string, target: string) {
+function inject(tag: string, content: string, target: string | string[]) {
+  const _target = Array.isArray(target) ? target.join("") : target;
   const open = `<${tag}`;
   const close = `</${tag}>`;
-  const position = target.indexOf(open);
+  const position = _target.indexOf(open);
   if (position === -1) {
     throw new Error(`Couldn't find ${open}`);
   }
-  const start = target.indexOf(">", position + open.length) + 1;
+  const start = _target.indexOf(">", position + open.length) + 1;
 
-  const end = target.indexOf(close, start);
+  const end = _target.indexOf(close, start);
   if (position === -1) {
     throw new Error(`Couldn't find ${close}`);
   }
 
-  return target.substring(0, start) + content + target.substring(end);
+  return _target.substring(0, start) + content + _target.substring(end);
 }
