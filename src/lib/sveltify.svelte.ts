@@ -243,7 +243,7 @@ function single<T extends React.FC | React.ComponentClass>(
  * (Mutates target and source objects)
  */
 function applyPortals(
-  $$payload: { out: string[] },
+  $$payload: { out: string | string[] },
   node: TreeNode,
   source: { html: string },
 ) {
@@ -255,7 +255,7 @@ function applyPortals(
 }
 
 function applyPortal(
-  $$payload: { out: string[] },
+  $$payload: { out: string | string[] },
   node: TreeNode,
   source: { html: string },
 ) {
@@ -281,13 +281,12 @@ function applyPortal(
     );
 
     source.html = portal.outerRemoved;
-    $$payload.out = [
-      inject(
-        portalTag("svelte", "portal", "target", node.key),
-        portal.innerHtml,
-        $$payload.out,
-      )
-    ];
+    const out = inject(
+      portalTag("svelte", "portal", "target", node.key),
+      portal.innerHtml,
+      $$payload.out,
+    );
+    $$payload.out = Array.isArray($$payload.out) ? [out] : out;
   } catch (err) {
     if (!node.parent) {
       throw err;
