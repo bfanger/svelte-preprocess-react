@@ -10,7 +10,7 @@
     "type": "git",
     "url": "https://github.com/bfanger/svelte-preprocess-react.git"
   },
-  "version": "2.1.1",
+  "version": "2.1.2",
   "license": "MIT",
   "type": "module",
   "scripts": {
@@ -44,53 +44,52 @@
     ]
   },
   "devDependencies": {
-    "@eslint/js": "^9.29.0",
-    "@playwright/test": "^1.53.1",
-    "@sveltejs/adapter-static": "^3.0.8",
-    "@sveltejs/kit": "^2.22.0",
-    "@sveltejs/package": "^2.3.11",
-    "@sveltejs/vite-plugin-svelte": "5.1.0",
+    "@eslint/js": "^9.35.0",
+    "@playwright/test": "^1.55.0",
+    "@sveltejs/adapter-static": "^3.0.9",
+    "@sveltejs/kit": "^2.39.1",
+    "@sveltejs/package": "^2.5.1",
+    "@sveltejs/vite-plugin-svelte": "^6.2.0",
     "@testing-library/react": "^16.3.0",
     "@testing-library/svelte": "^5.2.8",
-    "@types/node": "^24.0.3",
-    "@types/react": "^19.1.8",
-    "@types/react-dom": "^19.1.6",
+    "@types/node": "^24.4.0",
+    "@types/react": "^19.1.13",
+    "@types/react-dom": "^19.1.9",
     "autoprefixer": "^10.4.21",
-    "concurrently": "^9.1.2",
-    "eslint": "9.29.0",
-    "eslint-config-prettier": "^10.1.5",
+    "concurrently": "^9.2.1",
+    "eslint": "9.35.0",
+    "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-only-warn": "^1.1.0",
     "eslint-plugin-react": "^7.37.5",
-    "eslint-plugin-svelte": "^3.9.3",
-    "globals": "^16.2.0",
+    "eslint-plugin-svelte": "^3.12.3",
+    "globals": "^16.4.0",
     "happy-dom": "^18.0.1",
     "husky": "^9.1.7",
-    "lint-staged": "^16.1.2",
+    "lint-staged": "^16.1.6",
     "postcss": "^8.5.6",
-    "prettier": "^3.5.3",
+    "prettier": "^3.6.2",
     "prettier-plugin-svelte": "^3.4.0",
-    "react": "19.1.0",
-    "react-dom": "19.1.0",
+    "react": "19.1.1",
+    "react-dom": "19.1.1",
     "react-youtube": "^10.1.0",
-    "svelte": "5.34.7",
-    "svelte-check": "^4.2.2",
+    "svelte-check": "^4.3.1",
     "svelte-youtube-lite": "~1.2.1",
-    "svelte2tsx": "^0.7.40",
-    "tsd": "^0.32.0",
-    "typescript": "^5.8.3",
-    "typescript-eslint": "^8.34.1",
-    "vite": "^6.3.5",
+    "svelte2tsx": "^0.7.43",
+    "tsd": "^0.33.0",
+    "typescript": "^5.9.2",
+    "typescript-eslint": "^8.43.0",
+    "vite": "^7.1.5",
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^3.2.4"
   },
   "dependencies": {
     "estree-walker": "^3.0.3",
-    "magic-string": "^0.30.17"
+    "magic-string": "^0.30.19"
   },
   "peerDependencies": {
     "react": ">=16.8.0",
     "react-dom": ">=16.8.0",
-    "svelte": ">=5.0.0"
+    "svelte": ">=5.0.0 <=5.36.7"
   },
   "svelte": "./dist/index.js",
   "files": [
@@ -125,5 +124,10 @@
         "./dist/react-router/index.d.ts"
       ]
     }
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
   }
 }
