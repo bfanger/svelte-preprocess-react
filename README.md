@@ -1,3 +1,35 @@
+
+<div align="right">
+  <details>
+    <summary >🌐 Language</summary>
+    <div>
+      <div align="center">
+        <a href="https://openaitx.github.io/view.html?user=bfanger&project=svelte-preprocess-react&lang=en">English</a>
+        | <a href="https://openaitx.github.io/view.html?user=bfanger&project=svelte-preprocess-react&lang=zh-CN">简体中文</a>
+        | <a href="https://openaitx.github.io/view.html?user=bfanger&project=svelte-preprocess-react&lang=zh-TW">繁體中文</a>
+        | <a href="https://openaitx.github.io/view.html?user=bfanger&project=svelte-preprocess-react&lang=ja">日本語</a>
+        | <a href="https://openaitx.github.io/view.html?user=bfanger&project=svelte-preprocess-react&lang=ko">한국어</a>
+        | <a href="https://openaitx.github.io/view.html?user=bfanger&project=svelte-preprocess-react&lang=hi">हिन्दी</a>
+        | <a href="https://openaitx.github.io/view.html?user=bfanger&project=svelte-preprocess-react&lang=th">ไทย</a>
+        | <a href="https://openaitx.github.io/view.html?user=bfanger&project=svelte-preprocess-react&lang=fr">Français</a>
+        | <a href="https://openaitx.github.io/view.html?user=bfanger&project=svelte-preprocess-react&lang=de">Deutsch</a>
+        | <a href="https://openaitx.github.io/view.html?user=bfanger&project=svelte-preprocess-react&lang=es">Español</a>
+        | <a href="https://openaitx.github.io/view.html?user=bfanger&project=svelte-preprocess-react&lang=it">Italiano</a>
+        | <a href="https://openaitx.github.io/view.html?user=bfanger&project=svelte-preprocess-react&lang=ru">Русский</a>
+        | <a href="https://openaitx.github.io/view.html?user=bfanger&project=svelte-preprocess-react&lang=pt">Português</a>
+        | <a href="https://openaitx.github.io/view.html?user=bfanger&project=svelte-preprocess-react&lang=nl">Nederlands</a>
+        | <a href="https://openaitx.github.io/view.html?user=bfanger&project=svelte-preprocess-react&lang=pl">Polski</a>
+        | <a href="https://openaitx.github.io/view.html?user=bfanger&project=svelte-preprocess-react&lang=ar">العربية</a>
+        | <a href="https://openaitx.github.io/view.html?user=bfanger&project=svelte-preprocess-react&lang=fa">فارسی</a>
+        | <a href="https://openaitx.github.io/view.html?user=bfanger&project=svelte-preprocess-react&lang=tr">Türkçe</a>
+        | <a href="https://openaitx.github.io/view.html?user=bfanger&project=svelte-preprocess-react&lang=vi">Tiếng Việt</a>
+        | <a href="https://openaitx.github.io/view.html?user=bfanger&project=svelte-preprocess-react&lang=id">Bahasa Indonesia</a>
+        | <a href="https://openaitx.github.io/view.html?user=bfanger&project=svelte-preprocess-react&lang=as">অসমীয়া</
+      </div>
+    </div>
+  </details>
+</div>
+
 [![svelte-preprocess-react](./static/svelte-preprocess-react.svg)](https://www.npmjs.com/package/svelte-preprocess-react)
 
 # Svelte Preprocess React
