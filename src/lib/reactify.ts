@@ -150,6 +150,12 @@ function single<P extends Record<string, any>>(
               "Invalid $$payload, check if the svelte version is 5.36.8 or higher",
             );
           }
+          if (Array.isArray($$payload.out) === false) {
+            console.error(
+              "svelte-preprocess-react's SSR is not compatible with Svelte 5.39.0 or higher",
+            );
+            return;
+          }
           const len = $$payload.out.length;
           (SvelteWrapper as any)($$payload, {
             SvelteComponent,

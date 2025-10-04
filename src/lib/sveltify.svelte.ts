@@ -264,6 +264,9 @@ function applyPortal(
   node: TreeNode,
   source: { html: string },
 ) {
+  if (!Array.isArray($$payload.out)) {
+    return;
+  }
   if (node.svelteChildren !== undefined) {
     const child = extract(
       portalTag("svelte", "children", "source", node.key),
