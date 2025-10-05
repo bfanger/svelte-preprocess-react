@@ -1,11 +1,12 @@
-import { type Component, type SvelteComponent } from "svelte";
-import WrapReact from "./WrapReact.svelte";
+import type { Component } from "svelte";
+import Sveltified from "./Sveltified.svelte";
 import type {
-  ChildrenPropsAsSnippet,
   IntrinsicElementComponents,
   StaticPropComponents,
-  Sveltified,
+  Sveltified as SveltifiedComponent,
 } from "svelte-preprocess-react/internal/types";
+
+const cache = new WeakMap<any, unknown>();
 
 function sveltifyAsync<
   T extends Record<
@@ -15,17 +16,24 @@ function sveltifyAsync<
 >(
   components: T,
 ): {
-  [K in keyof T]: Sveltified<T[K]> & StaticPropComponents;
+  [K in keyof T]: SveltifiedComponent<T[K]> & StaticPropComponents;
 } & IntrinsicElementComponents;
 /**
  * Convert a React components into Svelte components.
  */
 function sveltifyAsync<
   T extends React.FC | React.ComponentClass | React.JSXElementConstructor<any>,
->(components: T): Sveltified<T>;
+>(components: T): SveltifiedComponent<T>;
 function sveltifyAsync(components: any): any {
   if (typeof components === "object") {
-    return multiple(components);
+    return Object.fromEntries(
+      Object.entries(components).map(([key, reactComponent]) => {
+        if (reactComponent === undefined) {
+          return [key, undefined];
+        }
+        return [key, single(reactComponent)];
+      }),
+    ) as any;
   } else {
     return single(components);
   }
@@ -33,31 +41,19 @@ function sveltifyAsync(components: any): any {
 
 export default sveltifyAsync;
 
-function multiple<T extends Record<string, React.FC | React.ComponentClass>>(
-  reactComponents: T,
-): {
-  [K in keyof T]: Component<ChildrenPropsAsSnippet<React.ComponentProps<T[K]>>>;
-} {
-  return Object.fromEntries(
-    Object.entries(reactComponents).map(([key, reactComponent]) => {
-      if (reactComponent === undefined) {
-        return [key, undefined];
-      }
-      return [key, single(reactComponent)];
-    }),
-  ) as any;
-}
-
-function single(component: any) {
-  function ConvertedReact(
-    this: any,
-    $$renderer: any,
-    $$props: any,
-    ...args: any[]
-  ) {
-    $$props.react$component = component;
-    // @ts-ignore
-    return WrapReact.call(this, $$renderer, $$props, ...args);
+function single(ReactComponent: any) {
+  const hit = cache.get(ReactComponent);
+  if (hit) {
+    return hit;
   }
-  return ConvertedReact as any as SvelteComponent;
+  const name = ReactComponent.displayName ?? ReactComponent.name ?? "anonymous";
+  const named = {
+    [name](this: any, $$renderer: any, $$props: any, ...args: any[]) {
+      $$props.react$component = ReactComponent;
+      // @ts-ignore
+      return Sveltified.call(this, $$renderer, $$props, ...args);
+    },
+  };
+  cache.set(ReactComponent, named[name]);
+  return named[name] as any as Component;
 }

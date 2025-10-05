@@ -6,3 +6,5 @@
 </script>
 
 <ReactAlert>Content</ReactAlert>
+123
+<ReactAlert>Multiple element</ReactAlert>

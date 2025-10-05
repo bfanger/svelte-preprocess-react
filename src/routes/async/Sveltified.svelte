@@ -1,31 +1,35 @@
 <script lang="ts">
+  /**
+   * Render a React component as a Svelte component.
+   */
   import { createElement, useLayoutEffect, useRef, type FC } from "react";
-  import { getAllContexts } from "svelte";
+  import { getAllContexts, onMount } from "svelte";
   import { renderToReadableStream } from "react-dom/server";
   import { render } from "svelte/server";
   import { browser } from "$app/environment";
   import { createRoot, type Root } from "react-dom/client";
   import Snippet from "./Snippet.svelte";
+  import { createPortal } from "react-dom";
 
   const { react$component, react$children, children, ...props } = $props();
   const context = getAllContexts();
-
-  async function ServerChild() {
-    const { body } = await render(Snippet, {
-      props: { snippet: children },
-      context,
-    });
-    return createElement("react-ssr-child", {
-      dangerouslySetInnerHTML: { __html: body },
-    });
-  }
 
   async function ssr() {
     const stream = await renderToReadableStream(
       createElement(
         react$component,
         props,
-        children ? createElement(ServerChild) : react$children,
+        children
+          ? createElement(async function ReactServerComponent() {
+              const { body } = await render(Snippet, {
+                props: { snippet: children },
+                context,
+              });
+              return createElement("sveltify-svelte-render", {
+                dangerouslySetInnerHTML: { __html: body },
+              });
+            })
+          : react$children,
       ),
     );
     let html = "";
@@ -38,15 +42,28 @@
     );
     return await Promise.resolve(html);
   }
-  let Child = $state<FC>();
+
   let reactRoot = $state<Root>();
+  let target = $state<HTMLElement>();
+  let Child = $state<FC>();
+
+  onMount(() => {
+    reactRoot = createRoot(document.createElement("div"));
+    return () => reactRoot?.unmount();
+  });
 
   $effect(() => {
-    reactRoot?.render(
-      createElement(
-        react$component,
-        props,
-        Child ? createElement(Child) : react$children,
+    if (!target || !reactRoot) {
+      return;
+    }
+    reactRoot.render(
+      createPortal(
+        createElement(
+          react$component,
+          props,
+          Child ? createElement(Child) : react$children,
+        ),
+        target,
       ),
     );
   });
@@ -61,23 +78,14 @@
         Child = () => {
           const ref = useRef<HTMLElement>(null);
           useLayoutEffect(() => {
-            if (!ref.current) {
-              throw new Error("No ref");
-            }
-            ref.current.appendChild(el);
+            ref.current!.appendChild(el);
           }, []);
-          return createElement("react-children", { ref });
+          return createElement("sveltify-react-child", { ref });
         };
       }}
     >
       {@render children()}
     </svelte-children>
   {/if}
-  <react-wrapper
-    {@attach (el: HTMLElement) => {
-      const root = createRoot(el);
-      reactRoot = root;
-      return () => root.unmount();
-    }}
-  ></react-wrapper>
+  <sveltify-react-portal bind:this={target}></sveltify-react-portal>
 {/if}

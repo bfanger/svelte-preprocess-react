@@ -11,5 +11,7 @@
 <react.Search
   {query}
   children={(results) =>
-    results.map((result, i) => createElement("div", { key: i }, result))}
+    results.map((result, i) =>
+      createElement("react-children-container", { key: i }, result),
+    )}
 />
