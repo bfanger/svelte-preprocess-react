@@ -1,5 +1,5 @@
 <script lang="ts" module>
-  let hydrated = false;
+  let hydrated = $state(false);
 </script>
 
 <script lang="ts">
@@ -7,21 +7,16 @@
   import SveltifiedCSR from "./SveltifiedCSR.svelte";
 
   const props = $props();
-  const SveltifiedSSR =
-    typeof document === "undefined"
-      ? (await import("./SveltifiedSSR.svelte")).default
-      : undefined;
 
-  let Sveltified: Component<any> | undefined = $state(
-    typeof document === "undefined"
-      ? SveltifiedSSR
-      : hydrated
+  let Sveltified: Component<any> | undefined = $derived(
+    typeof document === "object"
+      ? hydrated
         ? SveltifiedCSR
-        : undefined,
+        : undefined
+      : (await import("./SveltifiedSSR.svelte")).default,
   );
 
   onMount(() => {
-    Sveltified = SveltifiedCSR;
     hydrated = true;
   });
 </script>

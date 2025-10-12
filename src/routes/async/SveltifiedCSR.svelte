@@ -2,29 +2,74 @@
   /**
    * Render a React component as a Svelte component.
    */
-  import { createElement, useLayoutEffect, useRef, type FC } from "react";
+  import {
+    createElement,
+    useLayoutEffect,
+    useRef,
+    type FC,
+    type ReactNode,
+  } from "react";
   import { onDestroy } from "svelte";
   import { createRoot } from "react-dom/client";
-  import { createPortal } from "react-dom";
+  import { createPortal, flushSync } from "react-dom";
+  import {
+    getSvelteContext,
+    setSvelteContext,
+    type ReactApp,
+  } from "./SvelteContext";
+  import { SvelteMap } from "svelte/reactivity";
 
   const { react$component, react$children, children, ...props } = $props();
 
   let target = $state<HTMLElement>();
   let Child = $state<FC>();
+  const ctx = getSvelteContext();
 
-  const rootEl = document.createElement("sveltify-react-root");
-  const reactRoot = createRoot(rootEl);
-  document.body.appendChild(rootEl);
+  let autoKey = 0;
+
+  const app = ctx ? ctx.createApp() : createRootApp();
+  const nestedApps = new SvelteMap<number, ReactNode>();
+
+  setSvelteContext(() => {
+    const key = autoKey++;
+    const nestedApp: ReactApp = {
+      render(vdom) {
+        nestedApps.set(key, vdom);
+      },
+      unmount() {
+        nestedApps.delete(key);
+      },
+    };
+    return nestedApp;
+  });
+
+  function createRootApp(): ReactApp {
+    const rootEl = document.createElement("sveltify-csr-react-root");
+    const reactRoot = createRoot(rootEl);
+    document.body.appendChild(rootEl);
+
+    return {
+      render(vdom: ReactNode) {
+        reactRoot.render(vdom);
+      },
+      unmount() {
+        flushSync(() => {
+          reactRoot.unmount();
+        });
+        document.body.removeChild(rootEl);
+      },
+    };
+  }
 
   onDestroy(() => {
-    reactRoot.unmount();
+    app.unmount();
   });
 
   $effect(() => {
     if (!target) {
       return;
     }
-    reactRoot.render(
+    app.render(
       createPortal(
         createElement(
           react$component,
@@ -39,13 +84,23 @@
 
 {#if children}
   <svelte-children
+    hidden
     {@attach (el: HTMLElement) => {
       Child = () => {
+        el.hidden = false;
         const ref = useRef<HTMLElement>(null);
         useLayoutEffect(() => {
           ref.current!.appendChild(el);
         }, []);
-        return createElement("sveltify-react-child", { ref });
+        const vdom = [
+          createElement("sveltify-csr-react-child", { key: "child", ref }),
+        ];
+        for (const [key, nestedApp] of nestedApps.entries()) {
+          vdom.push(
+            createElement("sveltify-csr-nested-app", { key }, nestedApp),
+          );
+        }
+        return vdom;
       };
     }}
   >
