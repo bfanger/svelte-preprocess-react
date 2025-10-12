@@ -1,8 +1,16 @@
-import { createElement, Fragment, useLayoutEffect, useRef } from "react";
-import { mount, unmount, type Component } from "svelte";
+import { createElement, Fragment, use, useLayoutEffect, useRef } from "react";
+import {
+  createRawSnippet,
+  mount,
+  unmount,
+  type Component,
+  type Snippet,
+} from "svelte";
 import type { ChildrenPropsAsReactNode } from "svelte-preprocess-react/internal/types.js";
-import Reactified from "./Reactified.svelte";
+import ReactifiedCSR from "./ReactifiedCSR.svelte";
+import ReactifiedSSR from "./ReactifiedSSR.svelte";
 import { render } from "svelte/server";
+import ReactContext from "./ReactContext";
 
 const cache = new WeakMap<Component<any>, React.FunctionComponent<any>>();
 
@@ -39,9 +47,9 @@ function single(SvelteComponent: Component, key?: string): React.FC<any> {
   const named = {
     [name]({ children, ...props }: any) {
       if (typeof document === "undefined") {
-        return ReactifiedServerComponent(SvelteComponent, props, children);
+        return reactifySSR(SvelteComponent, props, children);
       } else {
-        return ReactifiedClientComponent(SvelteComponent, props, children);
+        return reactifyCSR(SvelteComponent, props, children);
       }
     },
   };
@@ -49,15 +57,11 @@ function single(SvelteComponent: Component, key?: string): React.FC<any> {
   return named[name];
 }
 
-function ReactifiedClientComponent(
-  SvelteComponent: Component,
-  props: any,
-  children: any,
-) {
+function reactifyCSR(SvelteComponent: Component, props: any, children: any) {
   const targetRef = useRef<HTMLElement>(null);
   const childrenRef = useRef<HTMLElement>(null);
   useLayoutEffect(() => {
-    const app = mount(Reactified, {
+    const app = mount(ReactifiedCSR, {
       target: targetRef.current!,
       props: {
         SvelteComponent,
@@ -84,14 +88,34 @@ function ReactifiedClientComponent(
   ]);
 }
 
-async function ReactifiedServerComponent(
+async function reactifySSR(
   SvelteComponent: Component,
   props: any,
-  children: any,
+  reactChildren: any,
 ) {
-  const { body } = await render(Reactified, {
-    props: { SvelteComponent, props, react$children: children },
+  const ctx = use(ReactContext);
+  let children: Snippet | undefined = undefined;
+  if (ctx && reactChildren === ctx?.reactChildren) {
+    children = ctx.svelteChildren;
+  } else if (typeof reactChildren === "string") {
+    const escapedHtml = reactChildren
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;");
+
+    children = createRawSnippet(() => ({ render: () => escapedHtml }));
+  } else {
+    console.warn(
+      "svelte-preprocess-react: Converting react children to svelte children in ssr is not implemented",
+    );
+  }
+
+  const { body, head } = await render(ReactifiedSSR, {
+    props: { SvelteComponent, props, reactChildren, children },
   });
+  if (head !== "") {
+    console.warn("svelte-preprocess-react doesn't support head content ");
+  }
   return createElement("reactify-svelte-render", {
     dangerouslySetInnerHTML: { __html: body },
   });

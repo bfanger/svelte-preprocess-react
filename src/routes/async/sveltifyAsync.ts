@@ -1,12 +1,14 @@
 import type { Component } from "svelte";
-import Sveltified from "./Sveltified.svelte";
 import type {
   IntrinsicElementComponents,
   StaticPropComponents,
-  Sveltified as SveltifiedComponent,
+  Sveltified,
 } from "svelte-preprocess-react/internal/types";
+import SveltifiedCSR from "./SveltifiedCSR.svelte";
+import SveltifiedSSR from "./SveltifiedSSR.svelte";
 
 const cache = new WeakMap<any, unknown>();
+const intrinsicElementCache: Record<string, unknown> = {};
 
 function sveltifyAsync<
   T extends Record<
@@ -16,14 +18,18 @@ function sveltifyAsync<
 >(
   components: T,
 ): {
-  [K in keyof T]: SveltifiedComponent<T[K]> & StaticPropComponents;
+  [K in keyof T]: Sveltified<T[K]> & StaticPropComponents;
 } & IntrinsicElementComponents;
 /**
  * Convert a React components into Svelte components.
  */
 function sveltifyAsync<
-  T extends React.FC | React.ComponentClass | React.JSXElementConstructor<any>,
->(components: T): SveltifiedComponent<T>;
+  T extends
+    | React.FC
+    | React.ComponentClass
+    | React.JSXElementConstructor<any>
+    | keyof React.JSX.IntrinsicElements,
+>(components: T): Sveltified<T>;
 function sveltifyAsync(components: any): any {
   if (typeof components === "object") {
     return Object.fromEntries(
@@ -42,7 +48,10 @@ function sveltifyAsync(components: any): any {
 export default sveltifyAsync;
 
 function single(ReactComponent: any) {
-  const hit = cache.get(ReactComponent);
+  const hit =
+    typeof ReactComponent === "string"
+      ? intrinsicElementCache[ReactComponent]
+      : cache.get(ReactComponent);
   if (hit) {
     return hit;
   }
@@ -50,10 +59,19 @@ function single(ReactComponent: any) {
   const named = {
     [name](this: any, $$renderer: any, $$props: any, ...args: any[]) {
       $$props.react$component = ReactComponent;
-      // @ts-ignore
-      return Sveltified.call(this, $$renderer, $$props, ...args);
+      if (typeof document === "undefined") {
+        // @ts-ignore
+        return SveltifiedSSR.call(this, $$renderer, $$props, ...args);
+      } else {
+        // @ts-ignore
+        return SveltifiedCSR.call(this, $$renderer, $$props, ...args);
+      }
     },
   };
-  cache.set(ReactComponent, named[name]);
+  if (typeof ReactComponent === "string") {
+    intrinsicElementCache[ReactComponent] = named[name];
+  } else {
+    cache.set(ReactComponent, named[name]);
+  }
   return named[name] as any as Component;
 }

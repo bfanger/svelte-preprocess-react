@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Component } from "svelte";
+  import { type Component, type Snippet } from "svelte";
 
   /**
    * Render a Svelte component as a Svelte component, but with props & children from React.
@@ -8,14 +8,18 @@
     SvelteComponent: Component;
     props: Record<string, any>;
     react$children?: any;
-    slot?: HTMLElement;
+    slot?: HTMLElement | null;
+    children?: Snippet;
   };
-  const { SvelteComponent, react$children, slot, props }: Props = $props();
+  const { SvelteComponent, react$children, slot, props, children }: Props =
+    $props();
 </script>
 
 {#if react$children !== undefined}
   <SvelteComponent {...props}>
-    {#if slot}
+    {#if children}
+      {@render children()}
+    {:else if slot}
       <target-for-react-portal-children
         {@attach (el: HTMLElement) => {
           el.appendChild(slot);

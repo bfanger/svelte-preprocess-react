@@ -37,13 +37,13 @@ export default function reactify<
 
 function single<P extends Record<string, any>>(
   SvelteComponent: Component<P>,
-  name?: string,
+  displayName?: string,
 ): React.FunctionComponent<any> {
   const hit = cache.get(SvelteComponent);
   if (hit) {
     return hit;
   }
-  name ??= SvelteComponent.name;
+  const name = displayName ?? SvelteComponent.name ?? "ReactifiedComponent";
 
   const named = {
     [name](options: any) {

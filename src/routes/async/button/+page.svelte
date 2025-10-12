@@ -1,5 +1,5 @@
 <script lang="ts">
-  import reactifyAsync from "../reactivyAsync";
+  import reactifyAsync from "../reactifyAsync";
   import sveltifyAsync from "../sveltifyAsync";
   import Button from "../../../demo/components/Button.svelte";
 
