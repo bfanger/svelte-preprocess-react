@@ -5,9 +5,13 @@
 <script lang="ts">
   import { onMount, type Component } from "svelte";
   import SveltifiedCSR from "./SveltifiedCSR.svelte";
-  import SveltifiedSSR from "./SveltifiedSSR.svelte";
 
   const props = $props();
+  const SveltifiedSSR =
+    typeof document === "undefined"
+      ? (await import("./SveltifiedSSR.svelte")).default
+      : undefined;
+
   let Sveltified: Component<any> | undefined = $state(
     typeof document === "undefined"
       ? SveltifiedSSR

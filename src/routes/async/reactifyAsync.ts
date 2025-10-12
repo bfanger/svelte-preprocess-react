@@ -9,7 +9,6 @@ import {
 import type { ChildrenPropsAsReactNode } from "svelte-preprocess-react/internal/types.js";
 import ReactifiedCSR, { type ReactifiedSync } from "./ReactifiedCSR.svelte";
 import ReactifiedSSR from "./ReactifiedSSR.svelte";
-import { render } from "svelte/server";
 import ReactContext from "./ReactContext";
 
 const cache = new WeakMap<Component<any>, React.FunctionComponent<any>>();
@@ -116,8 +115,9 @@ async function reactifySSR(
       "svelte-preprocess-react: Converting react children to svelte children in ssr is not implemented",
     );
   }
+  const svelteServer = await import("svelte/server");
 
-  const { body, head } = await render(ReactifiedSSR, {
+  const { body, head } = await svelteServer.render(ReactifiedSSR, {
     props: { SvelteComponent, props, reactChildren, children },
   });
   if (head !== "") {
