@@ -1,6 +1,5 @@
 import MagicString from "magic-string";
 import { parse, preprocess } from "svelte/compiler";
-import detectReactVersion from "./internal/detectReactVersion.js";
 import { walk } from "estree-walker";
 
 /**
@@ -8,27 +7,17 @@ import { walk } from "estree-walker";
  * @typedef {import("svelte/compiler").Processed} Processed
  */
 
-const defaults = /** @type {const} */ ({
-  react: "auto",
-  ssr: true,
-});
-
 /**
  * Svelte preprocessor to use convert <react:*> tags into Sveltified React components.
  *
  * Imports renderToString from 'react-dom/server' unless the `ssr` option is set to false.
  *
  * @param {{
- *   ssr?: boolean;
- *   react?: number | "auto";
  *   preprocess?: PreprocessorGroup | PreprocessorGroup[];
  * }} options
  * @returns {PreprocessorGroup}
  */
 export default function preprocessReact(options = {}) {
-  let react = options.react ?? defaults.react;
-  const ssr = options.ssr ?? defaults.ssr;
-
   return {
     async markup({ content, filename }) {
       /** @type {Processed | undefined} */
@@ -41,13 +30,8 @@ export default function preprocessReact(options = {}) {
         content = preprocessed.code;
       }
 
-      if (react === "auto") {
-        react = await detectReactVersion();
-      }
       const processed = transform(content, {
         filename,
-        react,
-        ssr,
       });
       if (!preprocessed) {
         return processed;
@@ -69,8 +53,6 @@ const prefix = "inject$$";
  * @param {string} content
  * @param {{
  *  filename?: string;
- *  react: number;
- *  ssr: boolean;
  * }} options
  * @returns
  */
@@ -79,25 +61,8 @@ function transform(content, options) {
 
   const packageName = "svelte-preprocess-react";
   const imports = [];
-  const sveltifyDeps = [`ReactDOM: ${prefix}ReactDOM`];
-  const hooksDeps = [`ReactDOM: ${prefix}ReactDOM`];
-  if (options.react >= 18) {
-    imports.push(`import ${prefix}ReactDOM from "react-dom/client";`);
-    sveltifyDeps.push(`createPortal: ${prefix}createPortal`);
-    hooksDeps.push(`flushSync: ${prefix}flushSync`);
-  } else {
-    imports.push(`import ${prefix}ReactDOM from "react-dom";`);
-    sveltifyDeps.push(`createPortal: ${prefix}ReactDOM.createPortal`);
-    hooksDeps.push(`flushSync: ${prefix}ReactDOM.flushSync`);
-  }
-
-  if (options.ssr) {
-    imports.push(
-      `import { renderToString as ${prefix}renderToString } from "react-dom/server";`,
-    );
-    sveltifyDeps.push(`renderToString: ${prefix}renderToString`);
-    hooksDeps.push(`renderToString: ${prefix}renderToString`);
-  }
+  /** @type {string[]} */
+  const hooksDeps = [];
 
   const ast = parse(content, {
     filename: options.filename,
@@ -129,17 +94,6 @@ function transform(content, options) {
       ) {
         imported.add("sveltify");
       } else if (parent.type === "CallExpression") {
-        if (
-          parent?.arguments.length === 1 &&
-          "end" in parent.arguments[0] &&
-          typeof parent.arguments[0].end === "number"
-        ) {
-          s.appendRight(
-            parent.arguments[0].end,
-            `, { ${sveltifyDeps.join(", ")} }`,
-          );
-        }
-
         const componentsArg = parent.arguments[0];
         if (!aliased && componentsArg.type === "ObjectExpression") {
           aliased = new Set();
@@ -248,22 +202,9 @@ function transform(content, options) {
           }
           return expression;
         })
-        .join(", ")} }, { ${sveltifyDeps.join(", ")} });`,
+        .join(", ")} });`,
     );
     used.add("sveltify");
-  }
-  if (used.has("sveltify") && used.has("hooks")) {
-    imports.push(
-      `import { createPortal as ${prefix}createPortal, flushSync as ${prefix}flushSync } from "react-dom";`,
-    );
-  } else if (used.has("sveltify")) {
-    imports.push(
-      `import { createPortal as ${prefix}createPortal } from "react-dom";`,
-    );
-  } else if (used.has("hooks")) {
-    imports.push(
-      `import { flushSync as ${prefix}flushSync } from "react-dom";`,
-    );
   }
 
   if (Object.values(components).find((c) => c.dispatcher)) {

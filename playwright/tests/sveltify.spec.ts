@@ -13,7 +13,7 @@ test.describe("sveltify", () => {
       }
       win.app = win.svelteMount(win.StatefulClicker, {
         target,
-        props: { ReactDOM: win.ReactDOM },
+        props: {},
       });
     });
     const message = page.getByTestId("message");

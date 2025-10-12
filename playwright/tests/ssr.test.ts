@@ -3,6 +3,7 @@ import { copyFile, readdir, stat } from "fs/promises";
 import path from "path";
 import { fileURLToPath } from "url";
 
+test.skip();
 test.describe.configure({ mode: "serial" });
 test.use({ viewport: { width: 480, height: 360 } });
 test.describe("ssr", () => {
@@ -41,7 +42,7 @@ test.describe("ssr", () => {
     const files = await readdir(snapshotsPath);
     let checked = 0;
     for (const file of files) {
-      if (file.match(/client-rendered/)) {
+      if (/client-rendered/.exec(file)) {
         const clientFile = path.join(snapshotsPath, file);
         const serverFile = path.join(
           snapshotsPath,

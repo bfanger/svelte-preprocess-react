@@ -1,11 +1,8 @@
 <script lang="ts">
-  import { createPortal } from "react-dom";
   import { sveltify } from "svelte-preprocess-react";
   import ClickerReact from "../../tests/fixtures/Clicker";
 
-  type Props = { ReactDOM: any };
-  const { ReactDOM }: Props = $props();
-  const Clicker = sveltify(ClickerReact, { createPortal, ReactDOM });
+  const Clicker = sveltify(ClickerReact);
 
   let count = $state(0);
 

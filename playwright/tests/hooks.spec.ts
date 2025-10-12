@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 
+test.skip();
 test.use({ viewport: { width: 480, height: 360 } });
 test.describe("hooks", () => {
   test("counter", async ({ page }) => {

@@ -16,7 +16,7 @@
     getSvelteContext,
     setSvelteContext,
     type ReactApp,
-  } from "./SvelteContext";
+  } from "./SvelteContext.js";
   import { SvelteMap } from "svelte/reactivity";
 
   const { react$component, react$children, children, ...props } = $props();
@@ -83,10 +83,10 @@
 </script>
 
 {#if children}
-  <svelte-children
+  <sveltify-csr-children
     hidden
     {@attach (el: HTMLElement) => {
-      Child = () => {
+      function SveltifiedCSRChild() {
         el.hidden = false;
         const ref = useRef<HTMLElement>(null);
         useLayoutEffect(() => {
@@ -101,10 +101,11 @@
           );
         }
         return vdom;
-      };
+      }
+      Child = SveltifiedCSRChild;
     }}
   >
     {@render children()}
-  </svelte-children>
+  </sveltify-csr-children>
 {/if}
 <sveltify-react-portal bind:this={target}></sveltify-react-portal>

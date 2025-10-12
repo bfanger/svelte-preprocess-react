@@ -5,7 +5,7 @@
   import { createElement, use, type Attributes } from "react";
   import { getAllContexts, type Snippet } from "svelte";
   import { renderToReadableStream } from "react-dom/server";
-  import ReactContext from "./ReactContext";
+  import ReactContext from "./ReactContext.js";
   import { render } from "svelte/server";
   import SnippetComponent from "./SnippetComponent.svelte";
 
@@ -15,11 +15,12 @@
     react$children?: any;
     children?: Snippet;
   } & Attributes;
-  const { react$component, children, ...props }: Props = $props();
+  const { react$component, react$children, children, ...props }: Props =
+    $props();
 
   const contexts = getAllContexts();
 
-  const reactChildren = children ? createElement(Child) : props.react$children;
+  const reactChildren = children ? createElement(Child) : react$children;
 
   const vdom = createElement(
     ReactContext,

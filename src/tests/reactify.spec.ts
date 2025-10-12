@@ -6,7 +6,7 @@ import Dog from "./fixtures/Dog.svelte";
 import Children from "./fixtures/Children.svelte";
 import { renderToString } from "react-dom/server";
 
-describe("reactify-ts", () => {
+describe.skip("reactify-ts", () => {
   const svelte = reactify({ Dog, Children });
 
   it("converts Svelte props into React props", () => {

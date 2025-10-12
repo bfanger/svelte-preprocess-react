@@ -1,6 +1,4 @@
-import type ReactDOMServer from "react-dom/server";
 import type React from "react";
-import type { Root } from "react-dom/client";
 import type { Component, Snippet } from "svelte";
 
 export type HandlerName<T extends string> = `on${Capitalize<T>}`;
@@ -97,24 +95,6 @@ export type StaticPropComponents = Record<
   string,
   Component & Record<string, Component & Record<string, Component>>
 >;
-
-export type ReactDependencies = {
-  ReactDOM:
-    | {
-        createRoot: (container: Element) => Root; // React 18 and above
-      }
-    | {
-        render(component: React.ReactNode, container: Element): void; // React 17 and below
-        unmountComponentAtNode(container: Element): void;
-      };
-  createPortal: (
-    children: React.ReactNode,
-    container: Element | DocumentFragment,
-    key?: null | string,
-  ) => React.ReactPortal;
-  flushSync: (cb: () => void) => void;
-  renderToString?: typeof ReactDOMServer.renderToString;
-};
 
 export type ChildrenPropsAsReactNode<T extends Record<string, any>> = {
   [K in keyof T]: K extends "children" ? React.ReactNode : T[K];

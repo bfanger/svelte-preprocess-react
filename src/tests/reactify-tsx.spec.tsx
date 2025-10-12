@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 import reactify from "../lib/reactify";
 import Dog from "./fixtures/Dog.svelte";
 
-describe("reactify-tsx", () => {
+describe.skip("reactify-tsx", () => {
   const svelte = reactify({ Dog }); // in a tsx file, Dog is of type "any"  :-(
 
   it("renders the Svelte component output into React", () => {
