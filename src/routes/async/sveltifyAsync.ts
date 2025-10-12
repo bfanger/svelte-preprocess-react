@@ -4,8 +4,7 @@ import type {
   StaticPropComponents,
   Sveltified,
 } from "svelte-preprocess-react/internal/types";
-import SveltifiedCSR from "./SveltifiedCSR.svelte";
-import SveltifiedSSR from "./SveltifiedSSR.svelte";
+import SveltifiedUniversal from "./SveltifiedUniversal.svelte";
 
 const cache = new WeakMap<any, unknown>();
 const intrinsicElementCache: Record<string, unknown> = {};
@@ -59,13 +58,8 @@ function single(ReactComponent: any) {
   const named = {
     [name](this: any, $$renderer: any, $$props: any, ...args: any[]) {
       $$props.react$component = ReactComponent;
-      if (typeof document === "undefined") {
-        // @ts-ignore
-        return SveltifiedSSR.call(this, $$renderer, $$props, ...args);
-      } else {
-        // @ts-ignore
-        return SveltifiedCSR.call(this, $$renderer, $$props, ...args);
-      }
+      // @ts-ignore
+      return SveltifiedUniversal.call(this, $$renderer, $$props, ...args);
     },
   };
   if (typeof ReactComponent === "string") {

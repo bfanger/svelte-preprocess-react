@@ -7,7 +7,7 @@ import {
   type Snippet,
 } from "svelte";
 import type { ChildrenPropsAsReactNode } from "svelte-preprocess-react/internal/types.js";
-import ReactifiedCSR from "./ReactifiedCSR.svelte";
+import ReactifiedCSR, { type ReactifiedSync } from "./ReactifiedCSR.svelte";
 import ReactifiedSSR from "./ReactifiedSSR.svelte";
 import { render } from "svelte/server";
 import ReactContext from "./ReactContext";
@@ -60,17 +60,24 @@ function single(SvelteComponent: Component, key?: string): React.FC<any> {
 function reactifyCSR(SvelteComponent: Component, props: any, children: any) {
   const targetRef = useRef<HTMLElement>(null);
   const childrenRef = useRef<HTMLElement>(null);
+  const syncRef = useRef<ReactifiedSync>(null);
+
+  useLayoutEffect(() => {
+    syncRef.current?.(props, children, childrenRef.current);
+  });
   useLayoutEffect(() => {
     const app = mount(ReactifiedCSR, {
       target: targetRef.current!,
       props: {
         SvelteComponent,
+        init: (sync: ReactifiedSync) => (syncRef.current = sync),
         react$children: children,
         slot: childrenRef.current,
         props,
       },
     });
     return () => {
+      syncRef.current = null;
       void unmount(app);
     };
   }, []);

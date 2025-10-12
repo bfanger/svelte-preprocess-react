@@ -1,8 +1,8 @@
 <script lang="ts">
-  import Counter from "../../../demo/react-components/Counter";
+  import CounterAsync from "../examples/CounterAsync";
   import sveltifyAsync from "../sveltifyAsync";
 
-  const ReactCounter = sveltifyAsync(Counter);
+  const ReactCounter = sveltifyAsync(CounterAsync);
 </script>
 
 <ReactCounter initial={1} />
