@@ -1,10 +1,9 @@
-"use client";
 import { createContext } from "react";
 import type { getAllContexts, Snippet } from "svelte";
 
 const ReactContext = createContext<
   | {
-      contexts: ReturnType<typeof getAllContexts>;
+      context: ReturnType<typeof getAllContexts>;
       svelteChildren?: Snippet;
       reactChildren?: any;
     }

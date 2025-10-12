@@ -62,6 +62,7 @@ function reactifyCSR(SvelteComponent: Component, props: any, children: any) {
   const targetRef = useRef<HTMLElement>(null);
   const childrenRef = useRef<HTMLElement>(null);
   const syncRef = useRef<ReactifiedSync>(null);
+  const ctx = use(ReactContext);
 
   useLayoutEffect(() => {
     syncRef.current?.(props, children, childrenRef.current);
@@ -76,6 +77,7 @@ function reactifyCSR(SvelteComponent: Component, props: any, children: any) {
         slot: childrenRef.current,
         props,
       },
+      context: ctx?.context,
     });
     return () => {
       syncRef.current = null;

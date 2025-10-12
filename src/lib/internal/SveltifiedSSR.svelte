@@ -11,26 +11,19 @@
 
   type Props = {
     react$component: Parameters<typeof createElement>[0];
-    hasChildren: boolean;
     react$children?: any;
     children?: Snippet;
   } & Attributes;
   const { react$component, react$children, children, ...props }: Props =
     $props();
 
-  const contexts = getAllContexts();
+  const context = getAllContexts();
 
   const reactChildren = children ? createElement(Child) : react$children;
 
   const vdom = createElement(
     ReactContext,
-    {
-      value: {
-        contexts,
-        reactChildren,
-        svelteChildren: children,
-      },
-    },
+    { value: { context, reactChildren, svelteChildren: children } },
     createElement(react$component, props, reactChildren),
   );
 
@@ -59,7 +52,7 @@
     if (children) {
       const { body, head } = await render(SnippetComponent, {
         props: { snippet: children },
-        context: ctx?.contexts,
+        context: ctx!.context,
       });
       if (head !== "") {
         console.warn(

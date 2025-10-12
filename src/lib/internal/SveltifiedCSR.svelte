@@ -9,7 +9,7 @@
     type FC,
     type ReactNode,
   } from "react";
-  import { onDestroy } from "svelte";
+  import { getAllContexts, onDestroy } from "svelte";
   import { createRoot } from "react-dom/client";
   import { createPortal, flushSync } from "react-dom";
   import {
@@ -18,16 +18,18 @@
     type ReactApp,
   } from "./SvelteContext.js";
   import { SvelteMap } from "svelte/reactivity";
+  import ReactContext from "svelte-preprocess-react/internal/ReactContext.js";
 
   const { react$component, react$children, children, ...props } = $props();
 
   let target = $state<HTMLElement>();
   let Child = $state<FC>();
   const ctx = getSvelteContext();
+  const context = getAllContexts();
 
   let autoKey = 0;
 
-  const app = ctx ? ctx.createApp() : createRootApp();
+  const app = ctx.createApp(createRoot, flushSync);
   const nestedApps = new SvelteMap<number, ReactNode>();
 
   setSvelteContext(() => {
@@ -43,24 +45,6 @@
     return nestedApp;
   });
 
-  function createRootApp(): ReactApp {
-    const rootEl = document.createElement("sveltify-csr-react-root");
-    const reactRoot = createRoot(rootEl);
-    document.body.appendChild(rootEl);
-
-    return {
-      render(vdom: ReactNode) {
-        reactRoot.render(vdom);
-      },
-      unmount() {
-        flushSync(() => {
-          reactRoot.unmount();
-        });
-        document.body.removeChild(rootEl);
-      },
-    };
-  }
-
   onDestroy(() => {
     app.unmount();
   });
@@ -72,9 +56,13 @@
     app.render(
       createPortal(
         createElement(
-          react$component,
-          props,
-          Child ? createElement(Child) : react$children,
+          ReactContext,
+          { value: { context } },
+          createElement(
+            react$component,
+            props,
+            Child ? createElement(Child) : react$children,
+          ),
         ),
         target,
       ),
