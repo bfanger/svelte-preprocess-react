@@ -57,7 +57,7 @@
       createPortal(
         createElement(
           ReactContext,
-          { value: { context } },
+          { value: { context, suffix: "csr" } },
           createElement(
             react$component,
             props,

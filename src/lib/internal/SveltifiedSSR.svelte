@@ -2,10 +2,10 @@
   /**
    * Render a React component as a Svelte component.
    */
-  import { createElement, use, type Attributes } from "react";
+  import { createElement, use, type Attributes, type FC } from "react";
   import { getAllContexts, getContext, setContext, type Snippet } from "svelte";
   import { renderToReadableStream } from "react-dom/server";
-  import ReactContext from "./ReactContext.js";
+  import ReactContext from "./ReactContext";
   import { render } from "svelte/server";
   import SnippetComponent from "./SnippetComponent.svelte";
 
@@ -17,75 +17,103 @@
   const { react$component, react$children, children, ...props }: Props =
     $props();
 
+  type SveltifiedSSRContext = {
+    nested: FC[];
+    suffix: string;
+    autoIndex: number;
+    replace: (suffix: string) => void;
+  };
   const parent = getContext<SveltifiedSSRContext | undefined>("SveltifiedSSR");
   const context = getAllContexts();
+  const key = parent ? parent.autoIndex++ : 0;
+  const suffix = parent ? `${parent.suffix}-${key}` : ``;
 
-  type SveltifiedSSRContext =
-    | {
-        prefix: string;
-        siblingIndex: number;
-        defer: (vdom: ReturnType<typeof createElement>) => void;
-        replace: (id: string) => void;
-      }
-    | undefined;
-
-  const nestedChildren: ReturnType<typeof createElement>[] = [];
   const replacements: string[] = [];
-
-  let childIndex = 0;
   const current = setContext<SveltifiedSSRContext>("SveltifiedSSR", {
-    prefix: parent ? `${parent.prefix + parent.siblingIndex}-` : "-",
-    siblingIndex: parent ? parent.siblingIndex++ : 0,
-    defer: (vdom) => {
-      const key = current.prefix + childIndex;
-      current.replace(key);
-      childIndex = nestedChildren.push(
-        createElement(`sveltified-ssr-source${key}`, { key }, vdom),
-      );
-    },
-    replace(id: string) {
-      if (parent) {
-        parent.replace(id);
-      }
-      replacements.push(id);
-    },
-  })!;
+    nested: [],
+    suffix,
+    autoIndex: 0,
+    replace: (id) => (parent ? parent.replace(id) : replacements.unshift(id)),
+  });
 
-  const reactChildren = children ? createElement(Child) : react$children;
+  let svelteRenderPromise: PromiseLike<string> | undefined;
 
-  const vdom = createElement(
-    ReactContext,
-    {
-      value: { context, reactChildren, svelteChildren: children },
-    },
-    createElement(react$component, props, reactChildren),
-  );
-
-  // svelte-ignore non_reactive_update
-  let html = await reactToHtml();
-
-  for (const id of replacements) {
-    const sourceTag = `sveltified-ssr-source${id}`;
-    const sourceStart = html.indexOf(`<${sourceTag}>`);
-    const sourceEnd = html.indexOf(`</${sourceTag}>`);
-    let content = "";
-    if (sourceStart !== -1 && sourceEnd !== -1) {
-      content = html.slice(sourceStart + sourceTag.length + 2, sourceEnd);
-      html =
-        html.slice(0, sourceStart) +
-        html.slice(sourceEnd + sourceTag.length + 3);
+  async function RenderSnippet() {
+    if (!children) {
+      throw new Error("Requires children snippet");
     }
-    const targetTag = `sveltified-ssr-target${id}`;
-    html = html.replaceAll(`<${targetTag}></${targetTag}>`, content);
+    const ctx = use(ReactContext)!;
+    const promise = render(SnippetComponent, {
+      props: { snippet: children },
+      context: ctx.context,
+    }).then((result) => result.body);
+
+    svelteRenderPromise = promise;
+
+    return createElement(`sveltified-ssr-snippet${ctx.suffix}`, {
+      dangerouslySetInnerHTML: {
+        __html: await promise,
+      },
+    });
   }
 
-  async function reactToHtml() {
-    if (parent) {
-      parent.defer(vdom);
-      const tag = `sveltified-ssr-target${parent.prefix + childIndex}`;
-      return `<${tag}></${tag}>`;
+  async function RenderNested() {
+    await svelteRenderPromise;
+    return current.nested.map((Component, index) =>
+      createElement(Component, { key: index }),
+    );
+  }
+
+  async function renderHTML() {
+    let vdom: any;
+    if (!parent) {
+      vdom = createElement(
+        ReactContext,
+        { value: { suffix, context } },
+        createElement(react$component, props, [
+          children
+            ? [createElement(RenderSnippet, { key: "snippet", suffix })]
+            : react$children,
+          createElement(RenderNested, { key: "nested", suffix }),
+        ]),
+      );
+    } else {
+      parent.nested.push(() =>
+        createElement(
+          `sveltified-ssr-nested${suffix}`,
+          null,
+          createElement(
+            ReactContext,
+            { key, value: { suffix, context } },
+            !children
+              ? createElement(react$component, props, react$children)
+              : createElement(react$component, props, [
+                  createElement(RenderSnippet, { key: "snippet", suffix }),
+                  createElement(RenderNested, { key: "nested", suffix }),
+                ]),
+          ),
+        ),
+      );
+      current.replace(suffix);
+
+      return `<sveltified-ssr-placeholder${suffix}></sveltified-ssr-placeholder${suffix}>`;
     }
-    return await streamToString(await renderToReadableStream(vdom));
+    let html = await streamToString(await renderToReadableStream(vdom));
+    for (const replacement of replacements) {
+      const sourceTag = `sveltified-ssr-nested${replacement}`;
+      const targetTag = `sveltified-ssr-placeholder${replacement}`;
+      const sourceStart = html.indexOf(`<${sourceTag}>`);
+      const sourceEnd = html.indexOf(`</${sourceTag}>`);
+      let content = "";
+      if (sourceStart !== -1 && sourceEnd !== -1) {
+        content = html.slice(sourceStart + sourceTag.length + 2, sourceEnd);
+        html =
+          html.slice(0, sourceStart) +
+          html.slice(sourceEnd + sourceTag.length + 3);
+      }
+      html = html.replaceAll(`<${targetTag}></${targetTag}>`, content);
+    }
+    return html;
   }
 
   async function streamToString(stream: ReadableStream) {
@@ -101,34 +129,7 @@
     return output;
   }
 
-  async function Child() {
-    const ctx = use(ReactContext);
-    if ("react$children" in props) {
-      console.warn(
-        "svelte-preprocess-react: Can't pass react & svelte children at the same time",
-      );
-    }
-    if (children && !parent) {
-      const { body, head } = await render(SnippetComponent, {
-        props: { snippet: children },
-        context: ctx!.context,
-      });
-      if (head !== "") {
-        console.warn(
-          "svelte-preprocess-react: Changing the head not supported in Svelte components nested inside React components",
-          head,
-        );
-      }
-      return [
-        createElement("sveltify-ssr-child", {
-          key: "svelte-child",
-          dangerouslySetInnerHTML: { __html: body },
-        }),
-        ...nestedChildren,
-      ];
-    }
-    return undefined;
-  }
+  const html = await renderHTML();
 </script>
 
 {@html html}
