@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { expectType } from "tsd";
 import * as React from "react";
-import reactify from "../lib/reactify";
+import reactify from "svelte-preprocess-react/reactify";
 import Dog from "./fixtures/Dog.svelte";
 import Children from "./fixtures/Children.svelte";
 import renderToStringAsync from "svelte-preprocess-react/internal/renderToStringAsync";

@@ -1,5 +1,4 @@
 import type { Component } from "svelte";
-import type { Readable } from "svelte/store";
 import type {
   IntrinsicElementComponents,
   StaticPropComponents,
@@ -17,8 +16,6 @@ declare global {
   ): {
     [K in keyof T]: Sveltified<T[K]> & StaticPropComponents;
   } & IntrinsicElementComponents;
-
-  function hooks<T>(callback: () => T): (() => T) & Readable<T>;
 
   const react: IntrinsicElementComponents &
     Record<string, Component & StaticPropComponents>;

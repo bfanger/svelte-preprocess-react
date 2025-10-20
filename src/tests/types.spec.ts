@@ -5,7 +5,7 @@ import type {
   HandlerName,
   OmitEventProps,
   SvelteEventHandlers,
-} from "../lib/internal/types";
+} from "svelte-preprocess-react/internal/types";
 
 const fn: any = () => undefined;
 

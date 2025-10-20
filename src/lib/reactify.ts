@@ -6,7 +6,7 @@ import {
   type Component,
   type Snippet,
 } from "svelte";
-import type { ChildrenPropsAsReactNode } from "svelte-preprocess-react/internal/types.js";
+import type { ChildrenPropsAsReactNode } from "./internal/types.js";
 import ReactifiedCSR, {
   type ReactifiedSync,
 } from "./internal/ReactifiedCSR.svelte";

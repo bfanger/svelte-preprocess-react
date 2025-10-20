@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 import { vitePreprocess } from "@sveltejs/vite-plugin-svelte";
 import { preprocess } from "svelte/compiler";
 import { describe, expect, it, vi } from "vitest";
-import preprocessReact from "../lib/preprocessReact";
+import preprocessReact from "svelte-preprocess-react/preprocessReact";
 
 describe("svelte-preprocess-react", () => {
   it("should process <react:component> tags", async () => {

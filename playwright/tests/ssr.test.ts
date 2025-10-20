@@ -3,7 +3,6 @@ import { copyFile, readdir, stat } from "fs/promises";
 import path from "path";
 import { fileURLToPath } from "url";
 
-test.skip();
 test.describe.configure({ mode: "serial" });
 test.use({ viewport: { width: 480, height: 360 } });
 test.describe("ssr", () => {

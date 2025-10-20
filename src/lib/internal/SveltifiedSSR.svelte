@@ -7,7 +7,7 @@
   import { getAllContexts, getContext, setContext, type Snippet } from "svelte";
   import SnippetComponent from "./SnippetComponent.svelte";
   import ReactContext from "./ReactContext.js";
-  import renderToStringAsync from "svelte-preprocess-react/internal/renderToStringAsync.js";
+  import renderToStringAsync from "./renderToStringAsync.js";
 
   type Props = {
     react$component: Parameters<typeof createElement>[0];
@@ -71,17 +71,24 @@
 
   async function renderHTML() {
     let vdom: any;
+    const selfClosing = ["img", "input", "br", "hr", "meta", "link"].includes(
+      typeof react$component === "string" ? react$component : "",
+    );
     if (!parent) {
-      vdom = createElement(
-        ReactContext,
-        { value: { suffix, context } },
-        createElement(react$component, props, [
-          children
-            ? [createElement(RenderSnippet, { key: "snippet", suffix })]
-            : react$children,
-          createElement(RenderNested, { key: "nested", suffix }),
-        ]),
-      );
+      if (selfClosing) {
+        vdom = createElement(react$component, props);
+      } else {
+        vdom = createElement(
+          ReactContext,
+          { value: { suffix, context } },
+          createElement(react$component, props, [
+            children
+              ? [createElement(RenderSnippet, { key: "snippet", suffix })]
+              : react$children,
+            createElement(RenderNested, { key: "nested", suffix }),
+          ]),
+        );
+      }
     } else {
       parent.nested.push(() =>
         createElement(
@@ -90,12 +97,14 @@
           createElement(
             ReactContext,
             { key, value: { suffix, context } },
-            !children
-              ? createElement(react$component, props, react$children)
-              : createElement(react$component, props, [
-                  createElement(RenderSnippet, { key: "snippet", suffix }),
-                  createElement(RenderNested, { key: "nested", suffix }),
-                ]),
+            selfClosing
+              ? createElement(react$component, props)
+              : !children
+                ? createElement(react$component, props, react$children)
+                : createElement(react$component, props, [
+                    createElement(RenderSnippet, { key: "snippet", suffix }),
+                    createElement(RenderNested, { key: "nested", suffix }),
+                  ]),
           ),
         ),
       );

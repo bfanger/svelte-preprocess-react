@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
-import type { createRoot as createRootType } from "react-dom/client";
-import type { flushSync as flushSyncType } from "react-dom";
+import { createRoot } from "react-dom/client";
+import { flushSync } from "react-dom";
 import { getContext, setContext } from "svelte";
 
 export type ReactApp = {
@@ -9,10 +9,7 @@ export type ReactApp = {
 };
 
 export type SvelteContext = {
-  createApp(
-    createRoot: typeof createRootType,
-    flushSync: typeof flushSyncType,
-  ): ReactApp;
+  createApp: () => ReactApp;
 };
 
 export function getSvelteContext(): SvelteContext {
@@ -21,7 +18,7 @@ export function getSvelteContext(): SvelteContext {
     return ctx;
   }
   return {
-    createApp(createRoot, flushSync) {
+    createApp() {
       const rootEl = document.createElement("sveltify-csr-react-root");
       const reactRoot = createRoot(rootEl);
       document.body.appendChild(rootEl);

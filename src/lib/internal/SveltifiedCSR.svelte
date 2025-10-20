@@ -10,15 +10,14 @@
     type ReactNode,
   } from "react";
   import { getAllContexts, onDestroy } from "svelte";
-  import { createRoot } from "react-dom/client";
-  import { createPortal, flushSync } from "react-dom";
+  import { createPortal } from "react-dom";
   import {
     getSvelteContext,
     setSvelteContext,
     type ReactApp,
   } from "./SvelteContext.js";
   import { SvelteMap } from "svelte/reactivity";
-  import ReactContext from "svelte-preprocess-react/internal/ReactContext.js";
+  import ReactContext from "./ReactContext.js";
 
   const { react$component, react$children, children, ...props } = $props();
 
@@ -29,7 +28,7 @@
 
   let autoKey = 0;
 
-  const app = ctx.createApp(createRoot, flushSync);
+  const app = ctx.createApp();
   const nestedApps = new SvelteMap<number, ReactNode>();
 
   setSvelteContext(() => {

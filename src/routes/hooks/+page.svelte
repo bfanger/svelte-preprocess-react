@@ -2,10 +2,10 @@
   import { useState } from "react";
   import HookWithContext from "./HookWithContext.svelte";
   import { type Auth, AuthProvider } from "./react-auth";
+  import { hooks } from "svelte-preprocess-react";
 
   const react = sveltify({ AuthProvider });
-
-  let [count, setCount] = $derived.by(hooks(() => useState(0)));
+  let [count, setCount] = $derived.by(await hooks(() => useState(0)));
 
   const auth: Auth = $state({ authenticated: false });
 

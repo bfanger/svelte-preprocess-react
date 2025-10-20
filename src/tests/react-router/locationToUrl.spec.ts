@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import locationToUrl from "../../lib/react-router/internal/locationToUrl";
+import locationToUrl from "svelte-preprocess-react/react-router/internal/locationToUrl";
 
 describe("locationToUrl", () => {
   it("absolute urls", () => {

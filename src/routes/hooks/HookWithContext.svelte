@@ -2,7 +2,7 @@
   import { hooks } from "svelte-preprocess-react";
   import { useAuth } from "./react-auth";
 
-  let auth = $derived(hooks(useAuth));
+  let auth = $derived.by(await hooks(useAuth));
 </script>
 
 {#if auth?.authenticated}

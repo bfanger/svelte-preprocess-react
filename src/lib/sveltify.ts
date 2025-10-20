@@ -3,7 +3,7 @@ import type {
   IntrinsicElementComponents,
   StaticPropComponents,
   Sveltified,
-} from "svelte-preprocess-react/internal/types.js";
+} from "./internal/types.js";
 import SveltifiedUniversal from "./internal/SveltifiedUniversal.svelte";
 
 const cache = new WeakMap<any, unknown>();

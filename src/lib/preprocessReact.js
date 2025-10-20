@@ -61,8 +61,6 @@ function transform(content, options) {
 
   const packageName = "svelte-preprocess-react";
   const imports = [];
-  /** @type {string[]} */
-  const hooksDeps = [];
 
   const ast = parse(content, {
     filename: options.filename,
@@ -72,9 +70,9 @@ function transform(content, options) {
   const components = replaceReactTags(ast.html, s, options.filename);
   const aliases = Object.entries(components);
 
-  /** @type {Set<'sveltify' | 'hooks'>} */
+  /** @type {Set<'sveltify'>} */
   const imported = new Set();
-  /** @type {Set<'sveltify' | 'hooks'>} */
+  /** @type {Set<'sveltify'>} */
   const used = new Set();
   let defined = false;
   /** @type {false|Set<string>} */
@@ -137,26 +135,6 @@ function transform(content, options) {
       }
     }
 
-    if (node.type === "Identifier" && node.name === "hooks" && parent) {
-      if (
-        parent.type === "ImportSpecifier" ||
-        parent.type === "ImportDeclaration"
-      ) {
-        imported.add("hooks");
-      } else if (parent.type === "CallExpression") {
-        if (
-          parent?.arguments.length === 1 &&
-          "end" in parent.arguments[0] &&
-          typeof parent.arguments[0].end === "number"
-        ) {
-          s.appendRight(
-            parent.arguments[0].end,
-            `, { ${hooksDeps.join(", ")} }`,
-          );
-        }
-        used.add("hooks");
-      }
-    }
     if (
       node.type === "Identifier" &&
       node.name === "react" &&
@@ -180,9 +158,6 @@ function transform(content, options) {
     (used.has("sveltify") || aliases.length > 0)
   ) {
     declarators.push("sveltify");
-  }
-  if (!imported.has("hooks") && used.has("hooks")) {
-    declarators.push("hooks");
   }
   if (declarators.length > 0) {
     imports.push(`import { ${declarators.join(", ")} } from "${packageName}";`);

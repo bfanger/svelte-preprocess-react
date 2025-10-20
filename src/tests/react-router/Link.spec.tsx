@@ -2,7 +2,7 @@
 import * as React from "react";
 import { render } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import { Link } from "../../lib/react-router";
+import { Link } from "svelte-preprocess-react/react-router";
 import TestRouter from "./TestRouter";
 
 describe("<Link> href", () => {

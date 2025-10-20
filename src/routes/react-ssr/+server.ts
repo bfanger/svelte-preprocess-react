@@ -1,6 +1,6 @@
 import { createElement } from "react";
 import App from "../../demo/react-components/App";
-import renderToStringAsync from "../../lib/internal/renderToStringAsync";
+import renderToStringAsync from "svelte-preprocess-react/internal/renderToStringAsync";
 
 const cssScript = `<script type="module" src="/src/demo/react-components/App.tsx"></script>`;
 const hydrateScript = `<script type="module">

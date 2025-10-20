@@ -2,7 +2,7 @@
 import { describe, it, expect } from "vitest";
 import { render } from "@testing-library/react";
 import * as React from "react";
-import { NavLink } from "../../lib/react-router";
+import { NavLink } from "svelte-preprocess-react/react-router";
 import TestRouter from "./TestRouter";
 
 describe("NavLink (react-router v6)", () => {
