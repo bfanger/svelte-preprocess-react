@@ -4,12 +4,12 @@ import * as React from "react";
 import reactify from "../lib/reactify";
 import Dog from "./fixtures/Dog.svelte";
 import Children from "./fixtures/Children.svelte";
-import { renderToString } from "react-dom/server";
+import renderToStringAsync from "svelte-preprocess-react/internal/renderToStringAsync";
 
-describe.skip("reactify-ts", () => {
+describe("reactify-ts", () => {
   const svelte = reactify({ Dog, Children });
 
-  it("converts Svelte props into React props", () => {
+  it("converts Svelte props into React props", async () => {
     expectType<
       React.FC<{
         name: string;
@@ -18,11 +18,11 @@ describe.skip("reactify-ts", () => {
     >(svelte.Dog);
     expectType<React.FC<{ children: React.ReactNode }>>(svelte.Children);
 
-    const html = renderToString(
+    const html = await renderToStringAsync(
       React.createElement(svelte.Dog, { name: "Fido" }),
     );
     expect(html).toMatchInlineSnapshot(
-      `"<reactify-svelte style="display:contents"><!--[--><svelte-dog class="svelte-1oslsbm">Fido</svelte-dog><!--]--></reactify-svelte>"`,
+      `"<reactified style="display:contents"><!--[--><!--[!--><!----><svelte-dog class="svelte-1oslsbm">Fido</svelte-dog><!----><!--]--><!--]--></reactified>"`,
     );
   });
 

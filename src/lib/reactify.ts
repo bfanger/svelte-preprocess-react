@@ -88,12 +88,13 @@ function reactifyCSR(SvelteComponent: Component, props: any, children: any) {
     children &&
       createElement(
         "reactify-react-child",
-        { key: "children", ref: childrenRef },
+        { key: "children", ref: childrenRef, style: { display: "contents" } },
         children,
       ),
     createElement("reactify-svelte-mount", {
       ref: targetRef,
       key: "component",
+      style: { display: "contents" },
     }),
   ]);
 }
@@ -127,7 +128,8 @@ async function reactifySSR(
   if (head !== "") {
     console.warn("svelte-preprocess-react doesn't support head content ");
   }
-  return createElement("reactify-svelte-render", {
+  return createElement("reactified", {
+    style: { display: "contents" },
     dangerouslySetInnerHTML: { __html: body },
   });
 }

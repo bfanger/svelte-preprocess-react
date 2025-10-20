@@ -1,6 +1,6 @@
 import { createElement } from "react";
-import { renderToString } from "react-dom/server";
 import App from "../../demo/react-components/App";
+import renderToStringAsync from "../../lib/internal/renderToStringAsync";
 
 const cssScript = `<script type="module" src="/src/demo/react-components/App.tsx"></script>`;
 const hydrateScript = `<script type="module">
@@ -8,8 +8,8 @@ import App, { createElement, hydrateRoot } from "/src/demo/react-components/App.
 hydrateRoot(document.querySelector("react-app"), createElement(App));
 </script>`;
 
-export function GET({ url }) {
-  const html = renderToString(createElement(App));
+export async function GET({ url }) {
+  const html = await renderToStringAsync(createElement(App));
   let script = "";
   if (url.searchParams.get("css")) {
     script += cssScript;

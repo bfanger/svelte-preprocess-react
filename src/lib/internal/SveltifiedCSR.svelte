@@ -96,4 +96,4 @@
     {@render children()}
   </sveltify-csr-children>
 {/if}
-<sveltify-react-portal bind:this={target}></sveltify-react-portal>
+<sveltify-csr-portal bind:this={target}></sveltify-csr-portal>

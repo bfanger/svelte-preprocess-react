@@ -1,10 +1,10 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`svelte-preprocess-react > should convert text content to react children prop 1`] = `
-"<script lang="ts">import inject$$ReactDOM from "react-dom/client"; import { renderToString as inject$$renderToString } from "react-dom/server"; import { sveltify } from "svelte-preprocess-react"; import { createPortal as inject$$createPortal } from "react-dom";
+"<script lang="ts">import { sveltify } from "svelte-preprocess-react";
   import Alert from "../../demo/react-components/Alert";
 
-  const react = sveltify({ Alert }, { ReactDOM: inject$$ReactDOM, createPortal: inject$$createPortal, renderToString: inject$$renderToString });
+  const react = sveltify({ Alert });
 
   const count = 0;
 ;</script>
@@ -17,11 +17,11 @@ exports[`svelte-preprocess-react > should convert text content to react children
 "
 `;
 
-exports[`svelte-preprocess-react > should detect tailing comma when adding aliases 1`] = `
-"<script lang="ts">import inject$$ReactDOM from "react-dom/client"; import { renderToString as inject$$renderToString } from "react-dom/server"; import { sveltify } from "svelte-preprocess-react"; import { createPortal as inject$$createPortal } from "react-dom";
+exports[`svelte-preprocess-react > should detect trailing comma when adding aliases 1`] = `
+"<script lang="ts">import { sveltify } from "svelte-preprocess-react";
   const react = sveltify({
     section: "section",
-  h1: "h1", p: "p", }, { ReactDOM: inject$$ReactDOM, createPortal: inject$$createPortal, renderToString: inject$$renderToString });
+  h1: "h1", p: "p", });
 ;</script>
 
 <react.section>
@@ -31,29 +31,11 @@ exports[`svelte-preprocess-react > should detect tailing comma when adding alias
 "
 `;
 
-exports[`svelte-preprocess-react > should import 'react-dom/server' when ssr is enabled 1`] = `
-"<script lang="ts">import inject$$ReactDOM from "react-dom/client"; import { renderToString as inject$$renderToString } from "react-dom/server"; import { sveltify } from "svelte-preprocess-react"; import { createPortal as inject$$createPortal } from "react-dom";
-  import Clicker from "./Clicker";
-
-  const react = sveltify({ Clicker }, { ReactDOM: inject$$ReactDOM, createPortal: inject$$createPortal, renderToString: inject$$renderToString });
-
-  let count = 1;
-;</script>
-
-<react.Clicker
-  {count}
-  onCount={(next) => {
-    count = next;
-  }}
-></react.Clicker>
-"
-`;
-
 exports[`svelte-preprocess-react > should inject a script tag 1`] = `
 "<script>
-import inject$$ReactDOM from "react-dom/client"; import { renderToString as inject$$renderToString } from "react-dom/server"; import { sveltify } from "svelte-preprocess-react"; import { createPortal as inject$$createPortal } from "react-dom";
+import { sveltify } from "svelte-preprocess-react";
 
-const react = sveltify({ Counter }, { ReactDOM: inject$$ReactDOM, createPortal: inject$$createPortal, renderToString: inject$$renderToString });
+const react = sveltify({ Counter });
 </script>
 
 <!-- Counter could be a global variable -->
@@ -61,29 +43,11 @@ const react = sveltify({ Counter }, { ReactDOM: inject$$ReactDOM, createPortal: 
 "
 `;
 
-exports[`svelte-preprocess-react > should not import 'react-dom/server' when ssr is disabled 1`] = `
-"<script lang="ts">import inject$$ReactDOM from "react-dom/client"; import { sveltify } from "svelte-preprocess-react"; import { createPortal as inject$$createPortal } from "react-dom";
-  import Clicker from "./Clicker";
-
-  const react = sveltify({ Clicker }, { ReactDOM: inject$$ReactDOM, createPortal: inject$$createPortal });
-
-  let count = 1;
-;</script>
-
-<react.Clicker
-  {count}
-  onCount={(next) => {
-    count = next;
-  }}
-></react.Clicker>
-"
-`;
-
 exports[`svelte-preprocess-react > should portal slotted content as children 1`] = `
-"<script lang="ts">import inject$$ReactDOM from "react-dom/client"; import { renderToString as inject$$renderToString } from "react-dom/server"; import { sveltify } from "svelte-preprocess-react"; import { createPortal as inject$$createPortal } from "react-dom";
+"<script lang="ts">import { sveltify } from "svelte-preprocess-react";
   import Alert from "../../demo/react-components/Alert";
 
-  const react = sveltify({ Alert }, { ReactDOM: inject$$ReactDOM, createPortal: inject$$createPortal, renderToString: inject$$renderToString });
+  const react = sveltify({ Alert });
 ;</script>
 
 <react.Alert react$children="A simple primary alert. Check it out!" />
@@ -91,10 +55,10 @@ exports[`svelte-preprocess-react > should portal slotted content as children 1`]
 `;
 
 exports[`svelte-preprocess-react > should process <react.Component.Item> tags 1`] = `
-"<script lang="ts">import inject$$ReactDOM from "react-dom/client"; import { renderToString as inject$$renderToString } from "react-dom/server"; import { sveltify } from "svelte-preprocess-react"; import { createPortal as inject$$createPortal } from "react-dom";
+"<script lang="ts">import { sveltify } from "svelte-preprocess-react";
   import List from "./List";
 
-  const react = sveltify({ List , inject$$List$Item: List.Item, inject$$List$Item$Icon: List.Item.Icon, }, { ReactDOM: inject$$ReactDOM, createPortal: inject$$createPortal, renderToString: inject$$renderToString });
+  const react = sveltify({ List , inject$$List$Item: List.Item, inject$$List$Item$Icon: List.Item.Icon, });
 ;</script>
 
 <react.List>
@@ -109,7 +73,7 @@ exports[`svelte-preprocess-react > should process <react.Component.Item> tags 1`
 `;
 
 exports[`svelte-preprocess-react > should process <react:Context.Provider> tags 1`] = `
-"<script lang="ts">import inject$$ReactDOM from "react-dom/client"; import { renderToString as inject$$renderToString } from "react-dom/server"; import { sveltify } from "svelte-preprocess-react"; import { createPortal as inject$$createPortal } from "react-dom";
+"<script lang="ts">import { sveltify } from "svelte-preprocess-react";
   import { createContext, type Context } from "react";
 
   type Props = {
@@ -117,7 +81,7 @@ exports[`svelte-preprocess-react > should process <react:Context.Provider> tags 
   };
   let { context = createContext(false) }: Props = $props();
 
-  let react = $derived(sveltify({ Provider: context.Provider }, { ReactDOM: inject$$ReactDOM, createPortal: inject$$createPortal, renderToString: inject$$renderToString }));
+  let react = $derived(sveltify({ Provider: context.Provider }));
 ;</script>
 
 <react.Provider value={true} react$children="content" />
@@ -125,10 +89,10 @@ exports[`svelte-preprocess-react > should process <react:Context.Provider> tags 
 `;
 
 exports[`svelte-preprocess-react > should process <react:component> tags 1`] = `
-"<script lang="ts">import inject$$ReactDOM from "react-dom/client"; import { renderToString as inject$$renderToString } from "react-dom/server"; import { sveltify } from "svelte-preprocess-react"; import { createPortal as inject$$createPortal } from "react-dom";
+"<script lang="ts">import { sveltify } from "svelte-preprocess-react";
   import Clicker from "./Clicker";
 
-  const react = sveltify({ Clicker }, { ReactDOM: inject$$ReactDOM, createPortal: inject$$createPortal, renderToString: inject$$renderToString });
+  const react = sveltify({ Clicker });
 
   let count = 1;
 ;</script>
@@ -143,11 +107,11 @@ exports[`svelte-preprocess-react > should process <react:component> tags 1`] = `
 `;
 
 exports[`svelte-preprocess-react > should process <react:component> tags 2`] = `
-"<script lang="ts">import inject$$ReactDOM from "react-dom/client"; import { renderToString as inject$$renderToString } from "react-dom/server"; import { sveltify } from "svelte-preprocess-react"; import { createPortal as inject$$createPortal } from "react-dom";
+"<script lang="ts">import { sveltify } from "svelte-preprocess-react";
   //@ts-nocheck
   import Clicker from "./Clicker";
 
-  const react = sveltify({ Clicker }, { ReactDOM: inject$$ReactDOM, createPortal: inject$$createPortal, renderToString: inject$$renderToString });
+  const react = sveltify({ Clicker });
 
   let count = 1;
 ;</script>
@@ -175,9 +139,9 @@ exports[`svelte-preprocess-react > should process <react:component> tags 2`] = `
 
 exports[`svelte-preprocess-react > should process <react:element> (lowercase) tags 1`] = `
 "<script>
-import inject$$ReactDOM from "react-dom/client"; import { renderToString as inject$$renderToString } from "react-dom/server"; import { sveltify } from "svelte-preprocess-react"; import { createPortal as inject$$createPortal } from "react-dom";
+import { sveltify } from "svelte-preprocess-react";
 
-const react = sveltify({ button: "button" }, { ReactDOM: inject$$ReactDOM, createPortal: inject$$createPortal, renderToString: inject$$renderToString });
+const react = sveltify({ button: "button" });
 </script>
 
 <react.button onClick={() => console.info("clicked")}>
@@ -187,14 +151,14 @@ const react = sveltify({ button: "button" }, { ReactDOM: inject$$ReactDOM, creat
 `;
 
 exports[`svelte-preprocess-react > should process {...rest} props 1`] = `
-"<script lang="ts">import inject$$ReactDOM from "react-dom/client"; import { renderToString as inject$$renderToString } from "react-dom/server"; import { sveltify } from "svelte-preprocess-react"; import { createPortal as inject$$createPortal } from "react-dom";
+"<script lang="ts">import { sveltify } from "svelte-preprocess-react";
   import type React from "react";
 
   const props: React.JSX.IntrinsicElements["div"] = {
     style: { backgroundColor: "#fcdef6" },
     onClick: () => console.info("clicked"),
   };
-;const react = sveltify({ div: "div" }, { ReactDOM: inject$$ReactDOM, createPortal: inject$$createPortal, renderToString: inject$$renderToString });</script>
+;const react = sveltify({ div: "div" });</script>
 
 <react.div react$props={{ "aria-atomic": true, ...props, "aria-label": "after" }}>
   <span>Hi</span>
@@ -203,13 +167,13 @@ exports[`svelte-preprocess-react > should process {...rest} props 1`] = `
 `;
 
 exports[`svelte-preprocess-react > should process {:else} {:then} and {:catch} sections 1`] = `
-"<script lang="ts">import inject$$ReactDOM from "react-dom/client"; import { renderToString as inject$$renderToString } from "react-dom/server"; import { sveltify } from "svelte-preprocess-react"; import { createPortal as inject$$createPortal } from "react-dom";
+"<script lang="ts">import { sveltify } from "svelte-preprocess-react";
   import type React from "react";
 
   const number = 1;
 
   const Component: React.FC = () => null;
-  const react = sveltify({ Component }, { ReactDOM: inject$$ReactDOM, createPortal: inject$$createPortal, renderToString: inject$$renderToString });
+  const react = sveltify({ Component });
 ;</script>
 
 <!-- eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -->
@@ -239,10 +203,10 @@ exports[`svelte-preprocess-react > should process {:else} {:then} and {:catch} s
 `;
 
 exports[`svelte-preprocess-react > should process on:event forwarding 1`] = `
-"<script lang="ts">import inject$$ReactDOM from "react-dom/client"; import { renderToString as inject$$renderToString } from "react-dom/server"; import { sveltify } from "svelte-preprocess-react"; import { createPortal as inject$$createPortal } from "react-dom";
+"<script lang="ts">import { sveltify } from "svelte-preprocess-react";
   import Clicker from "./Clicker";
 
-  const react = sveltify({ Clicker }, { ReactDOM: inject$$ReactDOM, createPortal: inject$$createPortal, renderToString: inject$$renderToString });
+  const react = sveltify({ Clicker });
 
   let { value = 0, onCount } = $props<{
     value: number;

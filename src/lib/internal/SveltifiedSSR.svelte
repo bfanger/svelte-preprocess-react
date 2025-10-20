@@ -3,11 +3,11 @@
    * Render a React component as a Svelte component.
    */
   import { createElement, use, type Attributes, type FC } from "react";
-  import { getAllContexts, getContext, setContext, type Snippet } from "svelte";
-  import { renderToReadableStream } from "react-dom/server";
-  import ReactContext from "./ReactContext";
   import { render } from "svelte/server";
+  import { getAllContexts, getContext, setContext, type Snippet } from "svelte";
   import SnippetComponent from "./SnippetComponent.svelte";
+  import ReactContext from "./ReactContext.js";
+  import renderToStringAsync from "svelte-preprocess-react/internal/renderToStringAsync.js";
 
   type Props = {
     react$component: Parameters<typeof createElement>[0];
@@ -46,7 +46,12 @@
     const promise = render(SnippetComponent, {
       props: { snippet: children },
       context: ctx.context,
-    }).then((result) => result.body);
+    }).then((result) => {
+      if (result.head !== "") {
+        console.warn("svelte-preprocess-react doesn't support head content ");
+      }
+      return result.body;
+    });
 
     svelteRenderPromise = promise;
 
@@ -98,7 +103,7 @@
 
       return `<sveltified-ssr-placeholder${suffix}></sveltified-ssr-placeholder${suffix}>`;
     }
-    let html = await streamToString(await renderToReadableStream(vdom));
+    let html = await renderToStringAsync(vdom);
     for (const replacement of replacements) {
       const sourceTag = `sveltified-ssr-nested${replacement}`;
       const targetTag = `sveltified-ssr-placeholder${replacement}`;
@@ -114,19 +119,6 @@
       html = html.replaceAll(`<${targetTag}></${targetTag}>`, content);
     }
     return html;
-  }
-
-  async function streamToString(stream: ReadableStream) {
-    let output = "";
-    const decoder = new TextDecoder();
-    await stream.pipeTo(
-      new WritableStream({
-        write(chunk) {
-          output += decoder.decode(chunk);
-        },
-      }),
-    );
-    return output;
   }
 
   const html = await renderHTML();

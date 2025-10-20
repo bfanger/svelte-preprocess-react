@@ -6,7 +6,7 @@ import { preprocess } from "svelte/compiler";
 import { describe, expect, it, vi } from "vitest";
 import preprocessReact from "../lib/preprocessReact";
 
-describe.skip("svelte-preprocess-react", () => {
+describe("svelte-preprocess-react", () => {
   it("should process <react:component> tags", async () => {
     const filename = resolveFilename("./fixtures/Container.svelte");
     const src = await readFile(filename, "utf8");
@@ -140,7 +140,7 @@ describe.skip("svelte-preprocess-react", () => {
     expect(output.code).toMatchSnapshot();
   });
 
-  it("should detect tailing comma when adding aliases", async () => {
+  it("should detect trailing comma when adding aliases", async () => {
     const filename = resolveFilename("./fixtures/TrailingComma.svelte");
     const src = await readFile(filename, "utf8");
     const output = await preprocess(src, preprocessReact(), { filename });

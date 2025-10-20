@@ -25,11 +25,13 @@ test.describe("ssr", () => {
   test("client-rendered", async ({ page }) => {
     // Create Screenshots using Client Side Rendering.
     for (const url of urls) {
-      await page.goto(url);
-      await expect(page.locator('body[data-ssr="spa"]')).toBeAttached({
-        timeout: 10_000,
+      await test.step(url, async () => {
+        await page.goto(url);
+        await expect(page.locator('body[data-ssr="spa"]')).toBeAttached({
+          timeout: 10_000,
+        });
+        await expect(page.locator("body")).toHaveScreenshot();
       });
-      await expect(page.locator("body")).toHaveScreenshot();
     }
   });
 
@@ -66,8 +68,10 @@ test.describe("ssr", () => {
     test.use({ javaScriptEnabled: false });
     test("server-rendered", async ({ page }) => {
       for (const url of urls) {
-        await page.goto(url);
-        await expect(page.locator("body")).toHaveScreenshot();
+        await test.step(url, async () => {
+          await page.goto(url);
+          await expect(page.locator("body")).toHaveScreenshot();
+        });
       }
     });
   });
