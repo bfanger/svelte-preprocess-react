@@ -1,6 +1,8 @@
 [![svelte-preprocess-react](./static/svelte-preprocess-react.svg)](https://www.npmjs.com/package/svelte-preprocess-react)
 
-# Svelte Preprocess React
+See [v2.x Readme](https://github.com/bfanger/svelte-preprocess-react/blob/2.1.4/README.md) for the stable version.
+
+# Svelte Preprocess React - 3.0-beta
 
 Seamlessly use React components inside a Svelte app
 
@@ -28,8 +30,9 @@ Use libraries from the React's ecosystem, react-youtube for example:
 ```svelte
 <script>
   import YouTube from "react-youtube";
+  import { sveltify } from "svelte-preprocess-react";
 
-  const react = sveltify({ YouTube }); // Optional step, but adds type-safety
+  const react = sveltify({ YouTube });
 </script>
 
 <react.YouTube videoId="AdNJ3fydeao" />
@@ -46,10 +49,7 @@ The snippet above would be generate:
   import { sveltify } from "svelte-preprocess-react";
   import YouTube from "react-youtube";
 
-  const react = sveltify(
-    { YouTube },
-    { createPortal, ReactDOM, renderToString },
-  );
+  const react = sveltify({ YouTube });
 </script>
 
 <react.YouTube videoId="AdNJ3fydeao" />
@@ -58,7 +58,7 @@ The snippet above would be generate:
 ## Setup / Installation
 
 ```sh
-npm install --save-dev svelte-preprocess-react react react-dom
+npm install --save-dev svelte-preprocess-react@next react react-dom
 ```
 
 Add `preprocessReact` to your svelte.config.js:
@@ -69,6 +69,9 @@ import preprocessReact from "svelte-preprocess-react/preprocessReact";
 
 export default {
   preprocess: preprocessReact(),
+  compilerOptions: {
+    experimental: { async: true }, // v3.0 relies on async svelte components
+  },
 };
 ```
 
@@ -81,6 +84,9 @@ import preprocessReact from "svelte-preprocess-react/preprocessReact";
 
 export default {
   preprocess: [vitePreprocess(), preprocessReact()],
+  compilerOptions: {
+    experimental: { async: true },
+  },
 };
 ```
 

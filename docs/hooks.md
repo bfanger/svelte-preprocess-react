@@ -10,7 +10,7 @@ The `hooks()` function uses Svelte lifecycle functions, so you can only call the
 <script lang="ts">
   import { hooks } from "svelte-preprocess-react";
 
-  const [count, setCount] = $derived.by(hooks(() => useState(0)));
+  const [count, setCount] = $derived.by(await hooks(() => useState(0)));
 </script>
 
 <h2>Count: {count}</h2>
@@ -21,7 +21,7 @@ hooks() returns a function, when that function retrieves the reactive state, by 
 
 ```ts
 const actions = $derived.by(
-  hooks(() => {
+  await hooks(() => {
     const multiplier = useContext(MultiplierContext);
     const [count, setCount] = useState(0);
     return {
