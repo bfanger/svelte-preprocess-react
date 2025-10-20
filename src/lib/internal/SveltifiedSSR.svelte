@@ -47,10 +47,8 @@
       props: { snippet: children },
       context: ctx.context,
     }).then((result) => {
-      if (result.head !== "") {
-        console.warn("svelte-preprocess-react doesn't support head content ");
-      }
-      return result.body;
+      // @TODO: Improve handling of head content
+      return result.head + result.body;
     });
 
     svelteRenderPromise = promise;

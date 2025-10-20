@@ -120,31 +120,32 @@ async function reactifySSR(
   reactChildren: any,
 ) {
   const ctx = use(ReactContext);
+  const svelteServer = await import("svelte/server");
+  const renderToStringAsync = (
+    await import("./internal/renderToStringAsync.js")
+  ).default;
+
   let children: Snippet | undefined = undefined;
   if (ctx && reactChildren === ctx?.reactChildren) {
     children = ctx.svelteChildren;
-  } else if (typeof reactChildren === "string") {
-    const escapedHtml = reactChildren
-      .replaceAll("&", "&amp;")
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;");
-
-    children = createRawSnippet(() => ({ render: () => escapedHtml }));
-  } else {
-    console.warn(
-      "svelte-preprocess-react: Converting react children to svelte children in ssr is not implemented",
+  } else if (typeof reactChildren !== "undefined") {
+    // @TODO: Use a nested context
+    const nested = await renderToStringAsync(
+      createElement("reactified-ssr-fragment", null, reactChildren),
     );
+    children = createRawSnippet(() => ({
+      render: () => {
+        return nested.substring(25, nested.length - 26);
+      },
+    }));
   }
-  const svelteServer = await import("svelte/server");
 
   const { body, head } = await svelteServer.render(ReactifiedSSR, {
     props: { SvelteComponent, props, reactChildren, children },
   });
-  if (head !== "") {
-    console.warn("svelte-preprocess-react doesn't support head content ");
-  }
+  // @TODO: Improve handling of head content
   return createElement("reactified", {
     style: { display: "contents" },
-    dangerouslySetInnerHTML: { __html: body },
+    dangerouslySetInnerHTML: { __html: head + body },
   });
 }
