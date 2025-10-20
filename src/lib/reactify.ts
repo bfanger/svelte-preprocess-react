@@ -1,4 +1,11 @@
-import { createElement, Fragment, use, useLayoutEffect, useRef } from "react";
+import {
+  createElement,
+  Fragment,
+  use,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import {
   createRawSnippet,
   mount,
@@ -63,6 +70,7 @@ function reactifyCSR(SvelteComponent: Component, props: any, children: any) {
   const childrenRef = useRef<HTMLElement>(null);
   const syncRef = useRef<ReactifiedSync>(null);
   const ctx = use(ReactContext);
+  const [contexts, setContexts] = useState<Map<any, any>>();
 
   useLayoutEffect(() => {
     syncRef.current?.(props, children, childrenRef.current);
@@ -73,6 +81,7 @@ function reactifyCSR(SvelteComponent: Component, props: any, children: any) {
       props: {
         SvelteComponent,
         init: (sync: ReactifiedSync) => (syncRef.current = sync),
+        setContexts,
         react$children: children,
         slot: childrenRef.current,
         props,
@@ -85,17 +94,23 @@ function reactifyCSR(SvelteComponent: Component, props: any, children: any) {
     };
   }, []);
   return createElement(Fragment, null, [
-    children &&
-      createElement(
-        "reactify-react-child",
-        { key: "children", ref: childrenRef, style: { display: "contents" } },
-        children,
-      ),
     createElement("reactify-svelte-mount", {
       ref: targetRef,
       key: "component",
       style: { display: "contents" },
     }),
+
+    children &&
+      contexts &&
+      createElement(
+        "reactify-react-child",
+        { key: "children", ref: childrenRef, style: { display: "contents" } },
+        createElement(
+          ReactContext,
+          { value: { context: contexts, suffix: "reactify" } },
+          children,
+        ),
+      ),
   ]);
 }
 

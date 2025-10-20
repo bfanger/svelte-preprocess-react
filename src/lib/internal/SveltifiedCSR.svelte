@@ -56,7 +56,7 @@
       createPortal(
         createElement(
           ReactContext,
-          { value: { context, suffix: "csr" } },
+          { value: { context, suffix: "sveltify-csr" } },
           createElement(
             react$component,
             props,

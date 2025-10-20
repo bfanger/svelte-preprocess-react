@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { type Component, type Snippet } from "svelte";
+  import type { Component, Snippet } from "svelte";
+  import ExtractContexts from "svelte-preprocess-react/internal/ExtractContexts.svelte";
 
   export type ReactifiedSync = (
     props: Record<string, any>,
@@ -13,13 +14,21 @@
   type Props = {
     SvelteComponent: Component;
     init: (sync: ReactifiedSync) => void;
+    setContexts: (context: Map<any, any>) => void;
     props: Record<string, any>;
     react$children?: any;
     slot?: HTMLElement | null;
     children?: Snippet;
   };
-  let { SvelteComponent, init, react$children, slot, props, children }: Props =
-    $props();
+  let {
+    SvelteComponent,
+    init,
+    setContexts,
+    react$children,
+    slot,
+    props,
+    children,
+  }: Props = $props();
 
   init((newProps, newChildren, newSlot) => {
     props = newProps;
@@ -30,6 +39,7 @@
 
 {#if react$children !== undefined}
   <SvelteComponent {...props}>
+    <ExtractContexts {setContexts} />
     {#if children}
       {@render children()}
     {:else if slot}
