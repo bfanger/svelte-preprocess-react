@@ -60,42 +60,38 @@ Svelte/React input:
 
 ```svelte
 <react.p>
-  <h1>Content</h1>
+  <span>Content</span>
 </react.p>
 ```
 
 React vDOM output:
 
 ```jsx
-<Bridge>
-  <SvelteFirstContext.Provider>
+<ReactContext>
     <p>
-      <Bridge>
-        <SvelteFirstContext.Provider>
-          <Child /> <- When merging the render trees the <h1>Content</h1> is injected here
-        </SvelteFirstContext.Provider>
-      </Bridge>
+        <SveltifiedChild>
+          <sveltified-csr-react-child /> <- When merging the render trees the <span>Content</span> is injected into this element
+        </SveltifiedChild>
     </p>
-  </SvelteFirstContext.Provider>
-</Bridge>
+</ReactContext>
 ```
 
 HTML output:
 
 ```html
-<svelte-portal-x-target style="display: contents;">
+<sveltify-csr-portal>
   <p>
-    <react-children-x-target style="display: contents;">
-      <svelte-children-x-source style="display: contents;">
-        <h1>Content</h1>
-      </svelte-children-x-source>
-    </react-children-x-target>
+    <sveltify-csr-react-child>
+      <sveltify-csr-children>
+        <span>Content</span>
+      </sveltify-csr-children>
+    </sveltify-csr-react-child>
   </p>
-</svelte-portal-x-target>
+</sveltify-csr-portal>
 ```
 
 There are cases where the React virtual DOM or this real DOM can cause problems.
-A workaround is write a react wrapper component that create the wanted structure and use that component inside Svelte.
+The workaround is to write a react component that creates the wanted structure and use that component inside Svelte.
 
 ### Render props
 
