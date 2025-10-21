@@ -19,7 +19,8 @@
   import { SvelteMap } from "svelte/reactivity";
   import ReactContext from "./ReactContext.js";
 
-  const { react$component, react$children, children, ...props } = $props();
+  const { react$component, react$children, react$props, children, ...props } =
+    $props();
 
   let target = $state<HTMLElement>();
   let Child = $state<FC>();
@@ -59,7 +60,7 @@
           { value: { context, suffix: "sveltify-csr" } },
           createElement(
             react$component,
-            props,
+            react$props ?? props,
             Child ? createElement(Child) : react$children,
           ),
         ),

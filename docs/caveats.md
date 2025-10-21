@@ -54,7 +54,7 @@ React children and Svelte children are fundamentally different.
 In Svelte children are a `Snippet` or `undefined`. You can't do much besides ` {@render children?.()}`.
 This improved encapsulation and predictability, but is less flexible than React.
 
-In React, children can be any type and can be inspected, modified or used in way.
+In React, children can be any type and can be inspected, modified or used in multiple ways.
 
 Svelte/React input:
 
@@ -111,9 +111,7 @@ Use the `children` prop instead:
 ✅
 ```
 
-## Synchronous rendering
+## Asynchronous rendering
 
-We render 2 trees, one for Svelte and one for React and then merge their output.
-
-Because the Svelte server rendering synchronous, we must also use the synchronous api in React.
-Therefor we use the renderToString instead of the newer renderToPipeableStream api.
+We render 2 trees, one for Svelte and one for React and then interleave their output.
+This requires both renderers to be asynchronous and wait on each other.

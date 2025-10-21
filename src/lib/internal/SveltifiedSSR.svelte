@@ -12,10 +12,16 @@
   type Props = {
     react$component: Parameters<typeof createElement>[0];
     react$children?: any;
+    react$props?: Record<string, any>;
     children?: Snippet;
   } & Attributes;
-  const { react$component, react$children, children, ...props }: Props =
-    $props();
+  const {
+    react$component,
+    react$props,
+    react$children,
+    children,
+    ...props
+  }: Props = $props();
 
   type SveltifiedSSRContext = {
     nested: FC[];
@@ -74,12 +80,12 @@
     );
     if (!parent) {
       if (selfClosing) {
-        vdom = createElement(react$component, props);
+        vdom = createElement(react$component, react$props ?? props);
       } else {
         vdom = createElement(
           ReactContext,
           { value: { suffix, context } },
-          createElement(react$component, props, [
+          createElement(react$component, react$props ?? props, [
             children
               ? [createElement(RenderSnippet, { key: "snippet", suffix })]
               : react$children,

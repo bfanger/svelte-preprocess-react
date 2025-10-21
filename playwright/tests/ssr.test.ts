@@ -19,6 +19,8 @@ test.describe("ssr", () => {
     "/fixtures/List",
     "/intrinsic-elements",
     "/fixtures/Dog",
+    "/context-react-nested",
+    "/fixtures/RestProps",
   ];
 
   test("client-rendered", async ({ page }) => {
