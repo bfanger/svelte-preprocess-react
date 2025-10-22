@@ -1,23 +1,21 @@
 <script lang="ts">
   import { sveltify } from "svelte-preprocess-react";
-  import ClickerReact from "../../tests/fixtures/Clicker";
-  import AlertReact from "../../demo/react-components/Alert";
-  import CounterReact from "../../demo/react-components/Counter";
+  import Clicker from "../../tests/fixtures/Clicker";
+  import Alert from "../../demo/react-components/Alert";
+  import Counter from "../../demo/react-components/Counter";
 
   let count = $state(1);
 
-  const Counter = sveltify(CounterReact);
-  const Clicker = sveltify(ClickerReact);
-  const Alert = sveltify(AlertReact);
+  const react = sveltify({ Clicker, Alert, Counter });
 </script>
 
-<Counter initial={10} onCount={console.info} />
+<react.Counter initial={10} onCount={console.info} />
 
-<Clicker
+<react.Clicker
   {count}
   onCount={() => {
     count = Math.random();
   }}
 />
 
-<Alert type="primary">A simple alert</Alert>
+<react.Alert type="primary">A simple alert</react.Alert>

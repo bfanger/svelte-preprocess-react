@@ -1,8 +1,8 @@
 <script lang="ts">
   import { sveltify } from "svelte-preprocess-react";
-  import ClickerReact from "../../tests/fixtures/Clicker";
+  import Clicker from "../../tests/fixtures/Clicker";
 
-  const Clicker = sveltify(ClickerReact);
+  const react = sveltify({ Clicker });
 
   let count = $state(0);
 
@@ -11,4 +11,4 @@
   }
 </script>
 
-<Clicker {count} {onCount} />
+<react.Clicker {count} {onCount} />

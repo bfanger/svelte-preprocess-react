@@ -6,8 +6,8 @@
    */
   type Props = {
     SvelteComponent: Component;
-    props: Record<string, any>;
-    reactChildren?: any;
+    props: Record<string, unknown>;
+    reactChildren?: unknown;
     children?: Snippet;
   };
   const { SvelteComponent, reactChildren, props, children }: Props = $props();

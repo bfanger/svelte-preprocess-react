@@ -7,10 +7,11 @@ import {
   useState,
 } from "react";
 import { mount, unmount, type Component } from "svelte";
-import type { ChildrenPropsAsReactNode } from "./internal/types.js";
-import ReactifiedCSR, {
-  type ReactifiedSync,
-} from "./internal/ReactifiedCSR.svelte";
+import type {
+  ChildrenPropsAsReactNode,
+  ReactifiedSync,
+} from "./internal/types.js";
+import ReactifiedCSR from "./internal/ReactifiedCSR.svelte";
 import ReactContext from "./internal/ReactContext.js";
 
 const cache = new WeakMap<Component<any>, React.FunctionComponent<any>>();

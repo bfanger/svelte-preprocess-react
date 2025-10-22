@@ -2,20 +2,11 @@ import type { Component } from "svelte";
 import type {
   IntrinsicElementComponents,
   StaticPropComponents,
-  Sveltified,
 } from "./internal/types.js";
+import type SveltifyType from "./sveltify.js";
 
 declare global {
-  function sveltify<
-    T extends Record<
-      string,
-      keyof JSX.IntrinsicElements | React.JSXElementConstructor<any>
-    >,
-  >(
-    reactComponents: T,
-  ): {
-    [K in keyof T]: Sveltified<T[K]> & StaticPropComponents;
-  } & IntrinsicElementComponents;
+  const sveltify: typeof SveltifyType;
 
   const react: IntrinsicElementComponents &
     Record<string, Component & StaticPropComponents>;

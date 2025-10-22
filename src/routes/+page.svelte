@@ -4,16 +4,17 @@
 
 <img
   src="/svelte-preprocess-react.svg"
-  alt="Svelte logo in react colors and the React logo in svelte colors"
+  alt="Svelte logo in React colors and the React logo in Svelte colors"
 />
 <ul>
   <li><a href={resolve("/preprocessor")}>via preprocessor</a></li>
   <li><a href={resolve("/sveltify-react")}>via sveltifyReact</a></li>
 
   <li><a href={resolve("/context-svelte")}>getContext()</a></li>
-  <li><a href={resolve("/context-react")}>useContext()</a></li>
+  <li><a href={resolve("/context-react-nested")}>useContext()</a></li>
 
   <li><a href={resolve("/hooks")}>Using hooks</a></li>
+  <li><a href={resolve("/signals")}>Using signals</a></li>
 
   <li><a href={resolve("/react-router/home")}>react-router</a></li>
   <li><a href={resolve("/lazy")}>react lazy</a></li>

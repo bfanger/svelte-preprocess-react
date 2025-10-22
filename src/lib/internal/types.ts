@@ -52,25 +52,11 @@ export type OmitEventProps<ReactProps> = Omit<
   ExcludeProps<keyof ReactProps>
 >;
 
-export type TreeNode = SvelteInit & {
-  reactComponent: React.FunctionComponent<any> | React.ComponentClass<any>;
-  key: string;
-  autoKey: number;
-  nodes: TreeNode[];
-  rerender?: (source?: "hooks") => void;
-  unroot?: () => void;
-};
-
-export type SvelteInit = {
-  props: { reactProps: Record<string, any>; children: React.ReactNode }; // The react props
-  portalTarget: HTMLElement | undefined; // An element to portal the React component into
-  childrenSource: HTMLElement | undefined; // An element containing the children from Svelte, inject as children into the React component
-  slotSources: HTMLElement[]; // An array of elements containing the slots from Svelte, inject as partials into the React component
-  svelteChildren: Snippet | undefined; // The svelte children prop (snippet/slot)
-  context: Map<any, any>; // The full Svelte context
-  hooks: { Hook: React.FunctionComponent; key: number }[];
-  parent?: TreeNode;
-};
+export type ReactifiedSync = (
+  props: Record<string, unknown>,
+  children: unknown,
+  slot: HTMLElement | null,
+) => void;
 
 export type ChildrenPropsAsSnippet<T> = T extends { children: unknown }
   ? Omit<T, "children"> & { children: Snippet | T["children"] }

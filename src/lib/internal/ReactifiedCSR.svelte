@@ -1,12 +1,7 @@
 <script lang="ts">
   import type { Component, Snippet } from "svelte";
-  import ExtractContexts from "svelte-preprocess-react/internal/ExtractContexts.svelte";
-
-  export type ReactifiedSync = (
-    props: Record<string, any>,
-    children: any,
-    slot: HTMLElement | null,
-  ) => void;
+  import ExtractContexts from "./ExtractContexts.svelte";
+  import type { ReactifiedSync } from "./types";
 
   /**
    * Render a Svelte component as a Svelte component, but with props & children from React.
@@ -15,8 +10,8 @@
     SvelteComponent: Component;
     init: (sync: ReactifiedSync) => void;
     setContexts: (context: Map<any, any>) => void;
-    props: Record<string, any>;
-    react$children?: any;
+    props: Record<string, unknown>;
+    react$children?: unknown;
     slot?: HTMLElement | null;
     children?: Snippet;
   };
@@ -30,11 +25,12 @@
     children,
   }: Props = $props();
 
-  init((newProps, newChildren, newSlot) => {
-    props = newProps;
-    react$children = newChildren;
-    slot = newSlot;
-  });
+  const sync: ReactifiedSync = (updatedProps, updatedChildren, updatedSlot) => {
+    props = updatedProps;
+    react$children = updatedChildren;
+    slot = updatedSlot;
+  };
+  init(sync);
 </script>
 
 {#if react$children !== undefined}

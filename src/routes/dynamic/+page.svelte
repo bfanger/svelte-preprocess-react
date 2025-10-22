@@ -5,7 +5,9 @@
 
   let group = $state("alert");
 
-  let Component = $derived(sveltify(group === "alert" ? Alert : Counter));
+  let react = $derived(
+    sveltify({ Component: group === "alert" ? Alert : Counter }),
+  );
 </script>
 
 <div style:margin-bottom="1rem">
@@ -13,4 +15,4 @@
   <label><input type="radio" bind:group value="counter" /> Counter</label>
 </div>
 
-<Component />
+<react.Component />

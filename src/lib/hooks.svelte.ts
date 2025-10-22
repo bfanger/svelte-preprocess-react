@@ -1,4 +1,4 @@
-import { createElement, memo } from "react";
+import * as React from "react";
 import { flushSync } from "react-dom";
 import { onDestroy } from "svelte";
 import renderToStringAsync from "svelte-preprocess-react/internal/renderToStringAsync";
@@ -8,6 +8,7 @@ export default async function hooks<T>(fn: () => T): Promise<() => T> {
   if (typeof document === "undefined") {
     return hooksSSR(fn);
   }
+  // Client-side
   const { createApp } = getSvelteContext();
   const app = createApp();
   onDestroy(() => {
@@ -16,8 +17,8 @@ export default async function hooks<T>(fn: () => T): Promise<() => T> {
   let result = $state<T>();
   flushSync(() =>
     app.render(
-      createElement(
-        memo(() => {
+      React.createElement(
+        React.memo(() => {
           result = fn();
           return null;
         }),
@@ -34,7 +35,7 @@ async function hooksSSR<T>(fn: () => T): Promise<() => T> {
   // @TODO: run hook inside nested react context
   let result: T;
   await renderToStringAsync(
-    createElement(() => {
+    React.createElement(() => {
       result = fn();
       return null;
     }),

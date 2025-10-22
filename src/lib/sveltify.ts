@@ -9,7 +9,10 @@ import SveltifiedUniversal from "./internal/SveltifiedUniversal.svelte";
 const cache = new WeakMap<any, unknown>();
 const intrinsicElementCache: Record<string, unknown> = {};
 
-function sveltify<
+/**
+ * Convert a React components into Svelte components.
+ */
+export default function sveltify<
   T extends Record<
     string,
     keyof React.JSX.IntrinsicElements | React.JSXElementConstructor<any>
@@ -18,26 +21,7 @@ function sveltify<
   components: T,
 ): {
   [K in keyof T]: Sveltified<T[K]> & StaticPropComponents;
-} & IntrinsicElementComponents;
-/**
- * Convert a React components into Svelte components.
- */
-function sveltify<
-  T extends
-    | React.FC
-    | React.ComponentClass
-    | React.JSXElementConstructor<any>
-    | keyof React.JSX.IntrinsicElements,
->(components: T): Sveltified<T>;
-function sveltify(components: any): any {
-  if (
-    typeof components !== "object" || // React.FC or JSXIntrinsicElements
-    ("render" in components && typeof components.render === "function") || // React.ComponentClass
-    "_context" in components || // a Context.Provider
-    ("Provider" in components && components.Provider === components) // a React 19 Context.Provider
-  ) {
-    return single(components);
-  }
+} & IntrinsicElementComponents {
   return Object.fromEntries(
     Object.entries(components).map(([key, reactComponent]) => {
       if (reactComponent === undefined) {
@@ -47,8 +31,6 @@ function sveltify(components: any): any {
     }),
   ) as any;
 }
-
-export default sveltify;
 
 function single(ReactComponent: any) {
   if (
