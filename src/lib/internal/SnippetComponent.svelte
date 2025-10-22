@@ -1,4 +1,7 @@
 <script lang="ts">
+  /**
+   * Allows rendering a snippet outside of svelte using mount or render.
+   */
   import type { Snippet } from "svelte";
 
   type Props = {

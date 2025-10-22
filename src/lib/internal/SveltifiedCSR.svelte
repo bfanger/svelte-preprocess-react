@@ -11,49 +11,46 @@
   } from "react";
   import { getAllContexts, onDestroy } from "svelte";
   import { createPortal } from "react-dom";
-  import {
-    getSvelteContext,
-    setSvelteContext,
-    type ReactApp,
-  } from "./SvelteContext.js";
+  import { getSvelteContext, setSvelteContext } from "./SvelteContext.js";
   import { SvelteMap } from "svelte/reactivity";
   import ReactContext from "./ReactContext.js";
+  import type { Root } from "react-dom/client";
 
   const { react$component, react$children, react$props, children, ...props } =
     $props();
 
   let target = $state<HTMLElement>();
   let Child = $state<FC>();
-  const ctx = getSvelteContext();
+  const createBranch = getSvelteContext();
   const context = getAllContexts();
 
   let autoKey = 0;
 
-  const app = ctx.createApp();
-  const nestedApps = new SvelteMap<number, ReactNode>();
+  const root = createBranch();
+  const branches = new SvelteMap<number, ReactNode>();
 
   setSvelteContext(() => {
     const key = autoKey++;
-    const nestedApp: ReactApp = {
+    const branch: Root = {
       render(vdom) {
-        nestedApps.set(key, vdom);
+        branches.set(key, vdom);
       },
       unmount() {
-        nestedApps.delete(key);
+        branches.delete(key);
       },
     };
-    return nestedApp;
+    return branch;
   });
 
   onDestroy(() => {
-    app.unmount();
+    root.unmount();
   });
 
   $effect(() => {
     if (!target) {
       return;
     }
-    app.render(
+    root.render(
       createPortal(
         createElement(
           ReactContext,
@@ -83,7 +80,7 @@
         const vdom = [
           createElement("sveltify-csr-react-child", { key: "child", ref }),
         ];
-        for (const [key, nestedApp] of nestedApps.entries()) {
+        for (const [key, nestedApp] of branches.entries()) {
           vdom.push(
             createElement("sveltify-csr-nested-app", { key }, nestedApp),
           );

@@ -9,14 +9,14 @@ export default async function hooks<T>(fn: () => T): Promise<() => T> {
     return hooksSSR(fn);
   }
   // Client-side
-  const { createApp } = getSvelteContext();
-  const app = createApp();
+  const createBranch = getSvelteContext();
+  const branch = createBranch();
   onDestroy(() => {
-    app.unmount();
+    branch.unmount();
   });
   let result = $state<T>();
   flushSync(() =>
-    app.render(
+    branch.render(
       React.createElement(
         React.memo(() => {
           result = fn();

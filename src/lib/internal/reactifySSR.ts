@@ -1,5 +1,4 @@
 import * as React from "react";
-import ReactContext from "./ReactContext.js";
 import { createRawSnippet, type Component, type Snippet } from "svelte";
 import renderToStringAsync from "./renderToStringAsync.js";
 import { render } from "svelte/server";
@@ -12,12 +11,9 @@ export default async function reactifySSR(
   SvelteComponent: Component,
   props: Record<string, unknown>,
   reactChildren: unknown,
-  ctx: React.ContextType<typeof ReactContext>,
 ) {
   let children: Snippet | undefined = undefined;
-  if (ctx && reactChildren === ctx?.reactChildren) {
-    children = ctx.svelteChildren;
-  } else if (typeof reactChildren !== "undefined" && reactChildren !== null) {
+  if (typeof reactChildren !== "undefined" && reactChildren !== null) {
     // @TODO: Use a nested context
     const nested = await renderToStringAsync(
       React.createElement(

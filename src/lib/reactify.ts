@@ -50,9 +50,8 @@ function single(SvelteComponent: Component, key?: string): React.FC<any> {
     [name]({ children, ...props }: any) {
       if (typeof document === "undefined") {
         // Server-side rendering
-        const ctx = use(ReactContext);
         return import("./internal/reactifySSR.js").then((module) =>
-          module.default(SvelteComponent, props, children, ctx),
+          module.default(SvelteComponent, props, children),
         );
       }
       // Client-side rendering
