@@ -3,6 +3,10 @@ import { copyFile, readdir, stat } from "fs/promises";
 import path from "path";
 import { fileURLToPath } from "url";
 
+test.skip(
+  process.platform !== "darwin",
+  "Repository only contains macOS screenshots",
+);
 test.describe.configure({ mode: "serial" });
 test.use({ viewport: { width: 480, height: 360 } });
 test.describe("ssr", () => {

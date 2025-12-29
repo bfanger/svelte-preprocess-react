@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Component, Snippet } from "svelte";
+  import { untrack, type Component, type Snippet } from "svelte";
   import ExtractContexts from "./ExtractContexts.svelte";
   import type { ReactifiedSync } from "./types";
 
@@ -30,7 +30,7 @@
     react$children = updatedChildren;
     slot = updatedSlot;
   };
-  init(sync);
+  untrack(() => init(sync));
 </script>
 
 {#if react$children !== undefined}

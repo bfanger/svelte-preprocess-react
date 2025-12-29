@@ -1,12 +1,12 @@
 <script lang="ts">
-  import { getContext } from "svelte";
+  import { getContext, untrack } from "svelte";
 
   type Props = {
     id: any;
   };
   let { id }: Props = $props();
 
-  const context = getContext(id);
+  const context = getContext(untrack(() => id));
   const text = JSON.stringify(context);
 </script>
 

@@ -1,6 +1,10 @@
 import { test, expect, type Page } from "@playwright/test";
 import svelteConfig from "../../svelte.config.js";
 
+test.skip(
+  process.platform !== "darwin",
+  "Repository only contains macOS screenshots",
+);
 test.use({ viewport: { width: 480, height: 360 } });
 test.describe("react-first", () => {
   test("render reactified Svelte component inside a React SPA", async ({

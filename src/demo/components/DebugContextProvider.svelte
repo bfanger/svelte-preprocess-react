@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { setContext, type Snippet } from "svelte";
+  import { setContext, untrack, type Snippet } from "svelte";
 
   type Props = {
     id: any;
@@ -8,7 +8,10 @@
   };
   let { id, value, children }: Props = $props();
 
-  setContext(id, value);
+  setContext(
+    untrack(() => id),
+    untrack(() => value),
+  );
 </script>
 
 {@render children?.()}
